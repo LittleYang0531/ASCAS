@@ -1,25 +1,14 @@
 <script setup lang="ts">
-import { useTheme } from 'vuetify';
+import AppBar from './components/AppBar.vue';
 import Message from './components/Message.vue';
+import NavigationDrawer from './components/NavigationDrawer.vue';
 import { errorText, isError, type } from './utils/message';
-
-const theme = useTheme();
 </script>
 
 <template>
     <v-app>
-        <v-app-bar>
-            <v-spacer></v-spacer>
-            <v-btn :prependIcon="theme.name.value == 'light' ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
-                text="Toggle Theme" slim @click="theme.toggle()"></v-btn>
-        </v-app-bar>
-
-        <v-navigation-drawer>
-            <v-list>
-                <v-list-item title="Navigation drawer"></v-list-item>
-            </v-list>
-        </v-navigation-drawer>
-
+        <AppBar></AppBar>
+        <NavigationDrawer></NavigationDrawer>
         <v-main>
             <router-view v-slot="{ Component }">
                 <component :is="Component"></component>
@@ -29,5 +18,5 @@ const theme = useTheme();
     <div class="nProcessBar">
 
     </div>
-    <Message :isError="isError" :errorText="errorText" :type="type" hasAppBar="true"></Message>
+    <Message :isError="isError" :errorText="errorText" :type="type" :hasAppBar="true"></Message>
 </template>
