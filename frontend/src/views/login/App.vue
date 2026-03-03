@@ -277,197 +277,37 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div v-if="loaded">
-        <div class="login-container d-flex align-center justify-center">
-            <v-carousel 
-                :show-arrows="false"
-                cycle 
-                height="100vh" 
-                class="login-carousel"
-                crossfade
-                hide-delimiters
-            >
-                <v-carousel-item v-for="(url, i) in login_background_urls" :key="i">
-                    <v-img :src="url" cover height="100vh"></v-img>
-                </v-carousel-item>
-            </v-carousel>
-            <div class="login-masking" :style="`background-color: rgba(0, 0, 0, ${theme.name.value == 'light' ? 0.2 : 0.6});`"></div>
-            <v-card class="login-form" rounded="xl" elevation="24">
-                <div class="d-flex justify-space-between mb-6">
-                    <v-icon
-                        icon="mdi-chevron-left"
-                        size="small"
-                        @click="history.back()"
-                    ></v-icon>
-                    <v-icon
-                        :icon="theme.name.value == 'light' ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
-                        size="small"
-                        @click="toggleTheme()"
-                    ></v-icon>
-                </div>
-                <v-carousel v-model="currpage" hide-delimiters :show-arrows="false" height="auto">
-                    <v-carousel-item value="login">
-                        <div class="d-flex justify-center mb-4">
-                            <v-img
-                                src="/favicon.ico"
-                                width="64"
-                                height="64"
-                            ></v-img>
-                        </div>
-                        <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">登录至 ASCAS</h2></div>
-                        <div class="d-flex justify-center mb-4">
-                            <v-text-field
-                                v-model="username"
-                                label="用户名/邮箱"
-                                variant="outlined"
-                                density="comfortable"
-                                hide-details
-                            ></v-text-field>
-                        </div>
-                        <div class="d-flex justify-center mb-10">
-                            <v-text-field
-                                v-model="password"
-                                label="用户密码"
-                                variant="outlined"
-                                density="comfortable"
-                                type="password"
-                                hide-details
-                            ></v-text-field>
-                        </div>
-                        <div class="d-flex justify-center mb-4">
-                            <v-btn
-                                width="100%"
-                                color="primary"
-                                @click="login()"
-                                :disabled="fetching"
-                            >登录</v-btn>
-                        </div>
-                        <div class="d-flex justify-space-between">
-                            <span>新用户？<a class="cursor-pointer" @click="switchPage('register')">点此注册</a></span>
-                            <span><a class="cursor-pointer" @click="switchPage('reset')">忘记密码</a></span>
-                        </div>
+    <transition>
+        <div v-if="loaded">
+            <div class="login-container d-flex align-center justify-center">
+                <v-carousel 
+                    :show-arrows="false"
+                    cycle 
+                    height="100vh" 
+                    class="login-carousel"
+                    crossfade
+                    hide-delimiters
+                >
+                    <v-carousel-item v-for="(url, i) in login_background_urls" :key="i">
+                        <v-img :src="url" cover height="100vh"></v-img>
                     </v-carousel-item>
-                    <v-carousel-item value="register">
-                        <div class="d-flex justify-center mb-4">
-                            <v-img
-                                src="/favicon.ico"
-                                width="64"
-                                height="64"
-                            ></v-img>
-                        </div>
-                        <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">注册 ASCAS 账户</h2></div>
-                        <div class="d-flex justify-center mb-4">
-                            <v-text-field
-                                v-model="register_username"
-                                label="用户名"
-                                variant="outlined"
-                                density="comfortable"
-                                hide-details
-                            ></v-text-field>
-                        </div>
-                        <div class="d-flex justify-center mb-4">
-                            <v-text-field
-                                v-model="register_email"
-                                label="电子邮箱"
-                                variant="outlined"
-                                density="comfortable"
-                                hide-details
-                            ></v-text-field>
-                        </div>
-                        <div class="d-flex justify-center mb-4">
-                            <v-text-field
-                                v-model="register_password"
-                                label="用户密码"
-                                variant="outlined"
-                                density="comfortable"
-                                type="password"
-                                hide-details
-                            ></v-text-field>
-                        </div>
-                        <div class="d-flex justify-center mb-10">
-                            <v-text-field
-                                v-model="register_password_confirm"
-                                label="确认密码"
-                                variant="outlined"
-                                density="comfortable"
-                                type="password"
-                                hide-details
-                            ></v-text-field>
-                        </div>
-                        <div class="d-flex justify-center mb-4">
-                            <v-btn
-                                width="100%"
-                                color="primary"
-                                @click="register()"
-                                :disabled="fetching"
-                            >注册</v-btn>
-                        </div>
-                        <div class="d-flex justify-end">
-                            <span><a class="cursor-pointer" @click="switchPage('login')">返回登录</a></span>
-                        </div>
-                    </v-carousel-item>
-                    <v-carousel-item value="register_success">
-                        <div class="d-flex justify-center mb-4">
-                            <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
-                        </div>
-                        <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">注册成功</h2></div>
-                        <div class="d-flex flex-column justify-center align-center mb-4">
-                            <span>请检查您的邮箱以完成验证</span>
-                            <span>验证链接有效期为 1 小时，请尽快完成邮箱验证！</span>
-                        </div>
-                    </v-carousel-item>
-                    <v-carousel-item value="reset">
-                        <div class="d-flex justify-center mb-4">
-                            <v-img
-                                src="/favicon.ico"
-                                width="64"
-                                height="64"
-                            ></v-img>
-                        </div>
-                        <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">重置密码</h2></div>
-                        <div class="d-flex justify-center mb-4">
-                            <v-text-field
-                                v-model="reset_email"
-                                label="电子邮箱"
-                                variant="outlined"
-                                density="comfortable"
-                                hide-details
-                            ></v-text-field>
-                        </div>
-                        <div class="d-flex justify-center mb-4">
-                            <v-btn
-                                width="100%"
-                                color="primary"
-                                @click="reset()"
-                                :disabled="fetching"
-                            >发送重置邮件</v-btn>
-                        </div>
-                        <div class="d-flex justify-end">
-                            <span><a class="cursor-pointer" @click="switchPage('login')">返回登录</a></span>
-                        </div>
-                    </v-carousel-item>
-                    <v-carousel-item value="reset_request_success">
-                        <div class="d-flex justify-center mb-4">
-                            <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
-                        </div>
-                        <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">重置邮件已发送</h2></div>
-                        <div class="d-flex flex-column justify-center align-center mb-4">
-                            <span>请检查您的邮箱以完成密码重置</span>
-                            <span>重置链接有效期为 1 小时，请尽快完成密码重置！</span>
-                        </div>
-                    </v-carousel-item>
-                    <v-carousel-item value="reset_verify">
-                        <div v-if="reset_verified == false">
-                            <div class="d-flex justify-center mb-4">
-                                <v-icon icon="mdi-close-circle" size="64" color="red"></v-icon>
-                            </div>
-                            <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">重置链接无效</h2></div>
-                            <div class="d-flex flex-column justify-center align-center mb-4">
-                                <span>重置链接无效或已过期</span>
-                                <span>请仔细检查您的邮箱，并使用正确的链接进行密码重置！</span>
-                            </div>
-                        </div>
-                        <div v-else>
+                </v-carousel>
+                <div class="login-masking" :style="`background-color: rgba(0, 0, 0, ${theme.name.value == 'light' ? 0.2 : 0.6});`"></div>
+                <v-card class="login-form" rounded="xl" elevation="24">
+                    <div class="d-flex justify-space-between mb-6">
+                        <v-icon
+                            icon="mdi-chevron-left"
+                            size="small"
+                            @click="history.back()"
+                        ></v-icon>
+                        <v-icon
+                            :icon="theme.name.value == 'light' ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
+                            size="small"
+                            @click="toggleTheme()"
+                        ></v-icon>
+                    </div>
+                    <v-carousel v-model="currpage" hide-delimiters :show-arrows="false" height="auto">
+                        <v-carousel-item value="login">
                             <div class="d-flex justify-center mb-4">
                                 <v-img
                                     src="/favicon.ico"
@@ -475,11 +315,70 @@ onBeforeUnmount(() => {
                                     height="64"
                                 ></v-img>
                             </div>
-                            <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">密码重置</h2></div>
+                            <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">登录至 ASCAS</h2></div>
                             <div class="d-flex justify-center mb-4">
                                 <v-text-field
-                                    v-model="reset_password"
-                                    label="新密码"
+                                    v-model="username"
+                                    label="用户名/邮箱"
+                                    variant="outlined"
+                                    density="comfortable"
+                                    hide-details
+                                ></v-text-field>
+                            </div>
+                            <div class="d-flex justify-center mb-10">
+                                <v-text-field
+                                    v-model="password"
+                                    label="用户密码"
+                                    variant="outlined"
+                                    density="comfortable"
+                                    type="password"
+                                    hide-details
+                                ></v-text-field>
+                            </div>
+                            <div class="d-flex justify-center mb-4">
+                                <v-btn
+                                    width="100%"
+                                    color="primary"
+                                    @click="login()"
+                                    :disabled="fetching"
+                                >登录</v-btn>
+                            </div>
+                            <div class="d-flex justify-space-between">
+                                <span>新用户？<a class="cursor-pointer" @click="switchPage('register')">点此注册</a></span>
+                                <span><a class="cursor-pointer" @click="switchPage('reset')">忘记密码</a></span>
+                            </div>
+                        </v-carousel-item>
+                        <v-carousel-item value="register">
+                            <div class="d-flex justify-center mb-4">
+                                <v-img
+                                    src="/favicon.ico"
+                                    width="64"
+                                    height="64"
+                                ></v-img>
+                            </div>
+                            <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">注册 ASCAS 账户</h2></div>
+                            <div class="d-flex justify-center mb-4">
+                                <v-text-field
+                                    v-model="register_username"
+                                    label="用户名"
+                                    variant="outlined"
+                                    density="comfortable"
+                                    hide-details
+                                ></v-text-field>
+                            </div>
+                            <div class="d-flex justify-center mb-4">
+                                <v-text-field
+                                    v-model="register_email"
+                                    label="电子邮箱"
+                                    variant="outlined"
+                                    density="comfortable"
+                                    hide-details
+                                ></v-text-field>
+                            </div>
+                            <div class="d-flex justify-center mb-4">
+                                <v-text-field
+                                    v-model="register_password"
+                                    label="用户密码"
                                     variant="outlined"
                                     density="comfortable"
                                     type="password"
@@ -488,7 +387,7 @@ onBeforeUnmount(() => {
                             </div>
                             <div class="d-flex justify-center mb-10">
                                 <v-text-field
-                                    v-model="reset_password_confirm"
+                                    v-model="register_password_confirm"
                                     label="确认密码"
                                     variant="outlined"
                                     density="comfortable"
@@ -500,59 +399,162 @@ onBeforeUnmount(() => {
                                 <v-btn
                                     width="100%"
                                     color="primary"
-                                    @click="resetPassword()"
+                                    @click="register()"
                                     :disabled="fetching"
-                                >重置</v-btn>
+                                >注册</v-btn>
                             </div>
-                        </div>
-                    </v-carousel-item>
-                    <v-carousel-item value="reset_success">
-                        <div>
+                            <div class="d-flex justify-end">
+                                <span><a class="cursor-pointer" @click="switchPage('login')">返回登录</a></span>
+                            </div>
+                        </v-carousel-item>
+                        <v-carousel-item value="register_success">
                             <div class="d-flex justify-center mb-4">
                                 <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
                             </div>
-                            <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">密码重置成功</h2></div>
-                            <div class="d-flex justify-center mb-4">
-                                <v-btn
-                                    width="100%"
-                                    color="primary"
-                                    @click="switchPage('login')"
-                                >前往登录</v-btn>
-                            </div>
-                        </div>
-                    </v-carousel-item>
-                    <v-carousel-item value="verify">
-                        <div v-if="verify_success">
-                            <div class="d-flex justify-center mb-4">
-                                <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
-                            </div>
-                            <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">邮箱验证成功</h2></div>
-                            <div class="d-flex justify-center mb-4">
-                                <v-btn
-                                    width="100%"
-                                    color="primary"
-                                    @click="switchPage('login')"
-                                >前往登录</v-btn>
-                            </div>
-                        </div>
-                        <div v-else>
-                            <div class="d-flex justify-center mb-4">
-                                <v-icon icon="mdi-close-circle" size="64" color="red"></v-icon>
-                            </div>
-                            <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">邮箱验证失败</h2></div>
+                            <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">注册成功</h2></div>
                             <div class="d-flex flex-column justify-center align-center mb-4">
-                                <span>验证链接无效或已过期</span>
-                                <span>请仔细检查您的邮箱，并使用正确的链接进行邮箱验证！</span>
+                                <span>请检查您的邮箱以完成验证</span>
+                                <span>验证链接有效期为 1 小时，请尽快完成邮箱验证！</span>
                             </div>
-                        </div>
-                    </v-carousel-item>
-                </v-carousel>
-            </v-card>
+                        </v-carousel-item>
+                        <v-carousel-item value="reset">
+                            <div class="d-flex justify-center mb-4">
+                                <v-img
+                                    src="/favicon.ico"
+                                    width="64"
+                                    height="64"
+                                ></v-img>
+                            </div>
+                            <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">重置密码</h2></div>
+                            <div class="d-flex justify-center mb-4">
+                                <v-text-field
+                                    v-model="reset_email"
+                                    label="电子邮箱"
+                                    variant="outlined"
+                                    density="comfortable"
+                                    hide-details
+                                ></v-text-field>
+                            </div>
+                            <div class="d-flex justify-center mb-4">
+                                <v-btn
+                                    width="100%"
+                                    color="primary"
+                                    @click="reset()"
+                                    :disabled="fetching"
+                                >发送重置邮件</v-btn>
+                            </div>
+                            <div class="d-flex justify-end">
+                                <span><a class="cursor-pointer" @click="switchPage('login')">返回登录</a></span>
+                            </div>
+                        </v-carousel-item>
+                        <v-carousel-item value="reset_request_success">
+                            <div class="d-flex justify-center mb-4">
+                                <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
+                            </div>
+                            <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">重置邮件已发送</h2></div>
+                            <div class="d-flex flex-column justify-center align-center mb-4">
+                                <span>请检查您的邮箱以完成密码重置</span>
+                                <span>重置链接有效期为 1 小时，请尽快完成密码重置！</span>
+                            </div>
+                        </v-carousel-item>
+                        <v-carousel-item value="reset_verify">
+                            <div v-if="reset_verified == false">
+                                <div class="d-flex justify-center mb-4">
+                                    <v-icon icon="mdi-close-circle" size="64" color="red"></v-icon>
+                                </div>
+                                <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">重置链接无效</h2></div>
+                                <div class="d-flex flex-column justify-center align-center mb-4">
+                                    <span>重置链接无效或已过期</span>
+                                    <span>请仔细检查您的邮箱，并使用正确的链接进行密码重置！</span>
+                                </div>
+                            </div>
+                            <div v-else>
+                                <div class="d-flex justify-center mb-4">
+                                    <v-img
+                                        src="/favicon.ico"
+                                        width="64"
+                                        height="64"
+                                    ></v-img>
+                                </div>
+                                <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">密码重置</h2></div>
+                                <div class="d-flex justify-center mb-4">
+                                    <v-text-field
+                                        v-model="reset_password"
+                                        label="新密码"
+                                        variant="outlined"
+                                        density="comfortable"
+                                        type="password"
+                                        hide-details
+                                    ></v-text-field>
+                                </div>
+                                <div class="d-flex justify-center mb-10">
+                                    <v-text-field
+                                        v-model="reset_password_confirm"
+                                        label="确认密码"
+                                        variant="outlined"
+                                        density="comfortable"
+                                        type="password"
+                                        hide-details
+                                    ></v-text-field>
+                                </div>
+                                <div class="d-flex justify-center mb-4">
+                                    <v-btn
+                                        width="100%"
+                                        color="primary"
+                                        @click="resetPassword()"
+                                        :disabled="fetching"
+                                    >重置</v-btn>
+                                </div>
+                            </div>
+                        </v-carousel-item>
+                        <v-carousel-item value="reset_success">
+                            <div>
+                                <div class="d-flex justify-center mb-4">
+                                    <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
+                                </div>
+                                <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">密码重置成功</h2></div>
+                                <div class="d-flex justify-center mb-4">
+                                    <v-btn
+                                        width="100%"
+                                        color="primary"
+                                        @click="switchPage('login')"
+                                    >前往登录</v-btn>
+                                </div>
+                            </div>
+                        </v-carousel-item>
+                        <v-carousel-item value="verify">
+                            <div v-if="verify_success">
+                                <div class="d-flex justify-center mb-4">
+                                    <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
+                                </div>
+                                <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">邮箱验证成功</h2></div>
+                                <div class="d-flex justify-center mb-4">
+                                    <v-btn
+                                        width="100%"
+                                        color="primary"
+                                        @click="switchPage('login')"
+                                    >前往登录</v-btn>
+                                </div>
+                            </div>
+                            <div v-else>
+                                <div class="d-flex justify-center mb-4">
+                                    <v-icon icon="mdi-close-circle" size="64" color="red"></v-icon>
+                                </div>
+                                <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">邮箱验证失败</h2></div>
+                                <div class="d-flex flex-column justify-center align-center mb-4">
+                                    <span>验证链接无效或已过期</span>
+                                    <span>请仔细检查您的邮箱，并使用正确的链接进行邮箱验证！</span>
+                                </div>
+                            </div>
+                        </v-carousel-item>
+                    </v-carousel>
+                </v-card>
+            </div>
         </div>
-    </div>
-    <div v-else class="d-flex justify-center align-center" style="width: 100%; height: 100vh;">
-        <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
-    </div>
+        <div v-else class="d-flex justify-center align-center position-absolute" style="width: 100%; height: 100vh;">
+            <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
+        </div>
+    </transition>
     <Message :isError="isError" :errorText="errorText" :type="type"></Message>
 </template>
 
@@ -600,5 +602,15 @@ a {
 
 .cursor-pointer {
     cursor: pointer;
+}
+
+.v-enter-active, .v-leave-active {
+    transition: opacity 0.28s;
+}
+.v-enter-from, .v-leave-to {
+    opacity: 0;
+}
+.v-enter-to, .v-leave-from {
+    opacity: 1;
 }
 </style>

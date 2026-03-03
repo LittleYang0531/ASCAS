@@ -8,12 +8,6 @@ function themeToggle() {
     theme.toggle();
     localStorage.setItem("theme", theme.name.value);
 }
-
-onMounted(() => {
-    var theme2 = localStorage.getItem("theme");
-    if (theme2 == 'light' && theme.name.value != 'light') theme.toggle();
-    else if (theme2 == 'dark' && theme.name.value != 'dark') theme.toggle();
-})
 </script>
 
 <template>
