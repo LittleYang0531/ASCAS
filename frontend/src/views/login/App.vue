@@ -40,11 +40,24 @@ const titles = {
 };
 type Page = keyof typeof titles;
 
+async function newFetch(url: string, options?: RequestInit): Promise<Response> {
+    try {
+        const response = await myFetch(url, options);
+        return response;
+    }
+    catch (error) {
+        NProgress.done();
+        showMsg(MessageType.Error, "网络错误，请稍后再试");
+        fetching.value = false;
+        throw error;
+    }
+}
+
 async function loading() {
     NProgress.start();
     NProgress.inc();
 
-    var res = await (await myFetch(`${API_BASE_URL}/users/check`)).json();
+    var res = await (await newFetch(`${API_BASE_URL}/users/check`)).json();
     NProgress.done();
     if (res.code == 200) {
         showMsg(MessageType.Error, "已登录，正在跳转...");
@@ -54,14 +67,14 @@ async function loading() {
     }
 
     if (currpage.value == "verify") {
-        var res = await (await myFetch(`${API_BASE_URL}/users/verify`, {
+        var res = await (await newFetch(`${API_BASE_URL}/users/verify`, {
             method: "POST",
             body: "code=" + new URLSearchParams(window.location.search).get("code")
         })).json();
         if (res.code == 200) verify_success.value = true;
         else verify_success.value = false;
     } else if (currpage.value == "reset_verify") {
-        var res = await (await myFetch(`${API_BASE_URL}/users/reset`, {
+        var res = await (await newFetch(`${API_BASE_URL}/users/reset`, {
             method: "POST",
             body: "type=verify&code=" + new URLSearchParams(window.location.search).get("code")
         })).json();
@@ -102,7 +115,7 @@ async function login() {
     NProgress.start();
     NProgress.inc();
 
-    var res = await (await myFetch(`${API_BASE_URL}/users/login`, {
+    var res = await (await newFetch(`${API_BASE_URL}/users/login`, {
         method: "POST",
         body: `name=${username.value}&passwd=${crypto.MD5(password.value).toString()}`,
     })).json();
@@ -142,7 +155,7 @@ async function register() {
     NProgress.start();
     NProgress.inc();
 
-    var res = await (await myFetch(`${API_BASE_URL}/users/create`, {
+    var res = await (await newFetch(`${API_BASE_URL}/users/create`, {
         method: "POST",
         body: `name=${register_username.value}&passwd=${crypto.MD5(register_password.value).toString()}&email=${register_email.value}`,
     })).json();
@@ -172,7 +185,7 @@ async function reset() {
     NProgress.start();
     NProgress.inc();
 
-    var res = await (await myFetch(`${API_BASE_URL}/users/reset`, {
+    var res = await (await newFetch(`${API_BASE_URL}/users/reset`, {
         method: "POST",
         body: `type=request&email=${reset_email.value}`,
     })).json();
@@ -208,7 +221,7 @@ async function resetPassword() {
     NProgress.start();
     NProgress.inc();
 
-    var res = await (await myFetch(`${API_BASE_URL}/users/reset`, {
+    var res = await (await newFetch(`${API_BASE_URL}/users/reset`, {
         method: "POST",
         body: `type=reset&code=${new URLSearchParams(window.location.search).get("code")}&passwd=${crypto.MD5(reset_password.value).toString()}`,
     })).json();
@@ -302,7 +315,7 @@ onBeforeUnmount(() => {
                         <div class="d-flex justify-center mb-4">
                             <v-text-field
                                 v-model="username"
-                                label="用户名"
+                                label="用户名/邮箱"
                                 variant="outlined"
                                 density="comfortable"
                                 hide-details
