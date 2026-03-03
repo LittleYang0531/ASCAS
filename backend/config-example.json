@@ -1,0 +1,25 @@
+{
+    "server.listenHost": "0.0.0.0",
+    "server.listenPort": 8080,
+    "server.enableSSL": false,
+    "server.httpsCacert": "cert.pem",
+    "server.httpsPrivkey": "privkey.pem",
+    "server.threadNumber": 8,
+
+    "mysql.host": "127.0.0.1",
+    "mysql.port": 3306,
+    "mysql.user": "root",
+    "mysql.passwd": "",
+    "mysql.database": "ascas",
+
+    "users.sessionExpireTime": 30,
+    "users.verifyExpireTime": 1,
+    "users.resetExpireTime": 1,
+
+    "smtp.host": "smtp.example.com",
+    "smtp.port": 465,
+    "smtp.ssl": true,
+    "smtp.tls": false,
+    "smtp.user": "testuser@example.com",
+    "smtp.passwd": "password"
+}
