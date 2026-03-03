@@ -57,7 +57,7 @@ onBeforeMount(() => {
 
 <template>
     <transition>
-        <v-app v-if="loaded">
+        <v-app :theme="theme.name.value" v-if="loaded">
             <AppBar></AppBar>
             <NavigationDrawer></NavigationDrawer>
             <v-main>
@@ -82,5 +82,11 @@ onBeforeMount(() => {
 }
 .v-enter-to, .v-leave-from {
     opacity: 1;
+}
+</style>
+
+<style lang="css">
+* {
+    /* transition: background-color 5s, color 5s; */
 }
 </style>

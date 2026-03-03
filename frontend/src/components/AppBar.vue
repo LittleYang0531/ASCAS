@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { onMounted } from 'vue';
 import { useTheme } from 'vuetify';
 
 const theme = useTheme();

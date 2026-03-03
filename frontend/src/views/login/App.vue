@@ -582,13 +582,13 @@ onBeforeUnmount(() => {
 }
 
 .login-form:before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  background-color: #fff; /* 伪元素的背景色 */
-  opacity: 1; /* 伪元素不透明 */
-  z-index: -1; /* 将伪元素置于元素下方 */
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: #fff; /* 伪元素的背景色 */
+    opacity: 1; /* 伪元素不透明 */
+    z-index: -1; /* 将伪元素置于元素下方 */
 }
 
 .login-form-title {

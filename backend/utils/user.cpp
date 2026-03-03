@@ -7,6 +7,7 @@ class UserUtils {
     const std::string authorizationPrefix = "SessionToken";
 
     std::string generateSession(int len = 64) {
+        srand(clock2());
         std::string session = "";
         for (int i = 0; i < len; i++) {
             int t = rand() % 62;
