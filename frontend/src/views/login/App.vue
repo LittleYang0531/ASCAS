@@ -266,6 +266,9 @@ onBeforeMount(() => {
     var page = new URLSearchParams(window.location.search).keys().next().value;
     if (page && titles[page as Page]) currpage.value = page;
     document.title = titles[currpage.value as Page] + " - ASCAS | 田间形状采集辅助系统";
+
+    theme.themes.value.light!.colors.primary = "#4CAF50";
+    theme.themes.value.dark!.colors.primary = "#4CAF50";
 });
 onBeforeUnmount(() => {
     NProgress.done();
@@ -334,7 +337,7 @@ onBeforeUnmount(() => {
                         <div class="d-flex justify-center mb-4">
                             <v-btn
                                 width="100%"
-                                color="green"
+                                color="primary"
                                 @click="login()"
                                 :disabled="fetching"
                             >登录</v-btn>
@@ -394,7 +397,7 @@ onBeforeUnmount(() => {
                         <div class="d-flex justify-center mb-4">
                             <v-btn
                                 width="100%"
-                                color="green"
+                                color="primary"
                                 @click="register()"
                                 :disabled="fetching"
                             >注册</v-btn>
@@ -434,7 +437,7 @@ onBeforeUnmount(() => {
                         <div class="d-flex justify-center mb-4">
                             <v-btn
                                 width="100%"
-                                color="green"
+                                color="primary"
                                 @click="reset()"
                                 :disabled="fetching"
                             >发送重置邮件</v-btn>
@@ -496,7 +499,7 @@ onBeforeUnmount(() => {
                             <div class="d-flex justify-center mb-4">
                                 <v-btn
                                     width="100%"
-                                    color="green"
+                                    color="primary"
                                     @click="resetPassword()"
                                     :disabled="fetching"
                                 >重置</v-btn>
@@ -512,7 +515,7 @@ onBeforeUnmount(() => {
                             <div class="d-flex justify-center mb-4">
                                 <v-btn
                                     width="100%"
-                                    color="green"
+                                    color="primary"
                                     @click="switchPage('login')"
                                 >前往登录</v-btn>
                             </div>
@@ -527,7 +530,7 @@ onBeforeUnmount(() => {
                             <div class="d-flex justify-center mb-4">
                                 <v-btn
                                     width="100%"
-                                    color="green"
+                                    color="primary"
                                     @click="switchPage('login')"
                                 >前往登录</v-btn>
                             </div>
@@ -546,6 +549,9 @@ onBeforeUnmount(() => {
                 </v-carousel>
             </v-card>
         </div>
+    </div>
+    <div v-else class="d-flex justify-center align-center" style="width: 100%; height: 100vh;">
+        <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
     </div>
     <Message :isError="isError" :errorText="errorText" :type="type"></Message>
 </template>
