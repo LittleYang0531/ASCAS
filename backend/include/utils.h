@@ -34,6 +34,10 @@ time_t clock2() {
 	return std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
 }
 
+time_t clock3() {
+	return std::chrono::duration_cast<std::chrono::microseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+}
+
 std::string readFile(std::string path) {
     std::ifstream fin(path);
     if (!fin) return "";
@@ -86,6 +90,13 @@ std::string trim(std::string str) {
     str = str.substr(st);
     while (str.size() && std::string(" \r\n\t\f\t\v").find(str.back()) != std::string::npos) str.pop_back();
     return str;
+}
+
+std::string join(std::string seperator, std::vector<std::string> v) {
+    std::string res = "";
+    for (int i = 0; i < v.size(); i++)
+        res += (i == 0 ? "" : seperator) + v[i];
+    return res;
 }
 
 #define quickSendObject(code, object) [&](){ \

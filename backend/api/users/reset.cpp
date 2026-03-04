@@ -2,11 +2,11 @@
 
 auto UsersReset = [](client_conn conn, http_request request, param argv) {
     if (request.method != "POST") quickSendCode(405);
-    auto posts = postParam(request);
-    std::string type = posts["type"];
-    std::string email = posts["email"];
-    std::string code = posts["code"];
-    std::string passwd = posts["passwd"];
+    auto posts = json_decode(request.postdata);
+    std::string type = posts["type"].asString();
+    std::string email = posts["email"].asString();
+    std::string code = posts["code"].asString();
+    std::string passwd = posts["passwd"].asString();
     if (type == "request") {
         if (email == "") quickSendCode(400);
         if (UserUtils.reset_request(email, request.argv["origin"]) == false) quickSendCode(404);

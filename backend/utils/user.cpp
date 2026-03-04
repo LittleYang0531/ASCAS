@@ -5,17 +5,40 @@ class UserUtils {
     private:
 
     const std::string authorizationPrefix = "SessionToken";
-
+    const std::string sessionStrings = 
+        "0123456789"
+        "abcdefghijklmnopqrstuvwxyz"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     std::string generateSession(int len = 64) {
-        srand(clock2());
+        srand(clock3());
         std::string session = "";
-        for (int i = 0; i < len; i++) {
-            int t = rand() % 62;
-            if (t < 10) session += '0' + t;
-            else if (t < 36) session += 'A' + t - 10;
-            else session += 'a' + t - 36;
-        }
+        for (int i = 0; i < len; i++) session += sessionStrings[rand() % sessionStrings.size()];
         return session;
+    }
+
+    void clearSessions() {
+        quick_mysqli_connect();
+        time_t t = time(NULL);
+        mysqli_execute(
+            mysql,
+            "DELETE FROM sessions WHERE expireAt < %lld", 
+            t
+        );
+        mysqli_execute(
+            mysql,
+            "DELETE FROM verifications WHERE expireAt < %lld",
+            t
+        );
+        mysqli_execute(
+            mysql,
+            "DELETE FROM resetCodes WHERE expireAt < %lld",
+            t
+        );
+        mysqli_execute(
+            mysql,
+            "DELETE FROM users WHERE verified = false AND id not in (SELECT uid FROM verifications)",
+            t
+        );
     }
 
     public:
@@ -31,12 +54,8 @@ class UserUtils {
             if (authorization.substr(0, authorizationPrefix.size()) == authorizationPrefix)
                 session = authorization.substr(authorizationPrefix.size() + 1);
         }
+        clearSessions();
         time_t t = time(NULL);
-        mysqli_execute(
-            mysql,
-            "DELETE FROM sessions WHERE expireAt < %lld", 
-            t
-        );
         auto res = mysqli_query(
             mysql,
             "SELECT uid FROM sessions WHERE session = \"%s\" AND expireAt >= %lld",
@@ -47,7 +66,7 @@ class UserUtils {
     }
 
     // 检查用户是否存在
-    bool exists(int uid) {
+    int exists(int uid) {
         quick_mysqli_connect();
         return stoi(mysqli_query(
             mysql,
@@ -57,7 +76,7 @@ class UserUtils {
     }
 
     // 获取用户信息
-    User getUserInfo(int uid, bool details = false) {
+    User getUserInfo(int uid) {
         quick_mysqli_connect();
         auto res = mysqli_query(
             mysql,
@@ -73,7 +92,7 @@ class UserUtils {
         return User({
             .uid = stoi(user["id"]),
             .name = user["name"],
-            .email = details ? user["email"] : "",
+            .email = user["email"],
             .isAdmin = stoi(user["isAdmin"]) ? true : false,
         });
     }

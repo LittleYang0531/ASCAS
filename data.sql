@@ -25,7 +25,7 @@ CREATE TABLE resetCodes (
     expireAt int
 );
 
-CREATE TABLE plants (
+CREATE TABLE crops (
     id int primary key auto_increment,
     name varchar(255),
     title text,

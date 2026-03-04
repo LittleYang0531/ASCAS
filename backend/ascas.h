@@ -15,6 +15,7 @@
 #include "include/smtp.h"
 
 #include "models/user.cpp"
+#include "models/crop.cpp"
 
 Json::Value appConfig;
 MYSQL mysql;
@@ -37,3 +38,4 @@ void quick_mysqli_close() {
 }
 
 #include "utils/user.cpp"
+#include "utils/crop.cpp"

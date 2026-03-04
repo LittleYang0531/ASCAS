@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdio>
+#include <functional>
 #include <jsoncpp/json/value.h>
 #include<string>
 #include<jsoncpp/json/json.h>

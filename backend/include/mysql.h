@@ -27,6 +27,7 @@ MYSQL mysqli_connect(std::string host, std::string user, std::string passwd, std
         if (retryedErrno.count(mysql_errno(&mysql))) return mysqli_connect(host, user, passwd, db, port);
         else writeLog(LOG_LEVEL_ERROR, "Failed to connect to database: %s(Errno: %d)", mysql_error(&mysql), mysql_errno(&mysql));
     }
+    std::cout << "MySQL Connected! Connector: " << mysql.thread_id << std::endl;
 	return mysql;
 }
 
@@ -107,5 +108,6 @@ void mysqli_execute(MYSQL &conn, const char* format, ...) {
 }
 
 void mysqli_close(MYSQL &conn) {
+    std::cout << "MySQL Disconnected! Connector: " << conn.thread_id << std::endl;
     mysql_close(&conn);
 }

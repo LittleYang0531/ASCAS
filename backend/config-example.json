@@ -6,6 +6,10 @@
     "server.httpsPrivkey": "privkey.pem",
     "server.threadNumber": 8,
 
+    "log.level": "LOG_LEVEL_INFO",
+    "log.target": [ "LOG_TARGET_FILE", "LOG_TARGET_CONSOLE" ],
+    "log.file": "ascas-backend.log",
+
     "mysql.host": "127.0.0.1",
     "mysql.port": 3306,
     "mysql.user": "root",
