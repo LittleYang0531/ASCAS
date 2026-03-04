@@ -1,10 +1,19 @@
 #pragma once
 
+#include "enum.h"
 #include "model.cpp"
 #include "user.cpp"
 #include <jsoncpp/json/value.h>
 #include <string>
 #include <vector>
+
+enum class UserPermission {
+    NONE,
+    VIEWER,
+    EDITOR,
+    OWNER
+};
+initEnum(UserPermission, NONE, OWNER);
 
 enum class RecordPropertyType {
     NUMBER,
@@ -16,12 +25,12 @@ initEnum(RecordPropertyType, NUMBER, IMAGE);
 class RecordPropertyBase {
     public:
 
-    std::string name; // 属性编号，由系统自动生成
-    std::string title;
-    std::string unit;
-    bool required;
-    std::string def;
-    RecordPropertyType type;
+    std::string name = ""; // 属性编号，由系统自动生成
+    std::string title = "";
+    std::string unit = "";
+    bool required = true;
+    std::string def = "";
+    RecordPropertyType type = RecordPropertyType::NUMBER;
 
     static RecordPropertyBase fromJsonObject(Json::Value obj) {
         return RecordPropertyBase({
@@ -50,15 +59,16 @@ initModel(RecordProperty);
 class CropBase {
     public:
 
-    int cid;
-    std::string name; // 作物编号，由系统自动生成
-    std::string title; 
-    std::string description;
-    std::vector<RecordProperty> properties;
-    User owner;
-    std::vector<User> editors;
-    std::vector<User> viewers;
-    time_t createdAt;
+    int cid = 0;
+    std::string name = ""; // 作物编号，由系统自动生成
+    std::string title = ""; 
+    std::string description = "";
+    std::vector<RecordProperty> properties = {};
+    User owner = User({});
+    std::vector<User> editors = {};
+    std::vector<User> viewers = {};
+    time_t createdAt = 0;
+    UserPermission permission = UserPermission::NONE;
 
     std::vector<int> vals;
 
@@ -72,7 +82,8 @@ class CropBase {
             .owner = obj["user"].as<User>(),
             .editors = extarr<User>(obj["editors"]),
             .viewers = extarr<User>(obj["viewers"]),
-            .createdAt = obj["createdAt"].asInt64()
+            .createdAt = obj["createdAt"].asInt64(),
+            .permission = getEnumFromName(UserPermission, obj["permission"].asString())
         });
     }
 
@@ -87,6 +98,7 @@ class CropBase {
         res["editors"] = packarr(editors);
         res["viewers"] = packarr(viewers);
         res["createdAt"] = createdAt;
+        res["permission"] = getNameFromEnum(permission);
         return res;
     }
 };

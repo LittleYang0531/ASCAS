@@ -26,7 +26,7 @@ class CropUtils {
     }
 
     // 获取作物信息
-    Crop getCropInfo(int cid) {
+    Crop getCropInfo(int cid, int uid) {
         quick_mysqli_connect();
         auto res = mysqli_query(
             mysql,
@@ -39,7 +39,8 @@ class CropUtils {
             cid, cid, cid
         );
         auto crop = res[0];
-        return Crop({
+
+        Crop item = Crop({
             .cid = stoi(crop["id"]),
             .name = crop["name"],
             .title = crop["title"],
@@ -56,6 +57,19 @@ class CropUtils {
             ),
             .createdAt = stoll(crop["createdAt"])
         });
+        
+        if (uid == item.owner.uid) item.permission = UserPermission::OWNER;
+        else {
+            for (int i = 0; i < item.viewers.size(); i++)
+                if (uid == item.viewers[i].uid) item.permission = UserPermission::VIEWER;
+            for (int i = 0; i < item.editors.size(); i++)
+                if (uid == item.editors[i].uid) item.permission = UserPermission::EDITOR;
+        }
+
+        if (item.permission == UserPermission::NONE) item = Crop({ .permission = UserPermission::NONE });
+        if (item.permission != UserPermission::OWNER) item.viewers.clear(), item.editors.clear();
+
+        return item;
     }
 
     // 创建作物表
@@ -97,5 +111,68 @@ class CropUtils {
             "SELECT id FROM crops WHERE name = \"%s\"",
             crop.name.c_str()
         )[0]["id"]);
+    }
+
+    // 列举相关作物表信息
+    std::vector<Crop> listCrops(int uid) {
+        quick_mysqli_connect();
+        std::vector<Crop> res;
+        
+        auto query = mysqli_query(
+            mysql,
+            "SELECT id, name, title, description, owner, createdAt FROM crops WHERE owner = %d",
+            uid
+        );
+        for (int i = 0; i < query.size(); i++) {
+            res.push_back(Crop({
+                .cid = stoi(query[i]["id"]),
+                .name = query[i]["name"],
+                .title = query[i]["title"],
+                .description = query[i]["description"],
+                .owner = UserUtils.getUserInfo(stoi(query[i]["owner"])),
+                .createdAt = stoll(query[i]["createdAt"]),
+                .permission = UserPermission::OWNER
+            }));
+        }
+
+        query = mysqli_query(
+            mysql,
+            "SELECT id, name, title, description, owner, createdAt FROM crops WHERE %s",
+            hasIntersection("editors", jsonarr(uid)).c_str()
+        );
+        for (int i = 0; i < query.size(); i++) {
+            res.push_back(Crop({
+                .cid = stoi(query[i]["id"]),
+                .name = query[i]["name"],
+                .title = query[i]["title"],
+                .description = query[i]["description"],
+                .owner = UserUtils.getUserInfo(stoi(query[i]["owner"])),
+                .createdAt = stoll(query[i]["createdAt"]),
+                .permission = UserPermission::EDITOR
+            }));
+        }
+
+        query = mysqli_query(
+            mysql,
+            "SELECT id, name, title, description, owner, createdAt FROM crops WHERE %s",
+            hasIntersection("viewers", jsonarr(uid)).c_str()
+        );
+        for (int i = 0; i < query.size(); i++) {
+            res.push_back(Crop({
+                .cid = stoi(query[i]["id"]),
+                .name = query[i]["name"],
+                .title = query[i]["title"],
+                .description = query[i]["description"],
+                .owner = UserUtils.getUserInfo(stoi(query[i]["owner"])),
+                .createdAt = stoll(query[i]["createdAt"]),
+                .permission = UserPermission::VIEWER
+            }));
+        }
+
+        std::sort(res.begin(), res.end(), [](Crop a, Crop b){
+            return a.permission == b.permission ? a.cid < b.cid : a.permission > b.permission;
+        });
+
+        return res;
     }
 }CropUtils;

@@ -4,21 +4,13 @@
 #include <jsoncpp/json/value.h>
 #include <string>
 
-enum class UserPermission {
-    NONE,
-    VIEWER,
-    EDITOR,
-    OWNER
-};
-initEnum(UserPermission, NONE, OWNER);
-
 class UserBase {
     public:
 
-    int uid;
-    std::string name;
-    std::string email;
-    bool isAdmin;
+    int uid = 0;
+    std::string name = "";
+    std::string email = "";
+    bool isAdmin = false;
 
     static UserBase fromJsonObject(Json::Value obj) {
         return UserBase({

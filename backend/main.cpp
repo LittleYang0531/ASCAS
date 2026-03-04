@@ -4,15 +4,17 @@
 
 #include "ascas.h"
 
-#include "api/notFound.cpp"
+#include "api/version.cpp"
 #include "api/favicon.cpp"
 #include "api/users/check.cpp"
 #include "api/users/login.cpp"
 #include "api/users/create.cpp"
 #include "api/users/verify.cpp"
 #include "api/users/reset.cpp"
+#include "api/crops/list.cpp"
 #include "api/crops/details.cpp"
 #include "api/crops/create.cpp"
+#include "api/notFound.cpp"
 
 initEnum(LOG_LEVEL, LOG_LEVEL_DEBUG, LOG_LEVEL_ASSERT);
 initEnumBin(LOG_TARGET, LOG_TARGET_FILE, LOG_TARGET_CONSOLE);
@@ -41,14 +43,16 @@ int main(int argc, char** argv) {
     app.setopt(HTTP_WORKER_TITLE, "ascas-backend: http worker process");
     app.setopt(HTTP_WS_WORKER_TITLE, "ascas-backend: websocket worker process");
 
+    app.addRoute("/version", Version);
+    app.addRoute("/favicon.ico", Favicon);
     app.addRoute("/users/check", UsersCheck);
     app.addRoute("/users/login", UsersLogin);
     app.addRoute("/users/create", UsersCreate);
     app.addRoute("/users/verify", UsersVerify);
     app.addRoute("/users/reset", UsersReset);
+    app.addRoute("/crops/list", CropsList);
     app.addRoute("/crops/%d", CropsDetails);
     app.addRoute("/crops/create", CropsCreate);
-    app.addRoute("/favicon.ico", Favicon);
     app.addRoute("*", NotFound);
     __default_response["Access-Control-Allow-Credentials"] = "true";
     __default_response["Access-Control-Allow-Headers"] = "*";

@@ -99,6 +99,14 @@ std::string join(std::string seperator, std::vector<std::string> v) {
     return res;
 }
 
+std::string hasIntersection(std::string key, Json::Value goal, bool ifEmptyValue = true) {
+    std::string where = "REPLACE(REPLACE(" + key + ", ']', ','), '[', ',') REGEXP '";
+    for (int i = 0; i < goal.size(); i++) where += "," + goal[i].asString() + "," + (i + 1 < goal.size() ? "|" : "");
+    where += "'";
+    if (goal.size() == 0 && !ifEmptyValue) where = "0 "; // 特判没有值的情况
+    return where;
+}
+
 #define quickSendObject(code, object) [&](){ \
     std::string responseBody = json_encode(object); \
     auto response = __api_default_response; \
