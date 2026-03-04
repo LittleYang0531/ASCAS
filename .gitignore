@@ -6,8 +6,10 @@ backend/config.json
 backend/favicon.ico
 backend/reset.html
 backend/signup.html
-backend/ascas-backend
+backend/ascas-backend*
 backend/make
+
+frontend/src/views/template.vue
 
 # Logs
 frontend/logs

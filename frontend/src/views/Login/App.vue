@@ -62,21 +62,29 @@ async function loading() {
     if (res.code == 200) {
         showMsg(MessageType.Error, "已登录，正在跳转...");
         await sleep(1000);
-        window.location.href = "/";
+        var url = "/";
+        var params = new URLSearchParams(window.location.search);
+        if (params.get("back") != null) url = params.get("back")!;
+        window.location.href = url;
         return;
     }
 
     if (currpage.value == "verify") {
         var res = await (await newFetch(`${API_BASE_URL}/users/verify`, {
             method: "POST",
-            body: "code=" + new URLSearchParams(window.location.search).get("code")
+            body: JSON.stringify({
+                code: new URLSearchParams(window.location.search).get("code")
+            }),
         })).json();
         if (res.code == 200) verify_success.value = true;
         else verify_success.value = false;
     } else if (currpage.value == "reset_verify") {
         var res = await (await newFetch(`${API_BASE_URL}/users/reset`, {
             method: "POST",
-            body: "type=verify&code=" + new URLSearchParams(window.location.search).get("code")
+            body: JSON.stringify({
+                type: "verify",
+                code: new URLSearchParams(window.location.search).get("code")
+            })
         })).json();
         if (res.code == 200) reset_verified.value = true;
         else reset_verified.value = false;
@@ -117,15 +125,20 @@ async function login() {
 
     var res = await (await newFetch(`${API_BASE_URL}/users/login`, {
         method: "POST",
-        body: `name=${username.value}&passwd=${crypto.MD5(password.value).toString()}`,
+        body: JSON.stringify({
+            name: username.value,
+            passwd: crypto.MD5(password.value).toString()
+        }),
     })).json();
     NProgress.done();
     if (res.code == 200) {
         setCookie("session", res.session, res.expires);
-
         showMsg(MessageType.Success, "登录成功");
         await sleep(1000);
-        window.location.href = "/";
+        var url = "/";
+        var params = new URLSearchParams(window.location.search);
+        if (params.get("back") != null) url = params.get("back")!;
+        window.location.href = url;
     } else if (res.code == 401) {
         showMsg(MessageType.Error, "用户名或密码错误");
     } else if (res.code == 403) {
@@ -157,7 +170,11 @@ async function register() {
 
     var res = await (await newFetch(`${API_BASE_URL}/users/create`, {
         method: "POST",
-        body: `name=${register_username.value}&passwd=${crypto.MD5(register_password.value).toString()}&email=${register_email.value}`,
+        body: JSON.stringify({
+            name: register_username.value,
+            passwd: crypto.MD5(register_password.value).toString(),
+            email: register_email.value
+        }),
     })).json();
     NProgress.done();
     if (res.code == 200) {
@@ -187,7 +204,10 @@ async function reset() {
 
     var res = await (await newFetch(`${API_BASE_URL}/users/reset`, {
         method: "POST",
-        body: `type=request&email=${reset_email.value}`,
+        body: JSON.stringify({
+            type: "request",
+            email: reset_email.value
+        }),
     })).json();
     NProgress.done();
     if (res.code == 200) {
@@ -223,7 +243,11 @@ async function resetPassword() {
 
     var res = await (await newFetch(`${API_BASE_URL}/users/reset`, {
         method: "POST",
-        body: `type=reset&code=${new URLSearchParams(window.location.search).get("code")}&passwd=${crypto.MD5(reset_password.value).toString()}`,
+        body: JSON.stringify({
+            type: "reset",
+            code: new URLSearchParams(window.location.search).get("code"),
+            passwd: crypto.MD5(reset_password.value).toString()
+        }),
     })).json();
     NProgress.done();
     if (res.code == 200) {

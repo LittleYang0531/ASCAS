@@ -1,45 +1,36 @@
 <script setup lang="ts">
 import { useTheme } from 'vuetify';
-import AppBar from './components/AppBar.vue';
 import Message from './components/Message.vue';
 import NavigationDrawer from './components/NavigationDrawer.vue';
 import { errorText, isError, showMsg, type } from './utils/message';
-import { onBeforeMount, ref } from 'vue';
-import { myFetch } from './utils/fetch';
+import { onBeforeMount, ref, type Ref } from 'vue';
+import { newFetch } from './utils/fetch';
 import { MessageType } from './models/message';
 import NProgress from 'nprogress';
 import { API_BASE_URL } from './config';
-
-async function newFetch(url: string, options?: RequestInit): Promise<Response> {
-    try {
-        const response = await myFetch(url, options);
-        return response;
-    }
-    catch (error) {
-        NProgress.done();
-        showMsg(MessageType.Error, "网络错误，请稍后再试");
-        throw error;
-    }
-}
+import type { User } from './models/user';
 
 const theme = useTheme();
 const loaded = ref(false);
+const userInfo: Ref<User> = ref({});
 
 async function loading() {
     NProgress.start();
     NProgress.inc();
 
     var res = await (await newFetch(`${API_BASE_URL}/users/check`)).json();
-    NProgress.done();
 
     if (res.code == 401) {
-        window.location.href = "/login";
+        window.location.href = "/login?back=" + encodeURIComponent(window.location.pathname);
         return;
     } else if (res.code != 200) {
         showMsg(MessageType.Error, "发生错误，请稍后再试");
         return;
     }
 
+    NProgress.done();
+
+    userInfo.value = res.item;
     loaded.value = true;
 }
 
@@ -57,9 +48,8 @@ onBeforeMount(() => {
 
 <template>
     <transition>
-        <v-app :theme="theme.name.value" v-if="loaded">
-            <AppBar></AppBar>
-            <NavigationDrawer></NavigationDrawer>
+        <v-app v-if="loaded">
+            <NavigationDrawer :user="userInfo"></NavigationDrawer>
             <v-main>
                 <router-view v-slot="{ Component }">
                     <component :is="Component"></component>
@@ -82,11 +72,5 @@ onBeforeMount(() => {
 }
 .v-enter-to, .v-leave-from {
     opacity: 1;
-}
-</style>
-
-<style lang="css">
-* {
-    /* transition: background-color 5s, color 5s; */
 }
 </style>

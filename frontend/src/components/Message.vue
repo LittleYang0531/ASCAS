@@ -1,11 +1,5 @@
 <script setup lang="ts">
-import { computed } from "vue";
-
 const props = defineProps(['isError', 'errorText', 'type', 'hasAppBar']);
-
-var isError = computed(() => props.isError);
-var errorText = computed(() => props.errorText);
-var type = computed(() => props.type);
 </script>
 
 <template>

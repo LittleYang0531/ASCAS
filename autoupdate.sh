@@ -1,8 +1,8 @@
 set -e
 
 API_ROOT="https://api.github.com"
-MAIN_ROOT="https://github.com"
-ORG="LittleYang0531"
+MAIN_ROOT="https://ghproxy.vip/https://github.com"
+ORG="littleyang0531"
 REPO="ASCAS"
 BRANCH="main"
 
@@ -13,14 +13,20 @@ ORANGE='\033[38;5;208m'
 CLEAR='\033[0m'
 
 if [[  ! -f .version ]]; then
-    echo -e "{\"type\": \"release\", \"version\": \"\"}" > .version
+    echo -e "{\"type\": \"release\", \"version\": \"\", \"channel\": \"\"}" > .version
 fi
 TYPE=$( cat .version | jq ".type // empty" -r )
 VERSION=$( cat .version | jq ".version // empty" -r )
+CHANNEL=$( cat .version | jq ".channel // empty" -r )
 URL=""
+COMMIT=""
 
 if [[ $TYPE != "dev" && $TYPE != "release" ]]; then
     TYPE="release"
+fi
+
+if [[ $TYPE == "dev" && $CHANNEL != "" ]]; then
+    BRANCH=$CHANNEL
 fi
 
 install_package() {
@@ -151,7 +157,10 @@ if [[ $TYPE == "dev" ]]; then
     VERSION=$COMMIT
 elif [[ $TYPE == "release" ]]; then
     DATA=$( curl -s "$API_ROOT/repos/$ORG/$REPO/releases/latest" )
+    DATA2=$( curl -s "$MAIN_ROOT/$ORG/$REPO/releases/latest" )
     TAG=$( echo "$DATA" | jq ".tag_name // empty" -r )
+    COMMIT=${DATA2#*href=\"/$ORG/$REPO/commit/}
+    COMMIT=${COMMIT:0:40}
 
     if [[ $TAG == "$VERSION" || $TAG == "" ]]; then
         # No update needed
@@ -202,6 +211,31 @@ rm -rf $TMP/$DIR
 
 # =============================================
 #
+# 编译前自行创建版本头文件
+# $TYPE: 版本类型 dev/release
+# $VERSION: 版本号，dev 为 commit，release 为 tag
+# $BRANCH: 版本渠道，dev 为分支名，release 为空
+# $COMMIT: 版本对应的 commit
+#
+# =============================================
+
+cat << EOF > $TMP/backend/version.h
+#pragma once
+
+#include <string>
+
+const std::string type = "$TYPE";
+const std::string channel = "$BRANCH";
+const std::string version = "$VERSION";
+const std::string commit = "$COMMIT";
+const std::string compileTime = __DATE__ " " __TIME__;
+const std::string compileTimestamp = __TIMESTAMP__;
+const std::string gccVersion = __VERSION__;
+const std::string cppStandard = "C++" + std::to_string(__cplusplus).substr(2, 2);
+EOF
+
+# =============================================
+#
 # 自定义安装过程
 # 文件在 $TMP 目录下，版本号为 $VERSION
 #
@@ -225,7 +259,7 @@ install_package jsoncpp libjsoncpp-dev jsoncpp-devel
 install_package mysqlclient libmysqlclient-dev mysql-devel
 
 echo -e $YELLOW"Building..."$CLEAR
-g++ $TMP/backend/main.cpp -o./ascas-backend -lssl -lcrypto -ljsoncpp -lmysqlclient -O3 -Wno-unused-result -Wno-deprecated-declarations
+g++ $TMP/backend/main.cpp -o./ascas-backend -lssl -lcrypto -ljsoncpp -lmysqlclient -O3 -Wno-unused-result -Wno-deprecated-declarations -std=c++20
 
 cp $TMP/backend/config.json ./
 cp $TMP/frontend ./ -r
@@ -242,5 +276,5 @@ echo -e $GREEN"Completed!"$CLEAR
 #
 # =============================================
 
-echo -e "{\"type\": \"$TYPE\", \"version\": \"$VERSION\"}" > .version
+echo -e "{\"type\": \"$TYPE\", \"version\": \"$VERSION\", \"channel\": \"$BRANCH\", \"commit\": \"$COMMIT\"}" > .version
 rm -rf $TMP
