@@ -1,7 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Index from './views/Index.vue';
 import NProgress from 'nprogress';
-import CropsList from './views/Crops/List.vue';
+import CropList from './views/Crop/List.vue';
+import CropDetails from './views/Crop/Details.vue';
+import CropCreate from './views/Crop/Create.vue';
 
 const routes = [
     {
@@ -15,7 +17,15 @@ const routes = [
     }, {
         path: '/crops/list',
         name: 'CropList',
-        component: CropsList
+        component: CropList
+    }, {
+        path: '/crops/:id',
+        name: 'CropDetails',
+        component: CropDetails
+    }, {
+        path: '/crops/create',
+        name: 'CropCreate',
+        component: CropCreate
     }
 ];
 

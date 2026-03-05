@@ -31,7 +31,7 @@ export default defineComponent({
 <script lang="ts" setup>
 import type { Ref } from 'vue';
 import type { Crop } from '../../models/crop';
-import CropCard from '../../components/Crops/Card.vue';
+import CropCard from '../../components/Crop/Card.vue';
 import { locate } from '../../router';
 
 const perms = {
@@ -85,7 +85,7 @@ function clear() {
 </script>
 
 <template>
-    <div v-if="loaded" class="CropMain">
+    <div v-if="loaded">
         <div class="d-flex align-center mt-4 ga-2">
             <v-text-field
                 v-model="keyword"
@@ -139,7 +139,7 @@ function clear() {
             ></v-select>
             <v-btn color="primary" prepend-icon="$mdiMagnify" @click="search">搜索</v-btn>
             <v-divider vertical></v-divider>
-            <v-btn color="primary" prepend-icon="$mdiPlus">新建</v-btn>
+            <v-btn color="primary" prepend-icon="$mdiPlus" @click="locate('/crops/create')">新建</v-btn>
         </div>
         <v-divider class="mt-4"></v-divider>
         <div v-if="showFilter">
@@ -173,12 +173,6 @@ function clear() {
 </template>
 
 <style lang="css" scoped>
-.CropMain {
-    max-width: 960px;
-    width: 100%;
-    margin: auto;
-}
-
 button {
     height: 40px;
     padding: 0 20px;

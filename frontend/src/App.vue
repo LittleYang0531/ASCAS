@@ -3,14 +3,16 @@ import { useTheme } from 'vuetify';
 import Message from './components/Message.vue';
 import NavigationDrawer from './components/NavigationDrawer.vue';
 import { errorText, isError, showMsg, type } from './utils/message';
-import { onBeforeMount, ref, type Ref } from 'vue';
+import { onBeforeMount, ref, watch, type Ref } from 'vue';
 import { newFetch } from './utils/fetch';
 import { MessageType } from './models/message';
 import NProgress from 'nprogress';
 import { API_BASE_URL } from './config';
 import type { User } from './models/user';
+import { useRoute } from 'vue-router';
 
 const theme = useTheme();
+const route = useRoute();
 const loaded = ref(false);
 const userInfo: Ref<User> = ref({});
 
@@ -34,6 +36,18 @@ async function loading() {
 
 loading();
 
+const titles = {
+    "Home": "首页",
+    "Index": "首页",
+    "CropList": "作物表列表",
+    "CropDetails": "作物表信息",
+    "CropCreate": "新建作物表"
+};
+watch(() => route.name, () => {
+	var title = "ASCAS | 田间形状采集辅助系统";
+	document.title = route.name ? titles[route.name as keyof typeof titles] + ' - ' + title : title;
+});
+
 onBeforeMount(() => {
     var theme2 = localStorage.getItem("theme");
     if (theme2 == 'light' && theme.name.value != 'light') theme.toggle();
@@ -48,7 +62,7 @@ onBeforeMount(() => {
     <transition>
         <v-app v-if="loaded">
             <NavigationDrawer :user="userInfo"></NavigationDrawer>
-            <v-main>
+            <v-main class="Main">
                 <router-view v-slot="{ Component }">
                     <component :is="Component"></component>
                 </router-view>
@@ -70,6 +84,12 @@ onBeforeMount(() => {
 }
 .v-enter-to, .v-leave-from {
     opacity: 1;
+}
+
+.Main {
+    max-width: 960px;
+    width: 100%;
+    margin: auto;
 }
 </style>
 
