@@ -16,9 +16,12 @@ enum class UserPermission {
 initEnum(UserPermission, NONE, OWNER);
 
 enum class RecordPropertyType {
-    NUMBER,
-    STRING,
-    IMAGE
+    NUMBER, // 输入数字
+    STRING, // 输入字符串
+    SELECT, // 单选
+    MULTI, // 多选
+    GEOMETRY, // GPS坐标
+    IMAGE // 图像
 };
 initEnum(RecordPropertyType, NUMBER, IMAGE);
 
@@ -30,6 +33,7 @@ class RecordPropertyBase {
     std::string unit = "";
     bool required = true;
     std::string def = "";
+    std::vector<std::string> options = {};
     RecordPropertyType type = RecordPropertyType::NUMBER;
 
     static RecordPropertyBase fromJsonObject(Json::Value obj) {
@@ -39,6 +43,7 @@ class RecordPropertyBase {
             .unit = obj["unit"].asString(),
             .required = obj["required"].asBool(),
             .def = obj["def"].asString(),
+            .options = extarr<std::string>(obj["options"]),
             .type = getEnumFromName(RecordPropertyType, obj["type"].asString())
         });
     }
@@ -56,6 +61,14 @@ class RecordPropertyBase {
 };
 initModel(RecordProperty);
 
+enum class CropSortOrder {
+    DEFAULT,
+    NAME,
+    CREATEDAT,
+    UPDATEDAT
+};
+initEnum(CropSortOrder, DEFAULT, UPDATEDAT);
+
 class CropBase {
     public:
 
@@ -68,9 +81,9 @@ class CropBase {
     std::vector<User> editors = {};
     std::vector<User> viewers = {};
     time_t createdAt = 0;
-    UserPermission permission = UserPermission::NONE;
+    time_t updatedAt = 0;
 
-    std::vector<int> vals;
+    UserPermission permission = UserPermission::NONE;
 
     static CropBase fromJsonObject(Json::Value obj) {
         return CropBase({
@@ -83,6 +96,7 @@ class CropBase {
             .editors = extarr<User>(obj["editors"]),
             .viewers = extarr<User>(obj["viewers"]),
             .createdAt = obj["createdAt"].asInt64(),
+            .updatedAt = obj["updatedAt"].asInt64(),
             .permission = getEnumFromName(UserPermission, obj["permission"].asString())
         });
     }
@@ -98,6 +112,7 @@ class CropBase {
         res["editors"] = packarr(editors);
         res["viewers"] = packarr(viewers);
         res["createdAt"] = createdAt;
+        res["updatedAt"] = updatedAt;
         res["permission"] = getNameFromEnum(permission);
         return res;
     }

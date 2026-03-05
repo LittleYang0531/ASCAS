@@ -34,5 +34,6 @@ CREATE TABLE crops (
     owner int,
     editors text,
     viewers text,
-    createdAt int
+    createdAt int,
+    updatedAt int
 );

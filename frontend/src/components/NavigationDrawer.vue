@@ -58,10 +58,10 @@ function themeToggle() {
         
         <v-list dense nav density="compact">
             <v-list-item
-                prepend-icon="$mdiAccountCog"
-                title="个人设置"
-                :active="active('/users/' + props.user.uid)"
-                @click="locate('/users/' + props.user.uid)"
+                prepend-icon="$mdiMessage"
+                title="我的消息"
+                :active="active('/messages')"
+                @click="locate('/messages/list')"
             ></v-list-item>
             <v-list-item
                 prepend-icon="$mdiAccountGroup"
@@ -69,10 +69,22 @@ function themeToggle() {
                 :active="active('/teams')"
                 @click="locate('/teams/list')"
             ></v-list-item>
+            <v-list-item
+                prepend-icon="$mdiAccountCog"
+                title="个人设置"
+                :active="active('/users/' + props.user.uid)"
+                @click="locate('/users/' + props.user.uid)"
+            ></v-list-item>
         </v-list>
 
         <v-divider></v-divider>
         <v-list dense nav density="compact">
+            <v-list-item
+                prepend-icon="$mdiCog"
+                title="服务器设置"
+                :active="active('/settings')"
+                @click="locate('/settings')"
+            ></v-list-item>
             <v-list-item
                 prepend-icon="$mdiLogout"
                 title="退出登录"

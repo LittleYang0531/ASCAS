@@ -6,13 +6,13 @@
 #include <vector>
 
 template<typename T, typename Func = std::function<T(Json::Value)> >
-std::vector<T> extarr(Json::Value arr, Func extfunc = T::fromJsonObject) {
+std::vector<T> extarr(Json::Value arr, Func extfunc = [](Json::Value obj){ return obj.as<T>(); }) {
     std::vector<T> v;
     for (int i = 0; i < arr.size(); i++) v.push_back(extfunc(arr[i]));
     return v;
 }
 template<typename T, typename Func = std::function<Json::Value(T)> >
-Json::Value packarr(std::vector<T> arr, Func packfunc = T::toJsonObject) {
+Json::Value packarr(std::vector<T> arr, Func packfunc = [](T obj){ return Json::Value(obj); }) {
     Json::Value res;
     res.resize(0);
     for (int i = 0; i < arr.size(); i++)

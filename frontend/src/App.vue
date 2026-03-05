@@ -28,8 +28,6 @@ async function loading() {
         return;
     }
 
-    NProgress.done();
-
     userInfo.value = res.item;
     loaded.value = true;
 }
@@ -60,7 +58,7 @@ onBeforeMount(() => {
             <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </div>
     </transition>
-    <Message :isError="isError" :errorText="errorText" :type="type" :hasAppBar="loaded"></Message>
+    <Message :isError="isError" :errorText="errorText" :type="type"></Message>
 </template>
 
 <style lang="css" scoped>
@@ -72,5 +70,15 @@ onBeforeMount(() => {
 }
 .v-enter-to, .v-leave-from {
     opacity: 1;
+}
+</style>
+
+<style lang="css">
+a {
+    color: green;
+    text-decoration: none;
+}
+a:hover {
+    text-decoration: underline;
 }
 </style>

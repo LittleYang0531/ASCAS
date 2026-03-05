@@ -1,25 +1,13 @@
 import type { User } from "./user";
 
-export enum UserPermission {
-    NONE,
-    VIEWER,
-    EDITOR,
-    OWNER
-};
-
-export enum RecordPropertyType {
-    NUMBER,
-    STRING,
-    IMAGE
-};
-
 export interface RecordProperty {
     name?: string;
     title?: string;
     unit?: string;
     required?: boolean;
     def?: string;
-    type?: RecordPropertyType;
+    options?: Array<string>;
+    type?: string;
 };
 
 export interface Crop {
@@ -32,5 +20,6 @@ export interface Crop {
     editors?: Array<User>;
     viewers?: Array<User>;
     createdAt?: number;
-    permission?: UserPermission;
+    updatedAt?: number;
+    permission?: string;
 };
