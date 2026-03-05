@@ -41,13 +41,13 @@ function themeToggle() {
 
         <v-list dense nav density="compact">
             <v-list-item
-                prepend-icon="mdi-home"
+                prepend-icon="$mdiHome"
                 title="主页"
                 :active="route.path == '/' || route.path == '/index'"
                 @click="locate('/')"
             ></v-list-item>
             <v-list-item
-                prepend-icon="mdi-database"
+                prepend-icon="$mdiDatabase"
                 title="我的数据"
                 :active="active('/crops')"
                 @click="locate('/crops/list')"
@@ -58,13 +58,13 @@ function themeToggle() {
         
         <v-list dense nav density="compact">
             <v-list-item
-                prepend-icon="mdi-account-cog"
+                prepend-icon="$mdiAccountCog"
                 title="个人设置"
                 :active="active('/users/' + props.user.uid)"
                 @click="locate('/users/' + props.user.uid)"
             ></v-list-item>
             <v-list-item
-                prepend-icon="mdi-account-group"
+                prepend-icon="$mdiAccountGroup"
                 title="我的团队"
                 :active="active('/teams')"
                 @click="locate('/teams/list')"
@@ -74,7 +74,7 @@ function themeToggle() {
         <v-divider></v-divider>
         <v-list dense nav density="compact">
             <v-list-item
-                prepend-icon="mdi-logout"
+                prepend-icon="$mdiLogout"
                 title="退出登录"
                 @click=""
             ></v-list-item>
@@ -83,7 +83,7 @@ function themeToggle() {
         <template v-slot:append>
             <v-list dense nav density="compact">
                 <v-list-item
-                    :prepend-icon="theme.name.value == 'light' ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
+                    :prepend-icon="theme.name.value == 'light' ? '$mdiWeatherNight' : '$mdiWhiteBalanceSunny'"
                     :title="`切换为${theme.name.value == 'light' ? '暗' : '亮'}色主题`"
                     @click="themeToggle()"
                 ></v-list-item>

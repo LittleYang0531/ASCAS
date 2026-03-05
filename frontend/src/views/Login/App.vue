@@ -27,6 +27,7 @@ const reset_password_confirm = ref("");
 const currpage = ref("login");
 
 const fetching = ref(false);
+const base_url = import.meta.env.BASE_URL
 
 const titles = {
     "login": "登录",
@@ -264,7 +265,7 @@ async function resetPassword() {
 
 function switchPage(page: Page) {
     currpage.value = page;
-    history.pushState(null, '', `/login?${page}`);
+    history.pushState(null, '', `${import.meta.env.BASE_URL}login?${page}`);
     document.title = titles[currpage.value as Page] + " - ASCAS | 田间形状采集辅助系统";
 }
 window.onpopstate = function() {
@@ -320,12 +321,12 @@ onBeforeUnmount(() => {
                 <v-card class="login-form" rounded="xl" elevation="24">
                     <div class="d-flex justify-space-between mb-6">
                         <v-icon
-                            icon="mdi-chevron-left"
+                            icon="$mdiChevronLeft"
                             size="small"
                             @click="history.back()"
                         ></v-icon>
                         <v-icon
-                            :icon="theme.name.value == 'light' ? 'mdi-weather-night' : 'mdi-white-balance-sunny'"
+                            :icon="theme.name.value == 'light' ? '$mdiWeatherNight' : '$mdiWhiteBalanceSunny'"
                             size="small"
                             @click="toggleTheme()"
                         ></v-icon>
@@ -334,7 +335,7 @@ onBeforeUnmount(() => {
                         <v-carousel-item value="login">
                             <div class="d-flex justify-center mb-4">
                                 <v-img
-                                    src="/favicon.ico"
+                                    :src="`${base_url}favicon.ico`"
                                     width="64"
                                     height="64"
                                 ></v-img>
@@ -375,7 +376,7 @@ onBeforeUnmount(() => {
                         <v-carousel-item value="register">
                             <div class="d-flex justify-center mb-4">
                                 <v-img
-                                    src="/favicon.ico"
+                                    :src="`${base_url}favicon.ico`"
                                     width="64"
                                     height="64"
                                 ></v-img>
@@ -433,7 +434,7 @@ onBeforeUnmount(() => {
                         </v-carousel-item>
                         <v-carousel-item value="register_success">
                             <div class="d-flex justify-center mb-4">
-                                <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
+                                <v-icon icon="$mdiCheckCircle" size="64" color="green"></v-icon>
                             </div>
                             <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">注册成功</h2></div>
                             <div class="d-flex flex-column justify-center align-center mb-4">
@@ -444,7 +445,7 @@ onBeforeUnmount(() => {
                         <v-carousel-item value="reset">
                             <div class="d-flex justify-center mb-4">
                                 <v-img
-                                    src="/favicon.ico"
+                                    :src="`${base_url}favicon.ico`"
                                     width="64"
                                     height="64"
                                 ></v-img>
@@ -473,7 +474,7 @@ onBeforeUnmount(() => {
                         </v-carousel-item>
                         <v-carousel-item value="reset_request_success">
                             <div class="d-flex justify-center mb-4">
-                                <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
+                                <v-icon icon="$mdiCheckCircle" size="64" color="green"></v-icon>
                             </div>
                             <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">重置邮件已发送</h2></div>
                             <div class="d-flex flex-column justify-center align-center mb-4">
@@ -484,7 +485,7 @@ onBeforeUnmount(() => {
                         <v-carousel-item value="reset_verify">
                             <div v-if="reset_verified == false">
                                 <div class="d-flex justify-center mb-4">
-                                    <v-icon icon="mdi-close-circle" size="64" color="red"></v-icon>
+                                    <v-icon icon="$mdiCloseCircle" size="64" color="red"></v-icon>
                                 </div>
                                 <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">重置链接无效</h2></div>
                                 <div class="d-flex flex-column justify-center align-center mb-4">
@@ -495,7 +496,7 @@ onBeforeUnmount(() => {
                             <div v-else>
                                 <div class="d-flex justify-center mb-4">
                                     <v-img
-                                        src="/favicon.ico"
+                                        :src="`${base_url}favicon.ico`"
                                         width="64"
                                         height="64"
                                     ></v-img>
@@ -534,7 +535,7 @@ onBeforeUnmount(() => {
                         <v-carousel-item value="reset_success">
                             <div>
                                 <div class="d-flex justify-center mb-4">
-                                    <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
+                                    <v-icon icon="$mdiCheckCircle" size="64" color="green"></v-icon>
                                 </div>
                                 <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">密码重置成功</h2></div>
                                 <div class="d-flex justify-center mb-4">
@@ -549,7 +550,7 @@ onBeforeUnmount(() => {
                         <v-carousel-item value="verify">
                             <div v-if="verify_success">
                                 <div class="d-flex justify-center mb-4">
-                                    <v-icon icon="mdi-check-circle" size="64" color="green"></v-icon>
+                                    <v-icon icon="$mdiCheckCircle" size="64" color="green"></v-icon>
                                 </div>
                                 <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">邮箱验证成功</h2></div>
                                 <div class="d-flex justify-center mb-4">
@@ -562,7 +563,7 @@ onBeforeUnmount(() => {
                             </div>
                             <div v-else>
                                 <div class="d-flex justify-center mb-4">
-                                    <v-icon icon="mdi-close-circle" size="64" color="red"></v-icon>
+                                    <v-icon icon="$mdiCloseCircle" size="64" color="red"></v-icon>
                                 </div>
                                 <div class="d-flex justify-center mb-10"><h2 class="mt-0 mb-0">邮箱验证失败</h2></div>
                                 <div class="d-flex flex-column justify-center align-center mb-4">

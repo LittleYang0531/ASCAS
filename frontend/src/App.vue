@@ -21,7 +21,7 @@ async function loading() {
     var res = await (await newFetch(`${API_BASE_URL}/users/check`)).json();
 
     if (res.code == 401) {
-        window.location.href = "/login?back=" + encodeURIComponent(window.location.pathname);
+        window.location.href = import.meta.env.BASE_URL + "login?back=" + encodeURIComponent(window.location.pathname);
         return;
     } else if (res.code != 200) {
         showMsg(MessageType.Error, "发生错误，请稍后再试");

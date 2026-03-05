@@ -2,7 +2,8 @@ import { createApp } from 'vue'
 import App from './App.vue'
 
 // @mdi/font
-import '@mdi/font/css/materialdesignicons.css'
+import { aliases, mdi } from 'vuetify/iconsets/mdi-svg'
+import { mdi_aliases } from '../../mdi_aliases.ts'
 
 // nprogress
 import NProgress from 'nprogress'
@@ -17,5 +18,17 @@ import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 
 createApp(App)
-    .use(createVuetify({ components }))
+    .use(createVuetify({ 
+        components, 
+        icons: { 
+            defaultSet: 'mdi',
+            aliases: {
+                ...aliases,
+                ...mdi_aliases
+            },
+            sets: {
+                mdi,
+            },
+        }, 
+    }))
     .mount('#app')

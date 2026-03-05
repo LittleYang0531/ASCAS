@@ -13,7 +13,7 @@ ORANGE='\033[38;5;208m'
 CLEAR='\033[0m'
 
 if [[  ! -f .version ]]; then
-    echo -e "{\"type\": \"release\", \"version\": \"\", \"channel\": \"\"}" > .version
+    echo -e "{\"type\": \"release\", \"version\": \"\", \"channel\": \"\", \"commit\": \"\"}" > .version
 fi
 TYPE=$( cat .version | jq ".type // empty" -r )
 VERSION=$( cat .version | jq ".version // empty" -r )
@@ -261,7 +261,8 @@ install_package mysqlclient libmysqlclient-dev mysql-devel
 echo -e $YELLOW"Building..."$CLEAR
 g++ $TMP/backend/main.cpp -o./ascas-backend -lssl -lcrypto -ljsoncpp -lmysqlclient -O3 -Wno-unused-result -Wno-deprecated-declarations -std=c++20
 
-cp $TMP/backend/config.json ./
+cp $TMP/data.sql ./data.sql
+cp $TMP/backend/config-example.json ./config.json
 cp $TMP/frontend ./ -r
 cd frontend
 npm install && npm run build

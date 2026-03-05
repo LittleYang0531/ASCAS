@@ -1,21 +1,19 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Index from './views/Index.vue';
 import NProgress from 'nprogress';
-import CropsList from './views/Crops/List.vue';
 
 const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Index
+        component: () => { import('./views/Index.vue') }
     }, {
         path: '/index',
         name: 'Home',
-        component: Index
+        component: () => { import('./views/Index.vue') }
     }, {
         path: '/crops/list',
         name: 'CropList',
-        component: CropsList
+        component: () => { import('./views/Crops/List.vue') }
     }
 ];
 
