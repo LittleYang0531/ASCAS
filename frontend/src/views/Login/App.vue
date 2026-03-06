@@ -331,7 +331,7 @@ onBeforeUnmount(() => {
                             @click="toggleTheme()"
                         ></v-icon>
                     </div>
-                    <v-carousel v-model="currpage" hide-delimiters :show-arrows="false" height="auto">
+                    <v-carousel v-model="currpage" hide-delimiters :show-arrows="false" height="auto" :touch="false">
                         <v-carousel-item value="login">
                             <div class="d-flex justify-center mb-4">
                                 <v-img
