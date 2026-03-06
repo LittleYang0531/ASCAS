@@ -167,7 +167,7 @@ function clear() {
             <p>没有找到符合条件的作物数据</p>
         </div>
     </div>
-    <div v-else class="d-flex justify-center align-center position-absolute" style="width: 100%; height: 100vh;">
+    <div v-else class="d-flex justify-center align-center position-absolute" style="width: 100%; height: 100vh; max-width: 960px;">
         <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
     </div>
 </template>

@@ -21,6 +21,7 @@ export default defineComponent({
 const loaded = ref(false);
 
 async function loading(val: any) {
+    val;
 
     loaded.value = true;
 }
@@ -32,7 +33,7 @@ defineExpose({ loading });
     <div v-if="loaded">
 
     </div>
-    <div v-else class="d-flex justify-center align-center position-absolute" style="width: 100%; height: 100vh;">
+    <div v-else class="d-flex justify-center align-center position-absolute" style="width: 100%; height: 100vh; max-width: 960px;">
         <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
     </div>
 </template>

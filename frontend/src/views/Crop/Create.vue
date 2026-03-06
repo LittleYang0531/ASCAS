@@ -9,6 +9,8 @@ import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
 
 async function load(to: any, from: any, next: any) {
+    to; from;
+
     NProgress.start();
     NProgress.inc();
 
@@ -90,6 +92,7 @@ function delete2(props: RecordProperty) {
 }
 
 function loading(data: any) {
+    data;
 
     loaded.value = true;
 }
@@ -149,7 +152,7 @@ defineExpose({ loading });
             </v-timeline-item>
         </v-timeline>
     </div>
-    <div v-else class="d-flex justify-center align-center position-absolute" style="width: 100%; height: 100vh;">
+    <div v-else class="d-flex justify-center align-center position-absolute" style="width: 100%; height: 100vh; max-width: 960px;">
         <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
     </div>
 </template>
