@@ -1,3 +1,7 @@
+#include "include/json.h"
+#include "include/log.h"
+#include "models/enum.h"
+#include <jsoncpp/json/value.h>
 #if __cplusplus < 202002L
 #error "Please using C++20 or later to compile ASCAS backend!"
 #endif
@@ -17,6 +21,8 @@
 #include "api/crops/create.cpp"
 #include "api/notFound.cpp"
 
+using Json::ValueType;
+initEnum(ValueType, nullValue, objectValue);
 initEnum(LOG_LEVEL, LOG_LEVEL_DEBUG, LOG_LEVEL_ASSERT);
 initEnumBin(LOG_TARGET, LOG_TARGET_FILE, LOG_TARGET_CONSOLE);
 
@@ -27,7 +33,26 @@ int main(int argc, char** argv) {
     proc_daemon(argv, "ascas-backend: daemon process", { "config.json" });
     proc_settitle(("ascas-backend: master process " + proc_name).c_str());
     
-    appConfig = json_decode(readFile("./config.json"));
+    appConfig = json_decode(config_json);
+    Json::Value newAppConfig = json_decode(readFile("./config.json"));
+    auto members = newAppConfig.getMemberNames();
+    for (auto key : members) {
+        if (!appConfig.isMember(key)) {
+            writeLog(LOG_LEVEL_WARNING, "Invalid config: no such key named \"%s\"", key.c_str());
+            continue;
+        }
+        if (appConfig[key].type() != newAppConfig[key].type()) {
+            writeLog(
+                LOG_LEVEL_WARNING,
+                "Invalid config: \"%s\" expected \"%s\", but \"%s\" was found.",
+                key.c_str(),
+                getNameFromEnum(appConfig[key].type()).c_str(),
+                getNameFromEnum(newAppConfig[key].type()).c_str()
+            );
+            continue;
+        }
+        appConfig[key] = newAppConfig[key];
+    } 
 
     Log.logLevelId = getEnumFromName(LOG_LEVEL, appConfig["log.level"].asString());
     Log.target = (LOG_TARGET)0;

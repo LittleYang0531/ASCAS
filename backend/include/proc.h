@@ -352,10 +352,12 @@ void proc_daemon(char** argv, const char* daemon_title, std::vector<std::string>
             std::cout << "\033[0;31m[Daemon] Process PID = " << newpid << " exited";
             if ((status & 0x7f) == 0) {
                 std::cout << ", exit code = " << ((status >> 8) & 0xff);
+                std::cout << ", exited!\033[0m" << std::endl;
+                exit(0);
             } else {
                 std::cout << " abnormally, exit signal = " << singal_strings[status & 0x3f];
+                std::cout << ", restarting...\033[0m" << std::endl;
             }
-            std::cout << ", restarting...\033[0m" << std::endl;
             break;
         }
         for (int i = 0; i < pids.size(); i++) {

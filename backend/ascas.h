@@ -1,6 +1,7 @@
 #pragma once
 
 // 资源文件
+#include "config_json.h"
 #include "favicon_ico.h"
 #include "reset_html.h"
 #include "signup_html.h"
