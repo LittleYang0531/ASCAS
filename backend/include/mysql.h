@@ -109,3 +109,108 @@ void mysqli_execute(MYSQL &conn, const char* format, ...) {
 void mysqli_close(MYSQL &conn) {
     mysql_close(&conn);
 }
+
+class DBColumn {
+    public:
+
+    std::string name;
+    std::string type;
+    bool isNull = true;
+    std::string defaultValue = "";
+    bool valueIsExpr = false;
+    bool isVisible = true;
+    bool autoIncrement = false;
+    bool unique = false;
+    bool primary = false;
+    std::string extraDef = "";
+
+    std::string toString() {
+        std::string str = "";
+        str += name + " ";
+        str += type + " ";
+        if (!isNull) str += "NOT NULL ";
+        if (!valueIsExpr) {
+            if (!valueIsExpr) str += "DEFAULT \"" + defaultValue + "\" ";
+            else str += "DEFAULT " + defaultValue + " ";
+        }
+        if (!isVisible) str += "INVISIBLE ";
+        if (autoIncrement) str += "AUTO_INCREMENT ";
+        if (unique) str += "UNIQUE ";
+        if (primary) str += "PRIMARY KEY ";
+        str += extraDef + " ";
+        str.pop_back();
+        return str;
+    }
+};
+class DBTable {
+    public:
+
+    std::string name;
+    std::vector<DBColumn> columns;
+    std::string extraDef = "";
+};
+
+void mysqli_check_table(MYSQL mysql, std::vector<DBTable> tables) {
+    // 不支持修改主键
+    writeLog(LOG_LEVEL_INFO, "Checking integrities of MySQL tables...");
+    for (int i = 0; i < tables.size(); i++) {
+        int primaryCount = 0;
+        for (int j = 0; j < tables[i].columns.size(); j++) 
+            primaryCount += tables[i].columns[j].primary;
+        if (primaryCount > 1) {
+            writeLog(LOG_LEVEL_ERROR, "Only 1 primary key can be set in a table");
+            return;
+        }
+
+        bool exists = mysqli_query(
+            mysql, 
+            "SHOW TABLES LIKE \"%s\"", 
+            tables[i].name.c_str()
+        ).size();
+        if (!exists) {
+            std::string columns = "";
+            for (int j = 0; j < tables[i].columns.size(); j++) {
+                auto column = tables[i].columns[j];
+                if (j) columns += ", ";
+                columns += column.toString();
+            }
+            mysqli_execute(
+                mysql, 
+                "CREATE TABLE %s (%s) %s", 
+                tables[i].name.c_str(),
+                columns.c_str(),
+                tables[i].extraDef.c_str()
+            );
+            writeLog(LOG_LEVEL_INFO, "Created table \"%s\"", tables[i].name.c_str());
+        } else {
+            for (int j = 0; j < tables[i].columns.size(); j++) {
+                auto column = tables[i].columns[j];
+                bool exists = mysqli_query(
+                    mysql,
+                    "DESCRIBE %s %s",
+                    tables[i].name.c_str(),
+                    column.name.c_str()
+                ).size();
+                column.primary = false;
+                if (!exists) {
+                    mysqli_execute(
+                        mysql,
+                        "ALTER TABLE %s ADD COLUMN %s",
+                        tables[i].name.c_str(),
+                        column.toString().c_str()
+                    );
+                    writeLog(LOG_LEVEL_INFO, "Added column \"%s\" to table %s", column.name.c_str(), tables[i].name.c_str());
+                } else {
+                    mysqli_execute(
+                        mysql,
+                        "ALTER TABLE %s CHANGE %s %s",
+                        tables[i].name.c_str(),
+                        column.name.c_str(),
+                        column.toString().c_str()
+                    );
+                    // writeLog(LOG_LEVEL_INFO, "Changed column \"%s\" in table %s", column.name.c_str(), tables[i].name.c_str());
+                }
+            }
+        }
+    }
+}

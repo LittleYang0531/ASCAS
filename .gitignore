@@ -2,6 +2,7 @@
 .version
 check.sh
 
+backend/backup
 backend/config.json
 backend/favicon.ico
 backend/reset.html

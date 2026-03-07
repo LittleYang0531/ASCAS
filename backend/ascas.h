@@ -1,10 +1,11 @@
 #pragma once
 
 // 资源文件
-#include "config_json.h"
-#include "favicon_ico.h"
-#include "reset_html.h"
-#include "signup_html.h"
+#include "resources/config_json.h"
+#include "resources/favicon_ico.h"
+#include "resources/reset_html.h"
+#include "resources/signup_html.h"
+#include "resources/tables.h"
 
 #include "include/encrypt.h"
 #include "include/httpd.h"

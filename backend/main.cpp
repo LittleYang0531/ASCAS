@@ -1,7 +1,4 @@
-#include "include/json.h"
 #include "include/log.h"
-#include "models/enum.h"
-#include <jsoncpp/json/value.h>
 #if __cplusplus < 202002L
 #error "Please using C++20 or later to compile ASCAS backend!"
 #endif
@@ -59,6 +56,24 @@ int main(int argc, char** argv) {
     for (int i = 0; i < appConfig["log.target"].size(); i++) 
         Log.target = LOG_TARGET(Log.target | getEnumFromName(LOG_TARGET, appConfig["log.target"][i].asString()));
     Log.targetPath = appConfig["log.file"].asString();
+
+    quick_mysqli_connect();
+    std::string backupFile = "./backup/mysql_" + std::to_string(time(NULL)) + ".sql";
+    mkdir("backup", 0777);
+    std::string command = "mysqldump";
+    if (appConfig["mysql.user"].asString() != "") command +=  " -u " + appConfig["mysql.user"].asString();
+    if (appConfig["mysql.passwd"].asString() != "") command += " -p" + appConfig["mysql.passwd"].asString();
+    if (appConfig["mysql.host"].asString() != "") command += " -h " + appConfig["mysql.host"].asString();
+    command += " -P " + appConfig["mysql.port"].asString();
+    command += " " + appConfig["mysql.database"].asString();
+    command += " > " + backupFile;
+    if (system(command.c_str())) {
+        writeLog(LOG_LEVEL_ERROR, "Failed to back up MySQL");
+        return 3;
+    }
+    writeLog(LOG_LEVEL_INFO, "Backed up MySQL to \"%s\"", backupFile.c_str());
+    mysqli_check_table(mysql, tables);
+    quick_mysqli_close();
 
     app.setopt(HTTP_ENABLE_SSL, appConfig["server.enableSSL"].asBool());
     app.setopt(HTTP_LISTEN_HOST, appConfig["server.listenHost"].asCString());
