@@ -41,6 +41,19 @@ const properties: Ref<Array<RecordProperty> > = ref([]);
 const propertiesDialog = ref(false);
 const editingIndex = ref(-1);
 
+function create() {
+    property.value = {
+        name: (new Date().getTime()).toString(),
+        title: "",
+        unit: "",
+        required: false,
+        def: "",
+        options: [],
+        type: "RecordPropertyType::NUMBER"
+    };
+    editingIndex.value = -1;
+    propertiesDialog.value = true;
+}
 function add() {
     if (property.value.title == "") {
         showMsg(MessageType.Error, "属性名不能为空");
@@ -67,15 +80,6 @@ function add() {
         properties.value.push(property.value);
     }
 
-    property.value = {
-        name: (new Date().getTime()).toString(),
-        title: "",
-        unit: "",
-        required: false,
-        def: "",
-        options: [],
-        type: "RecordPropertyType::NUMBER"
-    };
     propertiesDialog.value = false;
 }
 function edit(props: RecordProperty) {
@@ -137,8 +141,8 @@ defineExpose({ loading });
                         </template>
                     </draggable>
                 </v-list>
-                <v-btn prepend-icon="$mdiPlus" color="primary" @click="propertiesDialog = true">添加属性</v-btn>
-                <CropPropertyDialog 
+                <v-btn prepend-icon="$mdiPlus" color="primary" @click="create()">添加属性</v-btn>
+                <CropPropertyDialog
                     :title="editingIndex != -1 ? '编辑作物属性' : '添加作物属性'"
                     :btnTitle="editingIndex != -1 ? '保存修改' : '添加属性'"
                     :btnIcon="editingIndex != -1 ? '$mdiCheck' : '$mdiPlus'"
@@ -149,6 +153,7 @@ defineExpose({ loading });
             </v-timeline-item>
             <v-timeline-item icon="$mdiAccount" dot-color="green-lighten-1">
                 <h2 class="ma-0 font-weight-light mb-4">成员权限</h2>
+                
             </v-timeline-item>
         </v-timeline>
     </div>

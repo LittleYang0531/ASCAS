@@ -145,7 +145,7 @@ function remove(options: Array<string>, element: string) {
                     </v-outlined>
                     <div class="d-flex justify-space-between mt-2">
                         <p>是否为必填项</p>
-                        <v-switch v-model="props.required" hide-details></v-switch>
+                        <v-switch v-model="props.required" hide-details color="primary"></v-switch>
                     </div>
                     <PropertyControl v-model:props="props" label="默认值" class="mt-2"></PropertyControl>
                 </div>
