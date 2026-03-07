@@ -277,4 +277,27 @@ class UserUtils {
         );
         return true;
     }
+
+    std::vector<User> search(std::string keyword) {
+        quick_mysqli_connect();
+
+        auto res = mysqli_query(
+            mysql,
+            "SELECT * FROM users WHERE name LIKE \"%%%s%%\" OR email LIKE \"%%%s%%\"",
+            quote_encode(keyword).c_str(),
+            quote_encode(keyword).c_str()
+        );
+
+        std::vector<User> results;
+        for (int i = 0; i < res.size(); i++) {
+            results.push_back(User({
+                .uid = stoi(res[i]["id"]),
+                .name = res[i]["name"],
+                .email = res[i]["email"],
+                .isAdmin = stoi(res[i]["isAdmin"]) ? true : false
+            }));
+        }
+
+        return results;
+    }
 }UserUtils;
