@@ -144,3 +144,12 @@ Func funcname(...) {
 - `explode(seperator, source)`：以 `seperator` 为分隔符，将 `source` 切割成多个字符串。
 - `trim(source)`：删除 `source` 两端的空白字符 ` \r\n\t\f\t\v`
 - `join(seperator, source)`：使用 `seperator` 将 `source` 连接成一个字符串，也可以看作 `explode` 的逆函数。
+
+# 当前规划
+
+## `/crops/edit/%d`
+
+修改一个作物表，post 参数和相应正文可以参考 `/crops/create`
+
+## `/crops/`
+

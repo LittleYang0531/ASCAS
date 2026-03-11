@@ -1,7 +1,7 @@
 <script lang="ts">
 import NProgress from 'nprogress';
 import { defineComponent, ref, watch, type Ref } from 'vue';
-import type { Crop, RecordProperty } from '../../models/crop';
+import type { RecordProperty } from '../../models/crop';
 import CropPropertyOverview from '../../components/Crop/PropertyOverview.vue';
 import CropPropertyDialog from '../../components/Crop/PropertyDialog.vue';
 import draggable from 'vuedraggable';

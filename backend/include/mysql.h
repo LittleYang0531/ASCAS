@@ -131,7 +131,7 @@ class DBColumn {
         str += type + " ";
         if (!isNull) str += "NOT NULL ";
         if (enableDefaultValue) {
-            if (!valueIsExpr) str += "DEFAULT \"" + defaultValue + "\" ";
+            if (!valueIsExpr) str += "DEFAULT (\"" + defaultValue + "\") ";
             else str += "DEFAULT " + defaultValue + " ";
         }
         if (!isVisible) str += "INVISIBLE ";
