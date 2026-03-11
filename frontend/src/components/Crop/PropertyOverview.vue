@@ -25,12 +25,12 @@ const emits = defineEmits<{
         class="cursor-pointer"
         prepend-icon="$mdiDrag"
     >
-        <v-list-title class="d-flex align-center">
+        <p class="d-flex align-center ma-0">
             <v-icon :icon="icons[props.props.type as keyof typeof icons]" class="me-2"></v-icon>
             {{ props.props.title }}
             <span v-if="props.props.required" style="color: red">&nbsp;*</span>
             <span v-if="props.props.unit != ''">（{{ props.props.unit }}）</span>
-        </v-list-title>
+        </p>
         <template v-slot:append>
             <v-btn
                 color="info"

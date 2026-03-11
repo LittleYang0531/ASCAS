@@ -9,6 +9,7 @@ backend/reset.html
 backend/signup.html
 backend/ascas-backend*
 backend/make
+backend/recompile.json
 
 frontend/src/views/template.vue
 

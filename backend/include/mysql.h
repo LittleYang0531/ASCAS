@@ -116,6 +116,7 @@ class DBColumn {
     std::string name;
     std::string type;
     bool isNull = true;
+    bool enableDefaultValue = true;
     std::string defaultValue = "";
     bool valueIsExpr = false;
     bool isVisible = true;
@@ -129,7 +130,7 @@ class DBColumn {
         str += name + " ";
         str += type + " ";
         if (!isNull) str += "NOT NULL ";
-        if (!valueIsExpr) {
+        if (enableDefaultValue) {
             if (!valueIsExpr) str += "DEFAULT \"" + defaultValue + "\" ";
             else str += "DEFAULT " + defaultValue + " ";
         }

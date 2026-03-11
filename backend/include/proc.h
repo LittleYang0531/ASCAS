@@ -305,7 +305,7 @@ std::string __builtin_proc_sha256(std::string src) {
     return res;
 }
 
-void proc_daemon(char** argv, const char* daemon_title, std::vector<std::string> hotreloads = {}) {
+void proc_daemon(char** argv, const char* daemon_title, std::vector<std::string> hotreloads = {}, std::vector<std::string> recompiles = {}) {
     int argc = 0;
     for (; argv[argc]; argc++) ;
 	char *oldargv[argc + 1];
@@ -317,6 +317,11 @@ void proc_daemon(char** argv, const char* daemon_title, std::vector<std::string>
     proc_inittitle(argv);
     pid_t pid = fork();
     std::vector<std::string> hashes;
+    for (int i = 0; i < recompiles.size(); i++) {
+        std::string content = __builtin_proc_readFile(recompiles[i]);
+        std::string hash = __builtin_proc_sha256(content);
+        hashes.push_back(hash);
+    }
     for (int i = 0; i < hotreloads.size(); i++) {
         std::string content = __builtin_proc_readFile(hotreloads[i]);
         std::string hash = __builtin_proc_sha256(content);
@@ -326,13 +331,26 @@ void proc_daemon(char** argv, const char* daemon_title, std::vector<std::string>
         proc_settitle(daemon_title);
         auto pids = __builtin_proc_getpidsByPpid(pid);
         usleep(100 * 1000);
+        bool shouldRecompile = false;
         while (true) {
+            // 监视文件修改 => 重编译
+            for (int i = 0; i < recompiles.size(); i++) {
+                std::string content = __builtin_proc_readFile(recompiles[i]);
+                std::string hash = __builtin_proc_sha256(content);
+                if (hash != hashes[i]) {
+                    std::cout << "\033[0;33m[Daemon] File \"" << recompiles[i] << "\" updated, recompiling and restarting...\033[0m" << std::endl;
+                    shouldRecompile = true;
+                    break;
+                }
+            }
+            if (shouldRecompile) break;
+
             // 监视文件修改 => 热重载
             bool shouldHotReload = false;
             for (int i = 0; i < hotreloads.size(); i++) {
                 std::string content = __builtin_proc_readFile(hotreloads[i]);
                 std::string hash = __builtin_proc_sha256(content);
-                if (hash != hashes[i]) {
+                if (hash != hashes[i + recompiles.size()]) {
                     std::cout << "\033[0;33m[Daemon] File \"" << hotreloads[i] << "\" updated, hot reloading...\033[0m" << std::endl;
                     shouldHotReload = true;
                     break;
@@ -352,8 +370,9 @@ void proc_daemon(char** argv, const char* daemon_title, std::vector<std::string>
             std::cout << "\033[0;31m[Daemon] Process PID = " << newpid << " exited";
             if ((status & 0x7f) == 0) {
                 std::cout << ", exit code = " << ((status >> 8) & 0xff);
-                std::cout << ", exited!\033[0m" << std::endl;
-                exit(0);
+                std::cout << ", restarting...!\033[0m" << std::endl;
+                usleep(1000 * 1000);
+                // exit(0);
             } else {
                 std::cout << " abnormally, exit signal = " << singal_strings[status & 0x3f];
                 std::cout << ", restarting...\033[0m" << std::endl;
@@ -367,6 +386,12 @@ void proc_daemon(char** argv, const char* daemon_title, std::vector<std::string>
                 else assert(false);
             }
         }
+
+        // 重新编译
+        if (shouldRecompile) {
+            int code = system("bash ./make g++");
+        }
+
         waitpid(pid, NULL, 0);
         execv(oldargv[0], oldargv);
         exit(0);

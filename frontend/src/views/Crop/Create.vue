@@ -1,12 +1,15 @@
 <script lang="ts">
 import NProgress from 'nprogress';
-import { defineComponent, ref, type Ref } from 'vue';
-import type { RecordProperty } from '../../models/crop';
+import { defineComponent, ref, watch, type Ref } from 'vue';
+import type { Crop, RecordProperty } from '../../models/crop';
 import CropPropertyOverview from '../../components/Crop/PropertyOverview.vue';
 import CropPropertyDialog from '../../components/Crop/PropertyDialog.vue';
 import draggable from 'vuedraggable';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
+import { newFetch } from '../../utils/fetch';
+import { API_BASE_URL } from '../../config';
+import { sleep } from '../../utils/sleep';
 
 async function load(to: any, from: any, next: any) {
     to; from;
@@ -40,6 +43,14 @@ const property: Ref<RecordProperty> = ref({
 const properties: Ref<Array<RecordProperty> > = ref([]);
 const propertiesDialog = ref(false);
 const editingIndex = ref(-1);
+const editors: Ref<Array<number> > = ref([]);
+const editorSearch = ref("");
+const editorItems: Ref<Array<any> > = ref([]);
+const editorLoading = ref(false);
+const viewers: Ref<Array<number> > = ref([]);
+const viewerSearch = ref("");
+const viewerItems: Ref<Array<any> > = ref([]);
+const viewerLoading = ref(false);
 
 function create() {
     property.value = {
@@ -95,6 +106,27 @@ function delete2(props: RecordProperty) {
     }
 }
 
+async function submit() {
+    if (properties.value.length == 0) {
+        showMsg(MessageType.Error, "请至少添加一个属性");
+        return;
+    }
+    var res = await (await newFetch(`${API_BASE_URL}/crops/create`, {
+        method: "POST",
+        body: JSON.stringify({
+            title: title.value,
+            description: description.value,
+            properties: properties.value,
+            editors: editors.value,
+            viewers: viewers.value
+        })
+    })).json();
+    var id = res["id"];
+    showMsg(MessageType.Success, "创建成功，正在跳转...");
+    await sleep(1000);
+    window.location.href = `/crop/${id}`;
+}
+
 function loading(data: any) {
     data;
 
@@ -102,6 +134,39 @@ function loading(data: any) {
 }
 
 defineExpose({ loading });
+
+watch(editorSearch, async (val) => {
+    editorItems.value = editorItems.value.filter(item => editors.value.includes(item.value));
+    if (!val) {}
+    else {
+        editorLoading.value = true;
+        var users = await (await newFetch(`${API_BASE_URL}/users/search?keyword=${val}`)).json();
+        for (var i = 0; i < users.items.length; i++)
+            editorItems.value.push({
+                title: users.items[i].name + "（" + users.items[i].email + "）",
+                value: users.items[i].uid
+            });
+        editorItems.value = editorItems.value.filter((item, index, self) => self.findIndex(i => i.value == item.value) == index);
+        editorItems.value = editorItems.value.sort((a, b) => a.value - b.value);
+        editorLoading.value = false;
+    }
+})
+watch(viewerSearch, async (val) => {
+    viewerItems.value = viewerItems.value.filter(item => viewers.value.includes(item.value));
+    if (!val) {} 
+    else {
+        viewerLoading.value = true;
+        var users = await (await newFetch(`${API_BASE_URL}/users/search?keyword=${val}`)).json();
+        for (var i = 0; i < users.items.length; i++)
+            viewerItems.value.push({
+                title: users.items[i].name + "（" + users.items[i].email + "）",
+                value: users.items[i].uid
+            });
+        viewerItems.value = viewerItems.value.filter((item, index, self) => self.findIndex(i => i.value == item.value) == index);
+        viewerItems.value = viewerItems.value.sort((a, b) => a.value - b.value);
+        viewerLoading.value = false;
+    }
+})
 </script>
 
 <template>
@@ -141,7 +206,9 @@ defineExpose({ loading });
                         </template>
                     </draggable>
                 </v-list>
-                <v-btn prepend-icon="$mdiPlus" color="primary" @click="create()">添加属性</v-btn>
+                <div class="d-flex align-center justify-end">
+                    <v-btn prepend-icon="$mdiPlus" color="primary" @click="create()">添加属性</v-btn>
+                </div>
                 <CropPropertyDialog
                     :title="editingIndex != -1 ? '编辑作物属性' : '添加作物属性'"
                     :btnTitle="editingIndex != -1 ? '保存修改' : '添加属性'"
@@ -153,9 +220,42 @@ defineExpose({ loading });
             </v-timeline-item>
             <v-timeline-item icon="$mdiAccount" dot-color="green-lighten-1">
                 <h2 class="ma-0 font-weight-light mb-4">成员权限</h2>
-                
+                <v-autocomplete
+                    v-model="editors"
+                    v-model:search="editorSearch"
+                    :items="editorItems"
+                    :loading="editorLoading"
+                    label="EDITORS（协作编辑）"
+                    autocomplete="off"
+                    variant="outlined"
+                    density="comfortable"
+                    hide-details
+                    hide-no-data
+                    class="mb-4"
+                    multiple
+                ></v-autocomplete>
+                <v-autocomplete
+                    v-model="viewers"
+                    v-model:search="viewerSearch"
+                    :items="viewerItems"
+                    :loading="viewerLoading"
+                    label="VIEWERS（协作查看）"
+                    autocomplete="off"
+                    variant="outlined"
+                    density="comfortable"
+                    hide-details
+                    hide-no-data
+                    multiple
+                ></v-autocomplete>
             </v-timeline-item>
         </v-timeline>
+        <div class="mt-4 d-flex align-center justify-end">
+            <v-btn
+                prepend-icon="$mdiCheck"
+                color="primary"
+                @click="submit()"
+            >新建</v-btn>
+        </div>
     </div>
     <div v-else class="d-flex justify-center align-center position-absolute" style="width: 100%; height: 100vh; max-width: 960px;">
         <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>

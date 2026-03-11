@@ -202,4 +202,8 @@ class CropUtils {
 
         return res;
     }
+
+    void edit(Crop crop) {
+        
+    }
 }CropUtils;

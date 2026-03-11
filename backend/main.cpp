@@ -1,4 +1,3 @@
-#include "include/log.h"
 #if __cplusplus < 202002L
 #error "Please using C++20 or later to compile ASCAS backend!"
 #endif
@@ -27,7 +26,9 @@ int main(int argc, char** argv) {
     // Log.logLevelId = LOG_LEVEL_DEBUG;
 
     std::string proc_name = argv[0];
-    proc_daemon(argv, "ascas-backend: daemon process", { "config.json" });
+    std::vector<std::string> hotreloads = { "config.json" };
+    std::vector<std::string> recompiles = { "recompile.json" };
+    proc_daemon(argv, "ascas-backend: daemon process", hotreloads, recompiles);
     proc_settitle(("ascas-backend: master process " + proc_name).c_str());
     
     appConfig = json_decode(config_json);

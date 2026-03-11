@@ -3,7 +3,8 @@ import { showMsg } from "./message";
 import { MessageType } from "../models/message";
 
 export async function myFetch(url: string, options?: RequestInit): Promise<Response> {
-    options = options || { credentials: 'include' };
+    if (options == undefined) options = { credentials: 'include' };
+    if (options.credentials == undefined) options.credentials = 'include';
     // if (options.body != null)
     //     options.headers = options.headers || { "Content-Type": "application/json" };
     try {

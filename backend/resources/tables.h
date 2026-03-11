@@ -10,8 +10,7 @@ std::vector<DBTable> tables = {
             {
                 .name = "id",
                 .type = "int",
-                .defaultValue = "0",
-                .valueIsExpr = true,
+                .enableDefaultValue = false,
                 .autoIncrement = true,
                 .primary = true,
             }, {
@@ -95,8 +94,7 @@ std::vector<DBTable> tables = {
             {
                 .name = "id",
                 .type = "int",
-                .defaultValue = "0",
-                .valueIsExpr = true,
+                .enableDefaultValue = false,
                 .autoIncrement = true,
                 .primary = true,
             }, {

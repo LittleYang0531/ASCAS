@@ -80,6 +80,12 @@ class LogHelper {
                 fout.close();
             }
             if (target & LOG_TARGET_CONSOLE) {
+                switch (levelId) {
+                    case LOG_LEVEL_WARNING: std::cerr << "\033[0;33m"; break;
+                    case LOG_LEVEL_ERROR: std::cerr << "\033[0;31m"; break;
+                    case LOG_LEVEL_DEBUG: std::cerr << "\033[0;35m"; break;
+                    default: std::cerr << "\033[0m"; break;
+                }
                 std::cerr << "[" << st << "] "
                      << "[" << logLevels[levelId] << "] "
                      << "[tid:" << tid << "] "
