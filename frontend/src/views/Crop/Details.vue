@@ -24,7 +24,8 @@ async function load(to: any, from: any, next: any) {
     var crop = await (await newFetch(`${API_BASE_URL}/crops/${to.params.id}`)).json();
 
     next((e: any) => e.loading({
-        crop: crop.item
+        crop: crop.item,
+        param: to.query
     }));
 }
 export default defineComponent({
@@ -47,6 +48,7 @@ function loading(data: any) {
     item.value = data.crop;
     editors.value = item.value.editors!;
     viewers.value = item.value.viewers!;
+    if (data.param.page != undefined) tab.value = data.param.page;
     
     loaded.value = true;
 }
@@ -126,7 +128,7 @@ async function submit() {
         showMsg(MessageType.Error, "请至少添加一个属性");
         return;
     }
-    var res = await (await newFetch(`${API_BASE_URL}/crops/edit`, {
+    var res = await (await newFetch(`${API_BASE_URL}/crops/${item.value.cid}/edit`, {
         method: "POST",
         body: JSON.stringify({
             cid: item.value.cid,
