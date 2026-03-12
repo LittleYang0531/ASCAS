@@ -11,7 +11,6 @@ import draggable from 'vuedraggable';
 import UserCard from '../../components/User/Card.vue';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
-import { watch } from 'vue';
 import { sleep } from '../../utils/sleep';
 import type { User } from '../../models/user';
 
@@ -128,7 +127,7 @@ async function submit() {
         showMsg(MessageType.Error, "请至少添加一个属性");
         return;
     }
-    var res = await (await newFetch(`${API_BASE_URL}/crops/${item.value.cid}/edit`, {
+    await (await newFetch(`${API_BASE_URL}/crops/${item.value.cid}/edit`, {
         method: "POST",
         body: JSON.stringify({
             cid: item.value.cid,
