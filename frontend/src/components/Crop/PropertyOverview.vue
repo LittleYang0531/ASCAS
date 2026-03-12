@@ -11,11 +11,15 @@ const icons = {
 };
 
 const props = defineProps<{
-    props: RecordProperty
+    props: RecordProperty,
+    hasEdit: boolean,
+    hasRemove: boolean,
+    hasDetails: boolean
 }>();
 const emits = defineEmits<{
     (e: 'edit'): void,
     (e: 'remove'): void,
+    (e: 'details'): void
 }>();
 </script>
 
@@ -33,6 +37,7 @@ const emits = defineEmits<{
         </p>
         <template v-slot:append>
             <v-btn
+                v-if="props.hasEdit"
                 color="info"
                 icon="$mdiPencil"
                 size="small"
@@ -40,11 +45,20 @@ const emits = defineEmits<{
                 @click="emits('edit')"
             ></v-btn>
             <v-btn
+                v-if="props.hasRemove"
                 color="error"
                 icon="$mdiTrashCan"
                 size="small"
                 variant="text"
                 @click="emits('remove')"
+            ></v-btn>
+            <v-btn
+                v-if="props.hasDetails"
+                color="primary"
+                icon="$mdiInformation"
+                size="small"
+                variant="text"
+                @click="emits('details')"
             ></v-btn>
         </template>
     </v-list-item>

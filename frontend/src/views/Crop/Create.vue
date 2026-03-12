@@ -1,6 +1,5 @@
-<script lang="ts">
-import NProgress from 'nprogress';
-import { defineComponent, ref, watch, type Ref } from 'vue';
+<script lang="ts" setup>
+import { ref, type Ref } from 'vue';
 import type { RecordProperty } from '../../models/crop';
 import CropPropertyOverview from '../../components/Crop/PropertyOverview.vue';
 import CropPropertyDialog from '../../components/Crop/PropertyDialog.vue';
@@ -10,25 +9,10 @@ import { MessageType } from '../../models/message';
 import { newFetch } from '../../utils/fetch';
 import { API_BASE_URL } from '../../config';
 import { sleep } from '../../utils/sleep';
+import type { User } from '../../models/user';
+import UserMultipleSelect from '../../components/User/MultipleSelect.vue';
 
-async function load(to: any, from: any, next: any) {
-    to; from;
-
-    NProgress.start();
-    NProgress.inc();
-
-    next((e: any) => e.loading({
-
-    }));
-}
-export default defineComponent({
-    async beforeRouteEnter(to, from, next) { await load(to, from, next); },
-    async beforeRouteUpdate(to, from) { await load(to, from, (func: any) => func(this)); },
-});
-</script>
-
-<script lang="ts" setup>
-const loaded = ref(false);
+const loaded = ref(true);
 const title = ref("");
 const description = ref("");
 const property: Ref<RecordProperty> = ref({
@@ -43,14 +27,8 @@ const property: Ref<RecordProperty> = ref({
 const properties: Ref<Array<RecordProperty> > = ref([]);
 const propertiesDialog = ref(false);
 const editingIndex = ref(-1);
-const editors: Ref<Array<number> > = ref([]);
-const editorSearch = ref("");
-const editorItems: Ref<Array<any> > = ref([]);
-const editorLoading = ref(false);
-const viewers: Ref<Array<number> > = ref([]);
-const viewerSearch = ref("");
-const viewerItems: Ref<Array<any> > = ref([]);
-const viewerLoading = ref(false);
+const editors: Ref<Array<User> > = ref([]);
+const viewers: Ref<Array<User> > = ref([]);
 
 function create() {
     property.value = {
@@ -117,56 +95,15 @@ async function submit() {
             title: title.value,
             description: description.value,
             properties: properties.value,
-            editors: editors.value,
-            viewers: viewers.value
+            editors: editors.value.map((e) => e.uid!),
+            viewers: viewers.value.map((e) => e.uid!)
         })
     })).json();
     var id = res["id"];
     showMsg(MessageType.Success, "创建成功，正在跳转...");
     await sleep(1000);
-    window.location.href = `/crop/${id}`;
+    window.location.href = `/crops/${id}`;
 }
-
-function loading(data: any) {
-    data;
-
-    loaded.value = true;
-}
-
-defineExpose({ loading });
-
-watch(editorSearch, async (val) => {
-    editorItems.value = editorItems.value.filter(item => editors.value.includes(item.value));
-    if (!val) {}
-    else {
-        editorLoading.value = true;
-        var users = await (await newFetch(`${API_BASE_URL}/users/search?keyword=${val}`)).json();
-        for (var i = 0; i < users.items.length; i++)
-            editorItems.value.push({
-                title: users.items[i].name + "（" + users.items[i].email + "）",
-                value: users.items[i].uid
-            });
-        editorItems.value = editorItems.value.filter((item, index, self) => self.findIndex(i => i.value == item.value) == index);
-        editorItems.value = editorItems.value.sort((a, b) => a.value - b.value);
-        editorLoading.value = false;
-    }
-})
-watch(viewerSearch, async (val) => {
-    viewerItems.value = viewerItems.value.filter(item => viewers.value.includes(item.value));
-    if (!val) {} 
-    else {
-        viewerLoading.value = true;
-        var users = await (await newFetch(`${API_BASE_URL}/users/search?keyword=${val}`)).json();
-        for (var i = 0; i < users.items.length; i++)
-            viewerItems.value.push({
-                title: users.items[i].name + "（" + users.items[i].email + "）",
-                value: users.items[i].uid
-            });
-        viewerItems.value = viewerItems.value.filter((item, index, self) => self.findIndex(i => i.value == item.value) == index);
-        viewerItems.value = viewerItems.value.sort((a, b) => a.value - b.value);
-        viewerLoading.value = false;
-    }
-})
 </script>
 
 <template>
@@ -199,7 +136,10 @@ watch(viewerSearch, async (val) => {
                     <draggable v-model="properties" item-key="name">
                         <template #item="{ element }">
                             <CropPropertyOverview 
-                                :props="element" 
+                                :props="element"
+                                :hasEdit="true"
+                                :hasRemove="true"
+                                :hasDetails="false"
                                 @edit="edit(element)" 
                                 @remove="delete2(element)"
                             ></CropPropertyOverview>
@@ -216,37 +156,20 @@ watch(viewerSearch, async (val) => {
                     v-model:open="propertiesDialog" 
                     v-model:props="property" 
                     @submit="add"
+                    :disabled="false"
                 ></CropPropertyDialog>
             </v-timeline-item>
             <v-timeline-item icon="$mdiAccount" dot-color="green-lighten-1">
                 <h2 class="ma-0 font-weight-light mb-4">成员权限</h2>
-                <v-autocomplete
-                    v-model="editors"
-                    v-model:search="editorSearch"
-                    :items="editorItems"
-                    :loading="editorLoading"
+                <UserMultipleSelect
+                    v-model:users="editors"
                     label="EDITORS（协作编辑）"
-                    autocomplete="off"
-                    variant="outlined"
-                    density="comfortable"
-                    hide-details
-                    hide-no-data
-                    class="mb-4"
-                    multiple
-                ></v-autocomplete>
-                <v-autocomplete
-                    v-model="viewers"
-                    v-model:search="viewerSearch"
-                    :items="viewerItems"
-                    :loading="viewerLoading"
+                    class="mb-6"
+                ></UserMultipleSelect>
+                <UserMultipleSelect
+                    v-model:users="viewers"
                     label="VIEWERS（协作查看）"
-                    autocomplete="off"
-                    variant="outlined"
-                    density="comfortable"
-                    hide-details
-                    hide-no-data
-                    multiple
-                ></v-autocomplete>
+                ></UserMultipleSelect>
             </v-timeline-item>
         </v-timeline>
         <div class="mt-4 d-flex align-center justify-end">

@@ -43,7 +43,7 @@ std::vector<DBTable> tables = {
                 .defaultValue = "0",
                 .valueIsExpr = true
             }, {
-                .name = "code",
+                .name = "session",
                 .type = "text"
             }, {
                 .name = "expireAt",

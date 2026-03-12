@@ -10,6 +10,7 @@ backend/signup.html
 backend/ascas-backend*
 backend/make
 backend/recompile.json
+backend/data
 
 frontend/src/views/template.vue
 

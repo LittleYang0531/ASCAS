@@ -147,9 +147,38 @@ Func funcname(...) {
 
 # 当前规划
 
-## `/crops/edit/%d`
+用户头像存储在 `/backend/data/avatars/` 下。
 
-修改一个作物表，post 参数和相应正文可以参考 `/crops/create`
+图片数据存储在 `/backend/data/images/` 下，图片名称统一使用其 sha1 码，不需要后缀名，然后将其 sha1 码作为文本内容存储在数据库中。
 
-## `/crops/`
+## GET `/users/%d`
 
+获取用户详细信息
+
+## GET `/users/%d/avatar`
+
+获取用户头像，直接返回 image/png 格式即可。
+
+## POST `/users/%d/avatar`
+
+更新用户头像，postdata 内为图像 base64 码。
+
+## POST `/crops/%d/edit`
+
+修改一个作物表，post 参数和响应正文可以参考 `/crops/create`
+
+要求用户权限为 `UserPermission::OWNER`
+
+## POST `/crops/%d/records/add`
+
+向作物表中添加一行数据
+
+要求用户权限为 `UserPermission::OWNER` 或 `UserPermission::EDITOR`
+
+## GET `/crops/%s/records/list`
+
+拉取部分作物表中的数据
+
+需要支持 `where`, `order` 等 query 参数
+
+要求用户权限为 `UserPermission::OWNER` 或 `UserPermission::EDITOR` 或 `UserPermission::VIEWER`

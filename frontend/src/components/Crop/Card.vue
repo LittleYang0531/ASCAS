@@ -1,12 +1,5 @@
 <script lang="ts" setup>
-import { type Crop } from '../../models/crop';
-
-const icons = {
-    "UserPermission::NONE": "$mdiLock",
-    "UserPermission::VIEWER": "$mdiEye",
-    "UserPermission::EDITOR": "$mdiPencilCircle",
-    "UserPermission::OWNER": "$mdiCrownCircle",
-};
+import { UserPermission_icons, type Crop } from '../../models/crop';
 
 const props = defineProps<{
     crop: Crop
@@ -39,7 +32,7 @@ function formatDate(date: number) {
     <div class="pa-4">
         <div class="d-flex align-center ga-2">
             <router-link :to="`/crops/${props.crop.cid}`" class="text-title-large">{{ props.crop.title }}</router-link>
-            <v-icon :icon="icons[props.crop.permission as keyof typeof icons] || '$mdiLock'"></v-icon>
+            <v-icon :icon="UserPermission_icons[props.crop.permission as keyof typeof UserPermission_icons] || '$mdiLock'"></v-icon>
             <v-chip size="x-small" variant="outlined" class="text-medium-emphasis">id：{{ props.crop.name }}</v-chip>
             <v-chip size="x-small" variant="outlined" class="text-medium-emphasis">
                 {{ props.crop.permission?.substring("UserPermission::".length) }}
