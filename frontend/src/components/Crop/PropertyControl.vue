@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { RecordProperty } from '../../models/crop';
 
-const label = defineProps<{ label: string, class: string }>();
+const label = defineProps<{ label: string, class: string, disabled: boolean }>();
 const props = defineModel<RecordProperty>("props", { required: true });
 </script>
 
@@ -16,6 +16,7 @@ const props = defineModel<RecordProperty>("props", { required: true });
         @update:model-value="(val) => props.def = val.toString()"
         :class="label.class"
         :precision="null"
+        :disabled="label.disabled"
     ></v-number-input>
     <v-text-field
         v-if="props.type == 'RecordPropertyType::STRING'"
@@ -25,6 +26,7 @@ const props = defineModel<RecordProperty>("props", { required: true });
         density="comfortable"
         :class="label.class"
         hide-details
+        :disabled="label.disabled"
     ></v-text-field>
     <v-select
         v-if="props.type == 'RecordPropertyType::SELECT'"
@@ -35,6 +37,8 @@ const props = defineModel<RecordProperty>("props", { required: true });
         hide-details
         :class="label.class"
         :items="props.options"
+        @update:model-value="(val) => props.def = val.toString()"
+        :disabled="label.disabled"
     ></v-select>
     <v-select
         v-if="props.type == 'RecordPropertyType::MULTI'"
@@ -47,5 +51,6 @@ const props = defineModel<RecordProperty>("props", { required: true });
         :class="label.class"
         :items="props.options"
         @update:model-value="(val) => props.def = JSON.stringify(val)"
+        :disabled="label.disabled"
     ></v-select>
 </template>

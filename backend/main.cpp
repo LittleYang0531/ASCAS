@@ -25,6 +25,10 @@ initEnumBin(LOG_TARGET, LOG_TARGET_FILE, LOG_TARGET_CONSOLE);
 
 int main(int argc, char** argv) {
     // Log.logLevelId = LOG_LEVEL_DEBUG;
+    mkdir("backup", 0777);
+    mkdir("data", 0777);
+    mkdir("data/avatars", 0777);
+    mkdir("data/images", 0777);
 
     std::string proc_name = argv[0];
     std::vector<std::string> hotreloads = { "config.json" };
@@ -61,7 +65,6 @@ int main(int argc, char** argv) {
 
     quick_mysqli_connect();
     std::string backupFile = "./backup/mysql_" + std::to_string(time(NULL)) + ".sql";
-    mkdir("backup", 0777);
     std::string command = "mysqldump";
     if (appConfig["mysql.user"].asString() != "") command +=  " -u " + appConfig["mysql.user"].asString();
     if (appConfig["mysql.passwd"].asString() != "") command += " -p" + appConfig["mysql.passwd"].asString();

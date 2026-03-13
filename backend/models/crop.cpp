@@ -55,6 +55,7 @@ class RecordPropertyBase {
         res["unit"] = unit;
         res["required"] = required;
         res["def"] = def;
+        res["options"] = packarr(options);
         res["type"] = getNameFromEnum(type);
         return res;
     }

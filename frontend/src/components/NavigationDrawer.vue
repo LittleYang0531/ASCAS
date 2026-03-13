@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { useTheme } from 'vuetify';
 import type { User } from '../models/user';
-import { API_BASE_URL } from '../config';
 import { locate } from '../router';
 import { useRoute } from 'vue-router';
+import UserCard from './User/Card.vue';
 
 const theme = useTheme();
 const route = useRoute();
@@ -29,12 +29,7 @@ function themeToggle() {
         rail
     >
         <v-list>
-            <v-list-item
-                :prepend-avatar="`${API_BASE_URL}/users/avatar/${props.user.uid}`"
-                :subtitle="props.user.email"
-                :title="props.user.name"
-                @click="locate('/users/' + props.user.uid)"
-            ></v-list-item>
+            <UserCard :user="props.user" :active-click="true"></UserCard>
         </v-list>
 
         <v-divider></v-divider>

@@ -23,3 +23,10 @@ export interface Crop {
     updatedAt?: number;
     permission?: string;
 };
+
+export const UserPermission_icons = {
+    "UserPermission::NONE": "$mdiLock",
+    "UserPermission::VIEWER": "$mdiEye",
+    "UserPermission::EDITOR": "$mdiPencilCircle",
+    "UserPermission::OWNER": "$mdiCrownCircle",
+};

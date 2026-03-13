@@ -68,7 +68,10 @@ class CropUtils {
         }
 
         if (item.permission == UserPermission::NONE) item = Crop({ .permission = UserPermission::NONE });
-        if (item.permission != UserPermission::OWNER) item.viewers.clear(), item.editors.clear();
+        else {
+            for (int i = 0; i < item.viewers.size(); i++) item.viewers[i] = UserUtils.getUserInfo(item.viewers[i].uid);
+            for (int i = 0; i < item.editors.size(); i++) item.editors[i] = UserUtils.getUserInfo(item.editors[i].uid);
+        }
 
         return item;
     }
@@ -119,6 +122,7 @@ class CropUtils {
     std::vector<Crop> listCrops(int uid, std::string keyword, UserPermission perm, CropSortOrder order) {
         quick_mysqli_connect();
         std::vector<Crop> res;
+        std::set<int> ids;
         
         if (perm == UserPermission::NONE || perm == UserPermission::OWNER) {
             auto query = mysqli_query(
@@ -129,6 +133,8 @@ class CropUtils {
                 quote_encode(keyword).c_str()
             );
             for (int i = 0; i < query.size(); i++) {
+                if (ids.count(stoi(query[i]["id"]))) continue;
+                ids.insert(stoi(query[i]["id"]));
                 res.push_back(Crop({
                     .cid = stoi(query[i]["id"]),
                     .name = query[i]["name"],
@@ -151,6 +157,8 @@ class CropUtils {
                 quote_encode(keyword).c_str()
             );
             for (int i = 0; i < query.size(); i++) {
+                if (ids.count(stoi(query[i]["id"]))) continue;
+                ids.insert(stoi(query[i]["id"]));
                 res.push_back(Crop({
                     .cid = stoi(query[i]["id"]),
                     .name = query[i]["name"],
@@ -173,6 +181,8 @@ class CropUtils {
                 quote_encode(keyword).c_str()
             );
             for (int i = 0; i < query.size(); i++) {
+                if (ids.count(stoi(query[i]["id"]))) continue;
+                ids.insert(stoi(query[i]["id"]));
                 res.push_back(Crop({
                     .cid = stoi(query[i]["id"]),
                     .name = query[i]["name"],
@@ -196,7 +206,7 @@ class CropUtils {
                     return a.updatedAt < b.updatedAt;
                 case CropSortOrder::DEFAULT:
                 default:
-                    return a.permission == b.permission ? a.cid < b.cid : a.permission > b.permission;
+                    return a.permission == b.permission ? a.cid > b.cid : a.permission > b.permission;
             }
         });
 

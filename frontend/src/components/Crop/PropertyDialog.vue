@@ -10,7 +10,8 @@ const open = defineModel<boolean>("open", { required: true });
 const title = defineProps<{
     title: string,
     btnTitle: string,
-    btnIcon: string
+    btnIcon: string,
+    disabled: boolean,
 }>();
 const emits = defineEmits<{
     (e: 'submit'): void,
@@ -56,6 +57,7 @@ function remove(options: Array<string>, element: string) {
                         { title: "定位坐标", value: "RecordPropertyType::GEOMETRY" },
                         { title: "上传图片", value: "RecordPropertyType::IMAGE" }
                     ]'
+                    :disabled="title.disabled"
                 ></v-select>
                 <v-text-field
                     v-model="props.title"
@@ -64,6 +66,7 @@ function remove(options: Array<string>, element: string) {
                     density="comfortable"
                     hide-details
                     class="mt-4"
+                    :disabled="title.disabled"
                 ></v-text-field>
                 <div v-if="props.type != 'RecordPropertyType::GEOMETRY' && props.type != 'RecordPropertyType::IMAGE'">
                     <v-text-field
@@ -73,10 +76,11 @@ function remove(options: Array<string>, element: string) {
                         density="comfortable"
                         hide-details
                         class="mt-4"
+                        :disabled="title.disabled"
                     ></v-text-field>
-                    <v-outlined label="可选选项" v-if="props.type == 'RecordPropertyType::SELECT' || props.type == 'RecordPropertyType::MULTI'">
+                    <VOutlined label="可选选项" v-if="props.type == 'RecordPropertyType::SELECT' || props.type == 'RecordPropertyType::MULTI'">
                         <div class="d-flex flex-column" style="width: 100%">
-                            <v-list class="pa-0" v-if="props.options?.length">
+                            <v-list class="pa-0" v-if="props.options?.length" :disabled="title.disabled">
                                 <draggable v-model="props.options">
                                     <template #item="{ element }">
                                         <v-list-item
@@ -105,6 +109,7 @@ function remove(options: Array<string>, element: string) {
                                                     size="small"
                                                     variant="text"
                                                     @click="editingOption != element ? edit(element) : submitEdit(props.options!, element)"
+                                                    :disabled="title.disabled"
                                                 ></v-btn>
                                                 <v-btn
                                                     icon="$mdiTrashCan"
@@ -112,6 +117,7 @@ function remove(options: Array<string>, element: string) {
                                                     size="small"
                                                     variant="text"
                                                     @click="remove(props.options!, element)"
+                                                    :disabled="title.disabled"
                                                 ></v-btn>
                                             </template>
                                         </v-list-item>
@@ -134,20 +140,22 @@ function remove(options: Array<string>, element: string) {
                                     density="comfortable"
                                     hide-details
                                     active
+                                    :disabled="title.disabled"
                                 ></v-text-field>
                                 <v-btn
                                     icon="$mdiPlus"
                                     @click="() => { addOption && props.options?.push(addOption); addOption = ''; }"
                                     color="primary"
+                                    :disabled="title.disabled"
                                 ></v-btn>
                             </div>
                         </div>
-                    </v-outlined>
+                    </VOutlined>
                     <div class="d-flex justify-space-between mt-2">
                         <p>是否为必填项</p>
-                        <v-switch v-model="props.required" hide-details color="primary"></v-switch>
+                        <v-switch v-model="props.required" hide-details color="primary" :disabled="title.disabled"></v-switch>
                     </div>
-                    <PropertyControl v-model:props="props" label="默认值" class="mt-2"></PropertyControl>
+                    <PropertyControl v-model:props="props" label="默认值" class="mt-2" :disabled="title.disabled"></PropertyControl>
                 </div>
                 <div class="mt-3 d-flex justify-center">
                     <v-btn
