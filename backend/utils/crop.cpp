@@ -212,7 +212,7 @@ class CropUtils {
 
         return res;
     }
-    
+    //编辑作物属性
     void edit(Crop previous_crop,Crop current_crop) {
         quick_mysqli_connect();
         std::vector<std::string> add;
@@ -231,6 +231,7 @@ class CropUtils {
                 add.push_back(current_crop.properties[i].name);
             }
         }
+
         std::vector<std::string> del;
         for(int i = 0;i < previous_crop.properties.size();++i)
         {
@@ -246,6 +247,7 @@ class CropUtils {
                 del.push_back(previous_crop.properties[i].name);
             }
         }
+
         std::string all,sep = ",";
         std::vector<std::string> v;
 
@@ -258,11 +260,9 @@ class CropUtils {
         { 
             std::string v1 = " add var_" + add[i] + " text";
             v.push_back(v1);
-        }
-        
-        all = join(sep,v);
+        }  
 
-        std::cout << all << std::endl;
+        all = join(sep,v);
         std::string properties = json_encode(packarr(current_crop.properties));
         std::string editors = json_encode(packarr(current_crop.editors, [](User u){ return u.uid; }));
         std::string viewers = json_encode(packarr(current_crop.viewers, [](User u){ return u.uid; }));
@@ -282,9 +282,6 @@ class CropUtils {
             quote_encode(previous_crop.name).c_str(),
             quote_encode(all).c_str()
         );
-
-        //alter table modify A first,modify B after A,C after B;
-
         std::vector<std::string> astr;
         for(int i = 1;i < current_crop.properties.size();++i)
         {
