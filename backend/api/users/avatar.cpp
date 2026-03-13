@@ -12,5 +12,7 @@ auto UsersAvatar = [](client_conn conn, http_request request, param argv) {
         quickSendCode(200);
     }
     if (!UserUtils.exists(req)) quickSendCode(404);
-    StaticFileDownloader(conn, request, "./data/avatars/" + std::to_string(req) + ".png");
+    std::string avatarPath = "./data/avatars/" + std::to_string(req) + ".png";
+    if (!fileExists(avatarPath)) writeImage(avatarPath, UserUtils.generateAvatar(std::to_string(req)));
+    StaticFileDownloader(conn, request, avatarPath);
 };
