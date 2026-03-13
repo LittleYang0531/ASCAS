@@ -100,8 +100,8 @@ int main(int argc, char** argv) {
     app.addRoute("/crops/list", CropsList);
     app.addRoute("/crops/%d", CropsDetails);
     app.addRoute("/crops/create", CropsCreate);
-    app.addRoute("*", NotFound);
     app.addRoute("/crops/%d/edit",CropsEdit);
+    app.addRoute("*", NotFound);
     __default_response["Access-Control-Allow-Credentials"] = "true";
     __default_response["Access-Control-Allow-Headers"] = "*";
     __default_response["Access-Control-Allow-Methods"] = "*";

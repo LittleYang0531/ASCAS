@@ -227,8 +227,8 @@ class CropUtils {
                 }
             }
             if(!a) {
-                previous_crop.properties[i].name = generateSession(16);
-                add.push_back(previous_crop.properties[i].name);
+                current_crop.properties[i].name = generateSession(16);
+                add.push_back(current_crop.properties[i].name);
             }
         }
         std::vector<std::string> del;
@@ -247,18 +247,22 @@ class CropUtils {
             }
         }
         std::string all,sep = ",";
-        for(int i = 0;i < add.size();++i)
-        {
-            std::string line = "add " + add[i] + " text,";
-            all += line;
-        }
-        for(int i = 0;i < del.size();++i)
-        {
-            std::string line = "drop " + del[i];
-            if(i != del.size() - 2) line += ',';
-            all += line;
-        }
+        std::vector<std::string> v;
 
+        for(size_t i = 0;i < del.size();++i) 
+        { 
+            std::string v1 = " drop var_" + del[i];
+            v.push_back(v1);
+        }
+        for(size_t i = 0;i < add.size();++i) 
+        { 
+            std::string v1 = " add var_" + add[i] + " text";
+            v.push_back(v1);
+        }
+        
+        all = join(sep,v);
+
+        std::cout << all << std::endl;
         std::string properties = json_encode(packarr(current_crop.properties));
         std::string editors = json_encode(packarr(current_crop.editors, [](User u){ return u.uid; }));
         std::string viewers = json_encode(packarr(current_crop.viewers, [](User u){ return u.uid; }));
@@ -267,16 +271,33 @@ class CropUtils {
             "where id= %d",
             quote_encode(current_crop.title).c_str(),
             quote_encode(current_crop.description).c_str(),
-            quote_encode(viewers),
-            quote_encode(editors),
-            quote_encode(properties),
-            current_crop.cid
+            quote_encode(viewers).c_str(),
+            quote_encode(editors).c_str(),
+            quote_encode(properties).c_str(),
+            previous_crop.cid
         );
 
         mysqli_execute(mysql,
-            "alter table table_\"%s\" \"%s\"",
-            quote_encode(current_crop.name).c_str(),
+            "alter table table_%s %s",
+            quote_encode(previous_crop.name).c_str(),
             quote_encode(all).c_str()
         );
+
+        //alter table modify A first,modify B after A,C after B;
+
+        std::vector<std::string> astr;
+        for(int i = 1;i < current_crop.properties.size();++i)
+        {
+            astr.push_back("modify var_" + current_crop.properties[i].name + " text after var_" + current_crop.properties[i - 1].name);
+        }
+        std::string l = join(sep,astr);
+        mysqli_execute(mysql,
+            "alter table table_%s modify var_%s text first,"
+            "%s",
+            quote_encode(previous_crop.name).c_str(),
+            quote_encode(current_crop.properties[0].name).c_str(),
+            quote_encode(l).c_str()
+        );
+
     }
 }CropUtils;

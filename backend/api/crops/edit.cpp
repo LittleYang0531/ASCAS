@@ -14,6 +14,7 @@ auto CropsEdit = [](client_conn conn, http_request request, param argv) {
     auto viewers = extarr<User>(posts["viewers"], [](Json::Value obj){ return User({ .uid = obj.asInt() }); });
     auto properties = extarr<RecordProperty>(posts["properties"]);
     Crop current_crop = Crop({
+        .cid = previous_crop.cid,
         .title = title,
         .description = description,
         .properties = properties,
