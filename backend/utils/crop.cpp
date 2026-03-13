@@ -202,8 +202,71 @@ class CropUtils {
 
         return res;
     }
+    
+    void edit(Crop previous_crop,Crop current_crop) {
+        quick_mysqli_connect();
+        std::vector<std::string> add;
+        for(int i = 0;i < current_crop.properties.size();++i)
+        {
+            bool a = false;
+            for(int j = 0;j < previous_crop.properties.size();++j)
+            {
+                if(current_crop.properties[i].name == previous_crop.properties[j].name) {
+                    a = true;
+                    break;
+                }
+            }
+            if(!a) {
+                previous_crop.properties[i].name = generateSession(16);
+                add.push_back(previous_crop.properties[i].name);
+            }
+        }
+        std::vector<std::string> del;
+        for(int i = 0;i < previous_crop.properties.size();++i)
+        {
+            bool a = false;
+            for(int j = 0;j < current_crop.properties.size();++j)
+            {
+                if(current_crop.properties[j].name == previous_crop.properties[i].name){
+                    a = true;
+                    break;
+                }
+            }
+            if(!a){
+                del.push_back(previous_crop.properties[i].name);
+            }
+        }
+        std::string all,sep = ",";
+        for(int i = 0;i < add.size();++i)
+        {
+            std::string line = "add " + add[i] + " text,";
+            all += line;
+        }
+        for(int i = 0;i < del.size();++i)
+        {
+            std::string line = "drop " + del[i];
+            if(i != del.size() - 2) line += ',';
+            all += line;
+        }
 
-    void edit(Crop crop) {
-        
+        std::string properties = json_encode(packarr(current_crop.properties));
+        std::string editors = json_encode(packarr(current_crop.editors, [](User u){ return u.uid; }));
+        std::string viewers = json_encode(packarr(current_crop.viewers, [](User u){ return u.uid; }));
+        mysqli_execute(mysql,
+            "update crops set title=\"%s\",description=\"%s\",viewers=\"%s\",editors=\"%s\",properties=\"%s\" "
+            "where id= %d",
+            quote_encode(current_crop.title).c_str(),
+            quote_encode(current_crop.description).c_str(),
+            quote_encode(viewers),
+            quote_encode(editors),
+            quote_encode(properties),
+            current_crop.cid
+        );
+
+        mysqli_execute(mysql,
+            "alter table table_\"%s\" \"%s\"",
+            quote_encode(current_crop.name).c_str(),
+            quote_encode(all).c_str()
+        );
     }
 }CropUtils;

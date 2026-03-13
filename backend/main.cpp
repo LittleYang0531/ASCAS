@@ -16,6 +16,7 @@
 #include "api/crops/details.cpp"
 #include "api/crops/create.cpp"
 #include "api/notFound.cpp"
+#include "api/crops/edit.cpp"
 
 using Json::ValueType;
 initEnum(ValueType, nullValue, objectValue);
@@ -97,6 +98,7 @@ int main(int argc, char** argv) {
     app.addRoute("/crops/%d", CropsDetails);
     app.addRoute("/crops/create", CropsCreate);
     app.addRoute("*", NotFound);
+    app.addRoute("/crops/%d/edit",CropsEdit);
     __default_response["Access-Control-Allow-Credentials"] = "true";
     __default_response["Access-Control-Allow-Headers"] = "*";
     __default_response["Access-Control-Allow-Methods"] = "*";
