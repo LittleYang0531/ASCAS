@@ -14,7 +14,7 @@
     for(int i = 0;i < n;++i) {
         std::string newline;
         newline += c;
-        newline += ((posts["var_" + crop.properties[i].name].asString()));
+        newline += ((posts[crop.properties[i].name].asString()));
         newline += c;
         vjoin.push_back(newline);
     }
