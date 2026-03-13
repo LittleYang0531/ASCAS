@@ -16,4 +16,4 @@ jobs:
     - uses: actions/checkout@v4
     - name: update
       run: |
-        curl https://server.littleyang.com.cn/ascas -H "Authorization: Bearer ${{ secrets.TOKEN }}" -v 
+        curl https://server.littleyang.com.cn/ascas -H "Authorization: Bearer ${{ secrets.TOKEN }}"
