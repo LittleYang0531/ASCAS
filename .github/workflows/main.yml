@@ -15,4 +15,5 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: update
-      run: curl https://server.littleyang.com.cn/ascas -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -v 
+      run: |
+        curl https://server.littleyang.com.cn/ascas -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" -v 
