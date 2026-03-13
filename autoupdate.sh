@@ -1,7 +1,7 @@
 set -e
 
 API_ROOT="https://api.github.com"
-MAIN_ROOT="https://ghproxy.vip/https://github.com"
+MAIN_ROOT="https://github.com"
 ORG="littleyang0531"
 REPO="ASCAS"
 BRANCH="main"
