@@ -261,8 +261,9 @@ install_package mysqlclient libmysqlclient-dev mysql-devel
 echo -e $YELLOW"Building..."$CLEAR
 g++ $TMP/backend/main.cpp -o./ascas-backend -lssl -lcrypto -ljsoncpp -lmysqlclient -O3 -Wno-unused-result -Wno-deprecated-declarations -std=c++20
 
-cp $TMP/data.sql ./data.sql
-cp $TMP/backend/config-example.json ./config.json
+if [[ ! -f config.json ]]; then
+    cp $TMP/backend/config-example.json ./config.json
+fi
 cp $TMP/frontend ./ -r
 cd frontend
 npm install && npm run build

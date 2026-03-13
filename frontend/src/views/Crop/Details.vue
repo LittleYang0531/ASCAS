@@ -223,7 +223,7 @@ async function submit() {
                                 :hasEdit="true"
                                 :hasRemove="true"
                                 :hasDetails="false"
-                                @edit="edit(element)" 
+                                @edit="edit(element)"
                                 @remove="delete2(element)"
                             ></CropPropertyOverview>
                         </template>
@@ -240,6 +240,7 @@ async function submit() {
                     v-model:props="property" 
                     @submit="add"
                     :disabled="false"
+                    :disableType="true"
                 ></CropPropertyDialog>
                 <h2 class="ma-0 mt-4 mb-4">成员权限</h2>
                 <UserMultipleSelect
@@ -269,6 +270,7 @@ async function submit() {
             v-model:props="dialogData" 
             @submit="showDialog = false"
             :disabled="true"
+            :disableType="true"
         ></CropPropertyDialog>
     </div>
     <div v-else class="d-flex justify-center align-center position-absolute" style="width: 100%; height: 100vh; max-width: 960px;">

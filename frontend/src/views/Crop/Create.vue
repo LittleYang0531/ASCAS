@@ -157,6 +157,7 @@ async function submit() {
                     v-model:props="property" 
                     @submit="add"
                     :disabled="false"
+                    :disableType="false"
                 ></CropPropertyDialog>
             </v-timeline-item>
             <v-timeline-item icon="$mdiAccount" dot-color="green-lighten-1">
