@@ -1,7 +1,7 @@
 set -e
 
 API_ROOT="https://api.github.com"
-MAIN_ROOT="https://ghproxy.vip/https://github.com"
+MAIN_ROOT="https://github.com"
 ORG="littleyang0531"
 REPO="ASCAS"
 BRANCH="main"
@@ -257,12 +257,14 @@ fi
 install_package openssl openssl openssl-devel
 install_package jsoncpp libjsoncpp-dev jsoncpp-devel
 install_package mysqlclient libmysqlclient-dev mysql-devel
+install_package libpng libpng-dev png-devel
 
 echo -e $YELLOW"Building..."$CLEAR
-g++ $TMP/backend/main.cpp -o./ascas-backend -lssl -lcrypto -ljsoncpp -lmysqlclient -O3 -Wno-unused-result -Wno-deprecated-declarations -std=c++20
+g++ $TMP/backend/main.cpp -o./ascas-backend -lssl -lcrypto -ljsoncpp -lmysqlclient -lpng -O3 -Wno-unused-result -Wno-deprecated-declarations -std=c++20
 
-cp $TMP/data.sql ./data.sql
-cp $TMP/backend/config-example.json ./config.json
+if [[ ! -f config.json ]]; then
+    cp $TMP/backend/config-example.json ./config.json
+fi
 cp $TMP/frontend ./ -r
 cd frontend
 npm install && npm run build

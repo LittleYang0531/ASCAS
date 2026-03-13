@@ -58,6 +58,13 @@ void clearFile(std::string path) {
     fout.close();
 }
 
+bool fileExists(std::string path) {
+    std::ifstream fin(path);
+    if (!fin.is_open()) return false;
+    fin.close();
+    return true;
+}
+
 std::string str_replace(std::string from, std::string to, std::string source) {
     std::string result = source;
 	int st = 0, wh = result.find(from.c_str(), st);

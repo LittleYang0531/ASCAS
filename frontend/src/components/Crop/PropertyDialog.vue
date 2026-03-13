@@ -12,6 +12,7 @@ const title = defineProps<{
     btnTitle: string,
     btnIcon: string,
     disabled: boolean,
+    disableType: boolean
 }>();
 const emits = defineEmits<{
     (e: 'submit'): void,
@@ -57,7 +58,7 @@ function remove(options: Array<string>, element: string) {
                         { title: "定位坐标", value: "RecordPropertyType::GEOMETRY" },
                         { title: "上传图片", value: "RecordPropertyType::IMAGE" }
                     ]'
-                    :disabled="title.disabled"
+                    :disabled="title.disabled || title.disableType"
                 ></v-select>
                 <v-text-field
                     v-model="props.title"

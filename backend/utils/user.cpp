@@ -40,6 +40,18 @@ class UserUtils {
             t
         );
     }
+    
+    int hexToDec(std::string hex) {
+        int res = 0;
+        if ('A' <= hex[0] && hex[0] <= 'Z') hex[0] = hex[0] - 'A' + 'a';
+        if (isdigit(hex[0])) res += hex[0] - '0';
+        else res += hex[0] - 'a' + 10;
+        res <<= 4;
+        if ('A' <= hex[1] && hex[1] <= 'Z') hex[1] = hex[1] - 'A' + 'a';
+        if (isdigit(hex[1])) res += hex[1] - '0';
+        else res += hex[1] - 'a' + 10;
+        return res;
+    }
 
     public:
 
@@ -183,6 +195,9 @@ class UserUtils {
         smtp.login(appConfig["smtp.user"].asString(), appConfig["smtp.passwd"].asString());
         smtp.rcpt(info.email);
         smtp.mail("邮箱验证", data);
+
+        image img = generateAvatar(std::to_string(uid));
+        writeImage("./data/avatars/" + std::to_string(uid) + ".png", img);
     }
 
     // 邮箱验证
@@ -278,6 +293,7 @@ class UserUtils {
         return true;
     }
 
+    // 用户搜索
     std::vector<User> search(std::string keyword) {
         quick_mysqli_connect();
 
@@ -299,5 +315,41 @@ class UserUtils {
         }
 
         return results;
+    }
+
+    // 生成随机头像
+    image generateAvatar(std::string content) {
+        image img = image(420, 420);
+        std::string hash = sha1(content);
+        int backR = 240, backG = 240, backB = 240;
+        int foreR = 0, foreG = 0, foreB = 0;
+        foreR = hexToDec(hash.substr(0, 2));
+        foreG = hexToDec(hash.substr(2, 2));
+        foreB = hexToDec(hash.substr(4, 2));
+        for (int i = 0; i < 420; i++) {
+            for (int j = 0; j < 420; j++) {
+                img.data[i][j * 4 + 0] = backR;
+                img.data[i][j * 4 + 1] = backG;
+                img.data[i][j * 4 + 2] = backB;
+                img.data[i][j * 4 + 3] = 255;
+            }
+        }
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                int val = hash[i * 5 + (j > 2 ? 4 - j : j)];
+                if (val % 2 == 1) {
+                    int stx = 35 + 70 * i, sty = 35 + 70 * j;
+                    for (int x = stx; x < stx + 70; x++) {
+                        for (int y = sty; y < sty + 70; y++) {
+                            img.data[x][y * 4 + 0] = foreR;
+                            img.data[x][y * 4 + 1] = foreG;
+                            img.data[x][y * 4 + 2] = foreB;
+                            img.data[x][y * 4 + 3] = 255;
+                        }
+                    }
+                }
+            }
+        }
+        return img;
     }
 }UserUtils;

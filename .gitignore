@@ -11,6 +11,7 @@ backend/ascas-backend*
 backend/make
 backend/recompile.json
 backend/data
+backend/main
 
 frontend/src/views/template.vue
 

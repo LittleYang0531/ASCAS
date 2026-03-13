@@ -11,7 +11,7 @@ const props = defineProps<{
 
 <template>
     <v-list-item
-        :prepend-avatar="`${API_BASE_URL}/users/avatar/${props.user.uid}`"
+        :prepend-avatar="`${API_BASE_URL}/users/${props.user.uid}/avatar`"
         :subtitle="props.user.email"
         :title="props.user.name"
         @click="props.activeClick && locate('/users/' + props.user.uid)"
