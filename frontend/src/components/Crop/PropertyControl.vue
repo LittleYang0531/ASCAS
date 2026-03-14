@@ -225,13 +225,13 @@ onBeforeMount(() => {
         v-if="label.props.type == 'RecordPropertyType::MULTI'"
     >
         <v-select
-            :model-value="model || model == '' ? [] : JSON.parse(model!)"
+            :model-value="model == '' ? [] : JSON.parse(model!)"
             variant="outlined"
             density="comfortable"
             hide-details
             multiple
             :items="label.props.options"
-            @update:model-value="(val) => model = JSON.stringify(val)"
+            @update:model-value="(val) => model = JSON.stringify(val.sort())"
             :disabled="label.disabled"
         >
             <template v-slot:label>
