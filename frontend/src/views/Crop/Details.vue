@@ -240,7 +240,7 @@ async function submit() {
                     v-model:props="property" 
                     @submit="add"
                     :disabled="false"
-                    :disableType="true"
+                    :disableType="editingIndex != -1"
                 ></CropPropertyDialog>
                 <h2 class="ma-0 mt-4 mb-4">成员权限</h2>
                 <UserMultipleSelect
