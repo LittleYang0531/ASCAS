@@ -25,5 +25,7 @@
     "smtp.ssl": true,
     "smtp.tls": false,
     "smtp.user": "testuser@example.com",
-    "smtp.passwd": "password"
+    "smtp.passwd": "password",
+
+    "images.maxSize": 2048
 }
