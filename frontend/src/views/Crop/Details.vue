@@ -70,9 +70,18 @@ defineExpose({ loading });
 async function addRecord() {
     for (var i = 0; i < item.value.properties!.length; i++) {
         var prop = item.value.properties![i]!;
-        if (prop.required && values.value[prop.name!] == "") {
-            showMsg(MessageType.Error, `${prop.title}不能为空`);
-            return;
+        if (prop.required) {
+            if (prop.type == "RecordPropertyType::MULTI") {
+                if (JSON.parse(values.value[prop.name!]!).length == 0) {
+                    showMsg(MessageType.Error, `${prop.title}不能为空`);
+                    return;
+                }
+            } else {
+                if (values.value[prop.name!] == "") {
+                    showMsg(MessageType.Error, `${prop.title}不能为空`);
+                    return;
+                }
+            }
         }
     }
     await (await newFetch(`${API_BASE_URL}/crops/${item.value.cid}/records/add`, {

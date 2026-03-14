@@ -141,6 +141,9 @@ function loadGeolocation() {
 }
 
 onBeforeMount(() => {
+    if (label.props.type == "RecordPropertyType::NUMBER") {
+        if (model.value == "") model.value = "0";
+    }
     if (label.props.type == "RecordPropertyType::GEOMETRY") loadGeolocation();
 });
 </script>
