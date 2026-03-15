@@ -64,7 +64,9 @@ async function uploadImage(file: string) {
         xhr.withCredentials = true;
         try {
             xhr.setRequestHeader("Cookie", document.cookie);
-        } catch (e) {}
+        } catch (e) {
+            e;
+        }
         xhr.send(file);
     });
 }
