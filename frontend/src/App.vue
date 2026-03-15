@@ -75,7 +75,7 @@ onBeforeMount(() => {
             <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </div>
     </transition>
-    <Message :isError="isError" :errorText="errorText" :type="type" :hasAppBar="showAppBar"></Message>
+    <Message :isError="isError" :errorText="errorText" :type="type" :hasAppBar="showAppBar && !loaded"></Message>
 </template>
 
 <style lang="css" scoped>

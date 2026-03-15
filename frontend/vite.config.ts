@@ -5,7 +5,6 @@ import { exec } from 'child_process';
 
 // https://vite.dev/config/
 export default defineConfig({
-  base: "./",
   plugins: [
     vue(),
     run([

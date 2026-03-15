@@ -59,6 +59,7 @@ function remove(options: Array<string>, element: string) {
                         { title: "上传图片", value: "RecordPropertyType::IMAGE" }
                     ]'
                     :disabled="title.disabled || title.disableType"
+                    @click="props.def = ''"
                 ></v-select>
                 <v-text-field
                     v-model="props.title"
