@@ -19,6 +19,8 @@ onBeforeMount(() => {
         localStorage.setItem("appVersion", versionString);
     }
 
+    if (!showAppBar.value) return;
+
     var show = localStorage.getItem("showAppBar");
     if (show == null) showAppBar.value = true;
     else showAppBar.value = false;

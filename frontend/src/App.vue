@@ -11,12 +11,13 @@ import { API_BASE_URL } from './config';
 import type { User } from './models/user';
 import { useRoute } from 'vue-router';
 import AppBarHint from './components/AppBarHint.vue';
+import { type as versionType } from './version'
 
 const theme = useTheme();
 const route = useRoute();
 const loaded = ref(false);
 const userInfo: Ref<User> = ref({});
-const showAppBar = ref(true);
+const showAppBar = ref(versionType == 'dev');
 
 async function loading() {
     NProgress.start();
