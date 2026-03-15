@@ -7,7 +7,7 @@ const src = defineProps<{
 
 <template>
     <v-overlay v-model="model">
-        <v-img :src="src.src" absolute></v-img>
+        <v-img :src="src.src" contain></v-img>
     </v-overlay>
 </template>
 

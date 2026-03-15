@@ -234,6 +234,15 @@ const std::string gccVersion = __VERSION__;
 const std::string cppStandard = "C++" + std::to_string(__cplusplus).substr(2, 2);
 EOF
 
+cat << EOF > $TMP/frontend/src/version.ts
+export const type = "$TYPE";
+export const channel = "$BRANCH";
+export const version = "$VERSION";
+export const commit = "$COMMIT";
+export const channelString = (type == "dev" ? channel : "release");
+export const versionString = (type == "dev" ? channel + "@" + version : version);
+EOF
+
 # =============================================
 #
 # 自定义安装过程

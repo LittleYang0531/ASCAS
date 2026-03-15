@@ -3,7 +3,7 @@ const props = defineProps(['isError', 'errorText', 'type', 'hasAppBar']);
 </script>
 
 <template>
-    <div :style="`opacity: ${isError ? 1 : 0}; top: ${props.hasAppBar ? 80 : 16}px;`" class="message">
+    <div :style="`opacity: ${isError ? 1 : 0}; top: ${props.hasAppBar ? 64 : 16}px;`" class="message">
         <v-alert :type="type" style="min-width: 300px;">
             <template v-slot:text>
                 <div v-html="errorText"></div>
