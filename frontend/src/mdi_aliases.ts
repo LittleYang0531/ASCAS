@@ -1,10 +1,12 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Sun Mar 15 01:53:16 CST 2026
+// Generated on Sun Mar 15 21:55:12 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
 import { mdiAccountGroup } from '@mdi/js';
 import { mdiAlphabetical } from '@mdi/js';
+import { mdiArrowLeftBoldCircle } from '@mdi/js';
+import { mdiArrowRightBoldCircle } from '@mdi/js';
 import { mdiCheck } from '@mdi/js';
 import { mdiCheckCircle } from '@mdi/js';
 import { mdiChevronLeft } from '@mdi/js';
@@ -25,6 +27,7 @@ import { mdiHome } from '@mdi/js';
 import { mdiImage } from '@mdi/js';
 import { mdiInformation } from '@mdi/js';
 import { mdiListBox } from '@mdi/js';
+import { mdiLoading } from '@mdi/js';
 import { mdiLock } from '@mdi/js';
 import { mdiLogout } from '@mdi/js';
 import { mdiMagnify } from '@mdi/js';
@@ -45,6 +48,8 @@ export const mdi_aliases = {
     mdiAccountCog,
     mdiAccountGroup,
     mdiAlphabetical,
+    mdiArrowLeftBoldCircle,
+    mdiArrowRightBoldCircle,
     mdiCheck,
     mdiCheckCircle,
     mdiChevronLeft,
@@ -65,6 +70,7 @@ export const mdi_aliases = {
     mdiImage,
     mdiInformation,
     mdiListBox,
+    mdiLoading,
     mdiLock,
     mdiLogout,
     mdiMagnify,

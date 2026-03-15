@@ -12,7 +12,7 @@ auto RecordsUploadImages = [](client_conn conn, http_request request, param argv
     std::string image = base64_decode(request.postdata);
     if (image.size() > appConfig["images.maxSize"].asInt() * 1024) quickSendCode(413);
     std::string hash = sha1(image);
-    std::ofstream fout("./data/images/" + hash + ".png", std::ios::binary);
+    std::ofstream fout("./data/images/" + hash + ".jpg", std::ios::binary);
     fout.write(image.c_str(), image.size());
     fout.close();
     quickSendData(200, hash);

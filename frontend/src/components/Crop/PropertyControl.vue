@@ -20,6 +20,7 @@ const imageProperty = ref({
     height: 0,
     size: 0
 });
+const solvingImage = ref(false);
 const imagePreview = ref(false);
 
 async function uploadImage(file: string) {
@@ -34,33 +35,76 @@ async function uploadImage(file: string) {
     })).json();
     model.value = hash["hash"];
     showMsg(MessageType.Success, "图片上传成功");
+    solvingImage.value = false;
 }
-function solveImage(file: File) {
-    var canvas = document.createElement("canvas");
-    var ctx = canvas.getContext("2d")!;
-    var img = new Image();
-    img.onload = function() {
-        var scale = Math.sqrt(Math.min(1, 2048 * 1024 / 2 / img.width / img.height));
-
-        canvas.width = Math.ceil(img.width * scale);
-        canvas.height = Math.ceil(img.height * scale);
-        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        canvas.toBlob(function(blob) {
-            if (blob) {
-                var pngBase64 = canvas.toDataURL("image/png");
-                imageProperty.value = {
-                    isCropped: scale < 1,
+async function cropImage(file: File, scale: number) {
+    return new Promise((resolve, reject) => {
+        reject;
+        var canvas = document.createElement("canvas");
+        var ctx = canvas.getContext("2d")!;
+        var img = new Image();
+        img.onload = function() {
+            canvas.width = Math.ceil(img.width * scale);
+            canvas.height = Math.ceil(img.height * scale);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            canvas.toBlob(function(blob) {
+                return resolve({
+                    blob: blob,
                     width: canvas.width,
-                    height: canvas.height,
-                    size: blob.size
-                };
-                uploadImage(pngBase64);
-            } else {
-                showMsg(MessageType.Error, "图片转换失败");
-            }
-        });
-    };
-    img.src = URL.createObjectURL(file);
+                    height: canvas.height
+                });
+            }, "image/jpeg", 0.7);
+        };
+        img.src = URL.createObjectURL(file);
+    });
+}
+async function blobToBase64(blob: Blob) {
+    return new Promise<string>((resolve, reject) => {
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            resolve(reader.result as string);
+        };
+        reader.onerror = function() {
+            reject(new Error("读取文件失败"));
+        };
+        reader.readAsDataURL(blob);
+    });
+}
+async function solveImage(file: File) {
+    solvingImage.value = true;
+    var data = await cropImage(file, 1) as any;
+    if (data.blob.size < 2048 * 1024) {
+        var base64 = await blobToBase64(data.blob);
+        imageProperty.value = {
+            isCropped: false,
+            width: data.width,
+            height: data.height,
+            size: data.blob.size
+        };
+        await uploadImage(base64);
+        return;
+    }
+    var l = 0; var r = 1;
+    while (true) {
+        var mid = (l + r) / 2;
+        var data = await cropImage(file, mid) as any;
+        if (data.blob.size < 2048 * 1024 && data.blob.size > 2048 * 1024 * 0.9) {
+            var base64 = await blobToBase64(data.blob);
+            imageProperty.value = {
+                isCropped: true,
+                width: data.width,
+                height: data.height,
+                size: data.blob.size
+            };
+            await uploadImage(base64);
+            return;
+        }
+        if (data.blob.size > 2048 * 1024) {
+            r = mid;
+        } else {
+            l = mid;
+        }
+    }
 }
 function clickEvent() {
     if (model.value != "") {
@@ -290,10 +334,18 @@ onBeforeMount(() => {
             <div 
                 class="d-flex align-center justify-center ga-1" 
                 style="width: 100%; height: 32px;" 
-                v-if="model == ''"
+                v-if="model == '' && !solvingImage"
             >
                 <v-icon icon="$mdiCloudUpload" color="primary"></v-icon>
                 <span class="text-medium-emphasis">尚未上传图片。请点击选择，或将图片拖拽到此处</span>
+            </div>
+            <div 
+                class="d-flex align-center justify-center ga-1" 
+                style="width: 100%; height: 32px;" 
+                v-else-if="model == '' && solvingImage"
+            >
+                <div class="mdi-spin"><v-icon icon="$mdiLoading" color="primary"></v-icon></div>
+                <span class="text-medium-emphasis">文件处理中...</span>
             </div>
             <div class="d-flex align-center justify-space-between" style="width: 100%; height: 32px; padding: 0 6px" v-else>
                 <div class="d-flex align-center ga-1">
@@ -331,5 +383,32 @@ onBeforeMount(() => {
 }
 .hovering .v-field__outline {
     --v-field-border-opacity: var(--v-high-emphasis-opacity)!important;
+}
+
+.mdi-spin {
+  -webkit-animation: mdi-spin 2s infinite linear;
+  animation: mdi-spin 2s infinite linear;
+}
+
+@-webkit-keyframes mdi-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
+}
+
+@keyframes mdi-spin {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(359deg);
+    transform: rotate(359deg);
+  }
 }
 </style>
