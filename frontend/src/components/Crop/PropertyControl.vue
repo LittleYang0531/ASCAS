@@ -62,7 +62,9 @@ async function uploadImage(file: string) {
         });
         xhr.open("POST", `${API_BASE_URL}/crops/${label.cropId}/images`);
         xhr.withCredentials = true;
-        xhr.setRequestHeader("Cookie", document.cookie);
+        try {
+            xhr.setRequestHeader("Cookie", document.cookie);
+        } catch (e) {}
         xhr.send(file);
     });
 }
