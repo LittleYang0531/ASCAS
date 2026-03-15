@@ -106,7 +106,7 @@ class CropUtils {
         std::string columnString = join(", ", columns);
         mysqli_execute(
             mysql,
-            "CREATE TABLE table_%s (%s)",
+            "CREATE TABLE table_%s (id int AUTO_INCREMENT PRIMARY KEY, name text, uid int, %s)",
             crop.name.c_str(),
             columnString.c_str()
         );
@@ -262,7 +262,6 @@ class CropUtils {
         
         all = join(sep,v);
 
-        std::cout << all << std::endl;
         std::string properties = json_encode(packarr(current_crop.properties));
         std::string editors = json_encode(packarr(current_crop.editors, [](User u){ return u.uid; }));
         std::string viewers = json_encode(packarr(current_crop.viewers, [](User u){ return u.uid; }));
@@ -292,7 +291,11 @@ class CropUtils {
         }
         std::string l = join(sep,astr);
         mysqli_execute(mysql,
-            "alter table table_%s modify var_%s text first,"
+            "alter table table_%s "
+            "MODIFY id int AUTO_INCREMENT FIRST, "
+            "MODIFY name text AFTER id, "
+            "MODIFY uid int AFTER name, "
+            "modify var_%s text after uid,"
             "%s",
             quote_encode(previous_crop.name).c_str(),
             quote_encode(current_crop.properties[0].name).c_str(),

@@ -1,7 +1,6 @@
 #include "../../ascas.h"
 
 auto CropsCreate = [](client_conn conn, http_request request, param argv) {
-    
     if (request.method != "POST") quickSendCode(405);
     int uid = UserUtils.checkLogin(request);
     if (!uid) quickSendCode(401);
