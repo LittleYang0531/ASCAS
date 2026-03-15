@@ -4,7 +4,6 @@ import type { RecordProperty } from '../../models/crop';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
 import VOutlined from '../VOutlined.vue';
-import { newFetch } from '../../utils/fetch';
 import { API_BASE_URL } from '../../config';
 import ImageOverlay from '../ImageOverlay.vue';
 import { isJSON } from '../../utils/json';
@@ -21,22 +20,53 @@ const imageProperty = ref({
     size: 0
 });
 const solvingImage = ref(false);
+const uploadingImage = ref(false);
+const uploaded = ref(0);
+const uploadTotal = ref(1);
+const uploadSpeed = ref(0);
 const imagePreview = ref(false);
 
 async function uploadImage(file: string) {
+    uploaded.value = 0, uploadTotal.value = 1;
+    solvingImage.value = false;
+    uploadingImage.value = true;
     if (label.cropId == undefined) {
         showMsg(MessageType.Error, "内部错误：缺少作物表 id");
+        uploadingImage.value = false;
         return;
     }
     file = file.substring(file.indexOf(",") + 1);
-    var hash = await (await newFetch(`${API_BASE_URL}/crops/${label.cropId}/images`, {
-        method: "POST",
-        body: file
-    })).json();
-    model.value = hash["hash"];
-    showMsg(MessageType.Success, "图片上传成功");
-    solvingImage.value = false;
+    return new Promise((resolve, reject) => {
+        reject;
+        const xhr = new XMLHttpRequest();
+        xhr.addEventListener("readystatechange", () => {
+            if (xhr.readyState === xhr.DONE) {
+                var hash = JSON.parse(xhr.responseText);
+                model.value = hash["hash"];
+                showMsg(MessageType.Success, "图片上传成功");
+                uploadingImage.value = false;
+                resolve({});
+            }
+        });
+        var lastTime = new Date().getTime();
+        var lastUploaded = 0;
+        xhr.upload.addEventListener("progress", (e: any) => {
+            var loaded: number = e.loaded;
+            var total: number = e.total;
+            uploaded.value = loaded;
+            uploadTotal.value = total;
+            var currTime = new Date().getTime();
+            uploadSpeed.value = (loaded - lastUploaded) / (currTime - lastTime) * 1000;
+            lastTime = currTime;
+            lastUploaded = loaded;
+        });
+        xhr.open("POST", `${API_BASE_URL}/crops/${label.cropId}/images`);
+        xhr.withCredentials = true;
+        xhr.setRequestHeader("Cookie", document.cookie);
+        xhr.send(file);
+    });
 }
+
 async function cropImage(file: File, scale: number) {
     return new Promise((resolve, reject) => {
         reject;
@@ -334,7 +364,7 @@ onBeforeMount(() => {
             <div 
                 class="d-flex align-center justify-center ga-1" 
                 style="width: 100%; height: 32px;" 
-                v-if="model == '' && !solvingImage"
+                v-if="model == '' && !solvingImage && !uploadingImage"
             >
                 <v-icon icon="$mdiCloudUpload" color="primary"></v-icon>
                 <span class="text-medium-emphasis">尚未上传图片。请点击选择，或将图片拖拽到此处</span>
@@ -342,10 +372,16 @@ onBeforeMount(() => {
             <div 
                 class="d-flex align-center justify-center ga-1" 
                 style="width: 100%; height: 32px;" 
-                v-else-if="model == '' && solvingImage"
+                v-else-if="model == ''"
             >
                 <div class="mdi-spin"><v-icon icon="$mdiLoading" color="primary"></v-icon></div>
-                <span class="text-medium-emphasis">文件处理中...</span>
+                <span class="text-medium-emphasis" v-if="solvingImage">处理图片中......</span>
+                <span class="text-medium-emphasis" v-if="uploadingImage">
+                    上传图片中......
+                    <span v-if="uploadTotal != 1">
+                        （{{ Math.round(uploaded / 10.24) / 100.0 }}kb / {{ Math.round(uploadTotal / 10.24) / 100.0 }}kb，{{ Math.round(uploadSpeed / 10.24) / 100.0 }}kb/s）
+                    </span>
+                </span>
             </div>
             <div class="d-flex align-center justify-space-between" style="width: 100%; height: 32px; padding: 0 6px" v-else>
                 <div class="d-flex align-center ga-1">
@@ -361,6 +397,13 @@ onBeforeMount(() => {
                     @click="clearImage"
                 ></v-icon>
             </div>
+            <v-progress-linear 
+                :model-value="uploaded / uploadTotal" class="position-absolute"
+                :height="2"
+                style="top: none; bottom: 0;"
+                color="primary"
+                v-if="uploadingImage"
+            ></v-progress-linear>
         </VOutlined>
         <ImageOverlay v-model:model="imagePreview" :src="`${API_BASE_URL}/crops/${label.cropId}/images/${model}`"></ImageOverlay>
     </div>
