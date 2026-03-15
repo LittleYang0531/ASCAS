@@ -103,7 +103,7 @@ async function blobToBase64(blob: Blob) {
 async function solveImage(file: File) {
     solvingImage.value = true;
     var data = await cropImage(file, 1) as any;
-    if (data.blob.size < 2048 * 1024) {
+    if (data.blob.size < imageMaxSize * 1024) {
         var base64 = await blobToBase64(data.blob);
         imageProperty.value = {
             isCropped: false,
@@ -129,7 +129,7 @@ async function solveImage(file: File) {
             await uploadImage(base64);
             return;
         }
-        if (data.blob.size > 2048 * 1024) {
+        if (data.blob.size > imageMaxSize * 1024) {
             r = mid;
         } else {
             l = mid;
