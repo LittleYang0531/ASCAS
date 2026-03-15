@@ -41,6 +41,15 @@ install_package() {
     fi
 }
 
+check_package() {
+    cat << EOF > /tmp/main_test.cpp
+int main() {
+    return 0;
+}
+EOF
+    g++ /tmp/main_test.cpp -o/dev/null -l$1 >/dev/null 2>&1
+}
+
 if command -v curl > /dev/null 2>&1; then
     echo -e $GREEN"curl is already installed."$CLEAR
 else
@@ -235,12 +244,12 @@ const std::string cppStandard = "C++" + std::to_string(__cplusplus).substr(2, 2)
 EOF
 
 cat << EOF > $TMP/frontend/src/version.ts
-export const type = "$TYPE";
-export const channel = "$BRANCH";
-export const version = "$VERSION";
-export const commit = "$COMMIT";
-export const channelString = (type == "dev" ? channel : "release");
-export const versionString = (type == "dev" ? channel + "@" + version : version);
+export var type = "$TYPE";
+export var channel = "$BRANCH";
+export var version = "$VERSION";
+export var commit = "$COMMIT";
+export var channelString = (type == "dev" ? channel : "release");
+export var versionString = (type == "dev" ? channel + "@" + version : version);
 EOF
 
 # =============================================
@@ -263,10 +272,33 @@ else
     exit 1
 fi
 
-install_package openssl openssl openssl-devel
-install_package jsoncpp libjsoncpp-dev jsoncpp-devel
-install_package mysqlclient libmysqlclient-dev mysql-devel
-install_package libpng libpng-dev png-devel
+if check_package ssl; then
+    if check_package crypto; then
+        echo -e $GREEN"openssl is already installed."$CLEAR
+    else
+        install_package openssl openssl openssl-devel
+    fi
+else
+    install_package openssl openssl openssl-devel
+fi
+
+if check_package jsoncpp; then
+    echo -e $GREEN"jsoncpp is already installed."$CLEAR
+else
+    install_package jsoncpp libjsoncpp-dev jsoncpp-devel
+fi
+
+if check_package mysqlclient; then
+    echo -e $GREEN"mysqlclient is already installed."$CLEAR
+else
+    install_package mysqlclient libmysqlclient-dev mysql-devel
+fi
+
+if check_package png; then
+    echo -e $GREEN"libpng is already installed."$CLEAR
+else
+    install_package libpng libpng-dev png-devel
+fi
 
 echo -e $YELLOW"Building..."$CLEAR
 g++ $TMP/backend/main.cpp -o./ascas-backend -lssl -lcrypto -ljsoncpp -lmysqlclient -lpng -O3 -Wno-unused-result -Wno-deprecated-declarations -std=c++20
