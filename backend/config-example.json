@@ -27,5 +27,5 @@
     "smtp.user": "testuser@example.com",
     "smtp.passwd": "password",
 
-    "images.maxSize": 2048
+    "images.maxSize": 512
 }

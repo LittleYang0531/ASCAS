@@ -4,7 +4,7 @@ import type { RecordProperty } from '../../models/crop';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
 import VOutlined from '../VOutlined.vue';
-import { API_BASE_URL } from '../../config';
+import { API_BASE_URL, imageMaxSize } from '../../config';
 import ImageOverlay from '../ImageOverlay.vue';
 import { isJSON } from '../../utils/json';
 
@@ -118,7 +118,7 @@ async function solveImage(file: File) {
     while (true) {
         var mid = (l + r) / 2;
         var data = await cropImage(file, mid) as any;
-        if (data.blob.size < 2048 * 1024 && data.blob.size > 2048 * 1024 * 0.9) {
+        if (data.blob.size < imageMaxSize * 1024 && data.blob.size > imageMaxSize * 1024 * 0.9) {
             var base64 = await blobToBase64(data.blob);
             imageProperty.value = {
                 isCropped: true,
@@ -398,7 +398,7 @@ onBeforeMount(() => {
                 ></v-icon>
             </div>
             <v-progress-linear 
-                :model-value="uploaded / uploadTotal" class="position-absolute"
+                :model-value="uploaded / uploadTotal * 100" class="position-absolute"
                 :height="2"
                 style="top: none; bottom: 0;"
                 color="primary"
