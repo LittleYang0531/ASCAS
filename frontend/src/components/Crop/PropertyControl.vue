@@ -7,6 +7,7 @@ import VOutlined from '../VOutlined.vue';
 import { newFetch } from '../../utils/fetch';
 import { API_BASE_URL } from '../../config';
 import ImageOverlay from '../ImageOverlay.vue';
+import { isJSON } from '../../utils/json';
 
 const label = defineProps<{ props: RecordProperty, label: string, class: string, disabled: boolean, cropId?: number }>();
 const model = defineModel<string>("model", { required: true });
@@ -225,7 +226,7 @@ onBeforeMount(() => {
         v-if="label.props.type == 'RecordPropertyType::MULTI'"
     >
         <v-select
-            :model-value="model == '' ? [] : JSON.parse(model!)"
+            :model-value="!isJSON(model!) ? [] : JSON.parse(model!)"
             variant="outlined"
             density="comfortable"
             hide-details
