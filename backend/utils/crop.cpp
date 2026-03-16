@@ -298,18 +298,17 @@ class CropUtils {
             astr.push_back("modify var_" + current_crop.properties[i].name + type + " after var_" + current_crop.properties[i - 1].name);
         }
         std::string l = join(sep,astr);
-        if(l != "") l = ',' + l;
         std::string type1 = (current_crop.properties[0].type == RecordPropertyType::NUMBER ? " FLOAT" : " TEXT");
         mysqli_execute(mysql,
             "alter table table_%s "
             "MODIFY id int AUTO_INCREMENT FIRST, "
             "MODIFY name text AFTER id, "
             "MODIFY uid int AFTER name, "
-            "modify var_%s text after uid,"
+            "modify var_%s %s after uid,"
             "%s",
             quote_encode(previous_crop.name).c_str(),
             quote_encode(current_crop.properties[0].name).c_str(),
-            quote_encode(type1).c_str(),
+            type1.c_str(),
             quote_encode(l).c_str()
         );
 
