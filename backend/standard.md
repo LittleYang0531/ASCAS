@@ -320,8 +320,7 @@ class node {
                 ]
             }
         ]
-    },
-
+    }
 }
 ```
 
@@ -348,16 +347,18 @@ std::vector<node> order;
 例如输入为：
 
 ```json
-[
-    {
-        "column": "A",
-        "isASC": true
-    },
-    {
-        "column": "B",
-        "isASC": false
-    }
-]
+{
+    "order": [
+        {
+            "column": "A",
+            "isASC": true
+        },
+        {
+            "column": "B",
+            "isASC": false
+        }
+    ]
+}
 ```
 
 生成的 SQL 为：

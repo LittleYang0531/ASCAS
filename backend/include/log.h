@@ -42,6 +42,7 @@ class LogHelper {
     std::string targetPath = "log.txt";
     // pthread_mutex_t mutex;
     sem_t* sem;
+    std::function<void()> errorHandler = [](){};
 
     LogHelper() {
         sem = proc_sem_init();
@@ -93,6 +94,9 @@ class LogHelper {
             }
         }
         proc_sem_unlock(sem);
+        if (levelId == LOG_LEVEL_ERROR) {
+            errorHandler();
+        }
     }
 }Log;
 
