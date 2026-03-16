@@ -95,7 +95,6 @@ void putRequest(client_conn&, int, argvar);
 bool isCgi = false;
 std::string cgiRequest, cgiResponse;
 std::ofstream responseOut;
-client_conn currconn;
 
 /** WebSocket数据收发相关函数 */
 const int http_len = 1 << 12;
@@ -267,7 +266,7 @@ std::string recv(client_conn __fd, int siz = -1) {
                 if (times <= lim) times++;
                 else {
                     writeLog(LOG_LEVEL_WARNING, "Failed to recieve data! Error: %d", errno);
-                    return "";    
+                    return "";
                 }
             }
             __buf.push_back(char(ch));
@@ -396,6 +395,8 @@ int sock;
 struct sockaddr_in server_address;
 std::string http_code[1024];
 jmp_buf buf[1024];
+client_conn currconn;
+http_request currrequest;
 
 SSL_CTX *ctx;
 
@@ -1407,9 +1408,10 @@ void thread_pool::work_thread() {
         obj["code"] = 500;
         obj["msg"] = http_code[500];
         std::string msg = json_encode(obj);
-        auto request = __api_default_response;
-        request["Content-Length"] = std::to_string(msg.size());
-        putRequest(currconn, 500, request);
+        auto response = __api_default_response;
+        response["Content-Length"] = std::to_string(msg.size());
+        response["Access-Control-Allow-Origin"] = currrequest.argv["origin"];
+        putRequest(currconn, 500, response);
         send(currconn, msg);
         exitRequest(currconn);
     };
@@ -1454,6 +1456,7 @@ void thread_pool::work_thread() {
         conn2.thread_id = id;
         currconn = conn2;
         http_request request = getRequest(conn2);
+        currrequest = request;
         writeLog(LOG_LEVEL_INFO, "New Connection: %s %s [%s:%d]", request.method.c_str(), request.path.c_str(), inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
                                  
         /** 提取路径 */

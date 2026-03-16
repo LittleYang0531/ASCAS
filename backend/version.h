@@ -4,8 +4,8 @@
 
 const std::string type = "dev";
 const std::string channel = "main";
-const std::string version = "f14b18a6c4cf09f1aa4563fda5f4790b10b2789a";
-const std::string commit = "f14b18a6c4cf09f1aa4563fda5f4790b10b2789a";
+const std::string version = "02afc8a6bc086cd1f314956d16a54f4edc73f20c";
+const std::string commit = "02afc8a6bc086cd1f314956d16a54f4edc73f20c";
 const std::string compileTime = __DATE__ " " __TIME__;
 const std::string compileTimestamp = __TIMESTAMP__;
 const std::string gccVersion = __VERSION__;
