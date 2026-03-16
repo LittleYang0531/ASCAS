@@ -12,16 +12,16 @@ const scale = ref(1);
 const top = ref(0);
 const left = ref(0);
 const streaming = ref(false);
-const cameraClass = ref("ButtonBase CameraButton ButtonHover CameraButton-right");
+const cameraClass = ref("CameraButton-right");
 
 function onresize() {
     scale.value = Math.min(window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
     top.value = (window.innerHeight - scale.value * naturalHeight.value) / 2;
     left.value = (window.innerWidth - scale.value * naturalWidth.value) / 2;
     if (window.innerWidth > window.innerHeight) { // 横屏
-        cameraClass.value = "ButtonBase CameraButton ButtonHover CameraButton-right"
+        cameraClass.value = "CameraButton-right flex-column";
     } else { // 竖屏
-        cameraClass.value = "ButtonBase CameraButton ButtonHover CameraButton-bottom";
+        cameraClass.value = "CameraButton-bottom";
     }
 };
 
@@ -39,33 +39,46 @@ function takephoto() {
     }, 'image/jpeg', 0.7);
 }
 
-watch(model, (newVal) => {
-    if (newVal) {
-        navigator.mediaDevices.getUserMedia({ video: true, audio: false })
-            .then((stream) => {
-                video.value!.addEventListener('canplay', () => {
-                    if (!streaming.value) {
-                        naturalWidth.value = video.value!.videoWidth;
-                        naturalHeight.value = video.value!.videoHeight;
-                        onresize();
-                        streaming.value = true;
-                    }
-                }, false);
+const facingMode = ref<VideoFacingModeEnum>('environment');
+function register() {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode.value }, audio: false })
+        .then((stream) => {
+            video.value!.addEventListener('canplay', () => {
+                if (!streaming.value) {
+                    naturalWidth.value = video.value!.videoWidth;
+                    naturalHeight.value = video.value!.videoHeight;
+                    onresize();
+                    streaming.value = true;
+                }
+            }, false);
 
-                video.value!.srcObject = stream;
-                video.value!.play();
-            })
-            .catch((err) => {
-                console.error(`An error occurred: ${err}`);
-            });
-    } else {
-        const stream = video.value?.srcObject as MediaStream | undefined;
-        if (stream) {
-            const tracks = stream.getTracks();
-            tracks.forEach((track) => track.stop());
-            video.value!.srcObject = null;
-        }
+            video.value!.srcObject = stream;
+            video.value!.play();
+        })
+        .catch((err) => {
+            console.error(`An error occurred: ${err}`);
+        });
+}
+
+function release() {
+    const stream = video.value?.srcObject as MediaStream | undefined;
+    if (stream) {
+        const tracks = stream.getTracks();
+        tracks.forEach((track) => track.stop());
+        video.value!.srcObject = null;
     }
+}
+
+function reverse(e: Event) {
+    e.stopPropagation();
+    facingMode.value = facingMode.value == 'environment' ? 'user' : 'environment';
+    release();
+    register();
+}
+
+watch(model, (newVal) => {
+    if (newVal) register();
+    else release();
 });
 
 onBeforeMount(() => {
@@ -87,21 +100,26 @@ onBeforeUnmount(() => {
         ></video>
         <v-btn
             icon="$mdiClose"
-            class="ButtonBase CloseButton ButtonHover"
+            class="position-absolute ButtonBase CloseButton ButtonHover"
             @click="model = false"
         ></v-btn>
-        <v-btn
-            ref="camera"
-            icon="$mdiCamera"
-            :class="cameraClass"
-            @click="takephoto"
-        ></v-btn>
+        <div :class="`position-absolute ${cameraClass} d-flex justify-center align-center ga-2`" @click.prevent>
+            <v-btn
+                icon="$mdiCamera"
+                class="ButtonBase CameraButton ButtonHover"
+                @click="takephoto"
+            ></v-btn>
+            <v-btn
+                icon="$mdiCameraFlip"
+                class="ButtonBase CameraButton ButtonHover"
+                @click="reverse"
+            ></v-btn>
+        </div>
     </v-overlay>
 </template>
 
 <style lang="css" scoped>
 .ButtonBase {
-    position: absolute;
     opacity: var(--v-medium-emphasis-opacity);
     transition: opacity 0.28s;
 }
