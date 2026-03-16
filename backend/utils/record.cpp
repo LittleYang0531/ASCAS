@@ -142,7 +142,7 @@ public:
         //mysql_execute(mysql);
     }
 
-     void add(Crop crop, Json::Value posts, int uid)
+    void add(Crop crop, Json::Value posts, int uid)
     {
 
         std::string all, sep = ",", c = "\"",var;
@@ -175,6 +175,7 @@ public:
             quote_encode(var).c_str(),
             name.c_str(),
             uid,
-            all.c_str());
+            all.c_str()
+        );
     }
 }RecordUtils;

@@ -14,6 +14,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+    - name: Check
+      run: |
+        curl https://server.littleyang.com.cn/ascas/check -H "Authorization: Bearer ${{ secrets.TOKEN }}" -sN | bash
     - name: Update
       run: |
         curl https://server.littleyang.com.cn/ascas -H "Authorization: Bearer ${{ secrets.TOKEN }}" -sN
