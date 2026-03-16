@@ -1,4 +1,4 @@
-name: Update Remote Server
+name: check & deploy
 
 on:
   push:
@@ -8,15 +8,19 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
-
+  check:
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Check
       run: |
         curl https://server.littleyang.com.cn/ascas/check -H "Authorization: Bearer ${{ secrets.TOKEN }}" -sN | bash
-    - name: Update
+        
+  deploy:
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+    - uses: actions/checkout@v4
+    - name: Deploy
       run: |
-        curl https://server.littleyang.com.cn/ascas -H "Authorization: Bearer ${{ secrets.TOKEN }}" -sN
+        curl https://server.littleyang.com.cn/ascas/deploy -H "Authorization: Bearer ${{ secrets.TOKEN }}" -sN
