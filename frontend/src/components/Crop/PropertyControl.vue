@@ -209,8 +209,8 @@ function loadGeolocation() {
             showMsg(MessageType.Error, `获取地理位置失败（${err.code}）：${err.message}`);
             geometryLoaded.value = true;
         }, {
-            enableHighAccuracy: true, // 提高精度
-            maximumAge: 0 // 不使用缓存位置
+            enableHighAccuracy: true,
+            maximumAge: 0
         });
     } else {
         showMsg(MessageType.Error, "浏览器不支持获取地理位置，请使用支持的浏览器！");

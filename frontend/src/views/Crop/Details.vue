@@ -96,7 +96,7 @@ async function addRecord() {
         method: "POST",
         body: JSON.stringify(values.value)
     }, () => { fetching.value = false; }));
-    fetching.value = true;
+    fetching.value = false;
     showMsg(MessageType.Success, "添加成功");
 }
 async function addRecordAndExit() {
