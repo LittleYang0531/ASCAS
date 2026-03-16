@@ -74,7 +74,7 @@ function showPropertyDetails(prop: RecordProperty) {
 
 defineExpose({ loading });
 
-async function addRecord() {
+async function addRecord(callback = () => {}) {
     for (var i = 0; i < item.value.properties!.length; i++) {
         var prop = item.value.properties![i]!;
         if (prop.required) {
@@ -98,18 +98,21 @@ async function addRecord() {
     }, () => { fetching.value = false; }));
     fetching.value = false;
     showMsg(MessageType.Success, "添加成功");
+    callback();
 }
 async function addRecordAndExit() {
-    await addRecord();
-    await sleep(1000);
-    window.location.href = `/crops/${item.value.cid}?page=simple`;
+    await addRecord(async () => {
+        await sleep(1000);
+        window.location.href = `/crops/${item.value.cid}?page=simple`;
+    });
 }
 async function addRecordAndContinue() {
-    await addRecord();
-    for (var i = 0; i < item.value.properties!.length; i++) {
-        var prop = item.value.properties![i]!;
-        values.value[prop.name!] = prop.def!;
-    }
+    await addRecord(() => {
+        for (var i = 0; i < item.value.properties!.length; i++) {
+            var prop = item.value.properties![i]!;
+            values.value[prop.name!] = prop.def!;
+        }
+    });
 }
 
 const property: Ref<RecordProperty> = ref({

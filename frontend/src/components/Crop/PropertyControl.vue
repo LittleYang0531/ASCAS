@@ -10,6 +10,7 @@ import { API_BASE_URL, imageMaxSize } from '../../config';
 import ImageOverlay from '../ImageOverlay.vue';
 import { isJSON } from '../../utils/json';
 import CameraOverlay from '../CameraOverlay.vue';
+import { useDisplay } from 'vuetify';
 
 const label = defineProps<{ props: RecordProperty, label: string, class: string, disabled: boolean, cropId?: number }>();
 const model = defineModel<string>("model", { required: true });
@@ -29,6 +30,7 @@ const uploadTotal = ref(1);
 const uploadSpeed = ref(0);
 const imagePreview = ref(false);
 const cameraPreview = ref(false);
+const mobile = useDisplay().mobile;
 
 async function uploadImage(file: string) {
     uploaded.value = 0, uploadTotal.value = 1;
@@ -396,7 +398,7 @@ onBeforeMount(() => {
                 </div>
                 <v-icon
                     icon="$mdiCloseCircle"
-                    class="text-medium-emphasis clearButton"
+                    :class="`clearButton ${mobile ? 'mobile' : ''}`"
                     @click="clearImage"
                 ></v-icon>
             </div>
@@ -424,6 +426,9 @@ onBeforeMount(() => {
     opacity: 0;
     transition: opacity 0.28s;
 }
+.mobile.clearButton {
+    opacity: var(--v-medium-emphasis-opacity);
+}
 </style>
 
 <style lang="css">
@@ -432,7 +437,7 @@ onBeforeMount(() => {
         --v-field-border-opacity: var(--v-high-emphasis-opacity);
     }
     .myHoverOutlined.v-field:hover .clearButton {
-        opacity: var(--v-high-emphasis-opacity);
+        opacity: var(--v-medium-emphasis-opacity);
     }
 }
 .hovering .v-field__outline {
