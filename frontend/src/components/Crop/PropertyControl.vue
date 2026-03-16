@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+// (model = '') => (solvingImage) => (uploadingImage) => (model != '')
+
 import { onBeforeMount, ref } from 'vue';
 import type { RecordProperty } from '../../models/crop';
 import { showMsg } from '../../utils/message';
@@ -409,7 +411,7 @@ onBeforeMount(() => {
         <v-btn
             icon="$mdiCamera"
             color="primary"
-            :disabled="model != ''"
+            :disabled="model != '' || solvingImage || uploadingImage"
             @click="cameraPreview = true"
         ></v-btn>
         <ImageOverlay v-model:model="imagePreview" :src="`${API_BASE_URL}/crops/${label.cropId}/images/${model}`"></ImageOverlay>
