@@ -36,6 +36,7 @@ export default defineComponent({
 
 <script lang="ts" setup>
 const loaded = ref(false);
+const fetching = ref(false);
 const item: Ref<Crop> = ref({});
 const tab = ref("properties");
 
@@ -90,10 +91,13 @@ async function addRecord() {
             }
         }
     }
+    fetching.value = true;
     await (await newFetch(`${API_BASE_URL}/crops/${item.value.cid}/records/add`, {
         method: "POST",
         body: JSON.stringify(values.value)
-    }));
+    }, () => { fetching.value = false; }));
+    fetching.value = true;
+    showMsg(MessageType.Success, "添加成功");
 }
 
 const property: Ref<RecordProperty> = ref({
@@ -166,6 +170,7 @@ async function submit() {
         showMsg(MessageType.Error, "请至少添加一个属性");
         return;
     }
+    fetching.value = true;
     await (await newFetch(`${API_BASE_URL}/crops/${item.value.cid}/edit`, {
         method: "POST",
         body: JSON.stringify({
@@ -176,7 +181,7 @@ async function submit() {
             editors: editors.value.map((e) => e.uid!),
             viewers: viewers.value.map((e) => e.uid!)
         })
-    })).json();
+    }, () => { fetching.value = false; })).json();
     showMsg(MessageType.Success, "修改成功");
     await sleep(1000);
     window.location.href = `/crops/${item.value.cid}`;
@@ -242,6 +247,7 @@ async function submit() {
                         prepend-icon="$mdiCheck"
                         color="primary"
                         @click="addRecord()"
+                        :disabled="fetching"
                     >添加</v-btn>
                 </div>
             </v-tabs-window-item>
@@ -322,6 +328,7 @@ async function submit() {
                         prepend-icon="$mdiCheck"
                         color="primary"
                         @click="submit()"
+                        :disabled="fetching"
                     >修改</v-btn>
                 </div>
             </v-tabs-window-item>

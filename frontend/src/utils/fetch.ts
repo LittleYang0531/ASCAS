@@ -16,7 +16,7 @@ export async function myFetch(url: string, options?: RequestInit): Promise<Respo
     }
 }
 
-export async function newFetch(url: string, options?: RequestInit, callback?: () => {}): Promise<Response> {
+export async function newFetch(url: string, options?: RequestInit, callback = () => {}): Promise<Response> {
     try {
         const response = await myFetch(url, options);
         return response;
