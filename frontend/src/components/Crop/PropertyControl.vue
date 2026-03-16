@@ -387,7 +387,7 @@ onBeforeMount(() => {
             <div class="d-flex align-center justify-space-between" style="width: 100%; height: 32px; padding: 0 6px" v-else>
                 <div class="d-flex align-center ga-1">
                     <v-icon icon="$mdiImage" color="primary"></v-icon>
-                    <span class="text-medium-emphasis">{{ model }}.png</span>
+                    <span class="text-medium-emphasis">{{ model }}.jpg</span>
                     <span class="text-medium-emphasis">
                         ({{ Math.round(imageProperty.size / 10.24) / 100.0 }}kb{{ imageProperty.isCropped ? `，已裁剪至 ${imageProperty.width}x${imageProperty.height}` : "" }})
                     </span>

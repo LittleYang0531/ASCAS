@@ -85,6 +85,10 @@ function delete2(props: RecordProperty) {
 }
 
 async function submit() {
+    if (title.value == "") {
+        showMsg(MessageType.Error, "作物名称不能为空");
+        return;
+    }
     if (properties.value.length == 0) {
         showMsg(MessageType.Error, "请至少添加一个属性");
         return;
@@ -115,11 +119,15 @@ async function submit() {
                     <h2 class="ma-0 font-weight-light mb-4">基本信息</h2>
                     <v-text-field
                         v-model="title"
-                        label="作物名称"
                         variant="outlined"
                         density="comfortable"
                         hide-details
-                    ></v-text-field>
+                    >
+                        <template v-slot:label>
+                            <span>作物名称</span>  
+                            <span style="color: red">&nbsp;*</span>
+                        </template>
+                    </v-text-field>
                     <v-text-field
                         v-model="description"
                         label="作物描述"

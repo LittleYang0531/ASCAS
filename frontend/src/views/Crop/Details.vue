@@ -41,12 +41,18 @@ const tab = ref("properties");
 
 const propertiesDialog = ref(false);
 const editingIndex = ref(-1);
+const title = ref("");
+const description = ref("");
+const properties = ref<Array<RecordProperty>>([]);
 const editors: Ref<Array<User> > = ref([]);
 const viewers: Ref<Array<User> > = ref([]);
 const values: Ref<Record<string, string>> = ref({});
 
 function loading(data: any) {
     item.value = data.crop;
+    title.value = item.value.title!;
+    description.value = item.value.description!;
+    properties.value = item.value.properties!;
     editors.value = item.value.editors!;
     viewers.value = item.value.viewers!;
     if (data.param.page != undefined) tab.value = data.param.page;
@@ -132,27 +138,31 @@ function add() {
     }
 
     if (editingIndex.value != -1) {
-        item.value.properties![editingIndex.value] = property.value;
+        properties.value[editingIndex.value] = property.value;
         editingIndex.value = -1;
     } else {
-        item.value.properties?.push(property.value);
+        properties.value.push(property.value);
     }
 
     propertiesDialog.value = false;
 }
 function edit(props: RecordProperty) {
     property.value = JSON.parse(JSON.stringify(props));
-    editingIndex.value = item.value.properties?.indexOf(props)!;
+    editingIndex.value = properties.value.indexOf(props);
     propertiesDialog.value = true;
 }
 function delete2(props: RecordProperty) {
-    var index = item.value.properties?.indexOf(props)!;
+    var index = properties.value.indexOf(props);
     if (index > -1) {
-        item.value.properties?.splice(index, 1);
+        properties.value.splice(index, 1);
     }
 }
 async function submit() {
-    if (item.value.properties?.length == 0) {
+    if (title.value == "") {
+        showMsg(MessageType.Error, "作物名称不能为空");
+        return;
+    }
+    if (properties.value.length == 0) {
         showMsg(MessageType.Error, "请至少添加一个属性");
         return;
     }
@@ -160,9 +170,9 @@ async function submit() {
         method: "POST",
         body: JSON.stringify({
             cid: item.value.cid,
-            title: item.value.title,
-            description: item.value.description,
-            properties: item.value.properties,
+            title: title.value,
+            description: description.value,
+            properties: properties.value,
             editors: editors.value.map((e) => e.uid!),
             viewers: viewers.value.map((e) => e.uid!)
         })
@@ -251,14 +261,18 @@ async function submit() {
             <v-tabs-window-item value="edit" class="pa-4" v-if="item.permission == 'UserPermission::OWNER'">
                 <h2 class="ma-0 mb-4">基本信息</h2>
                 <v-text-field
-                    v-model="item.title"
-                    label="作物名称"
+                    v-model="title"
                     variant="outlined"
                     density="comfortable"
                     hide-details
-                ></v-text-field>
+                >
+                    <template v-slot:label>
+                        <span>作物名称</span>  
+                        <span style="color: red">&nbsp;*</span>
+                    </template>
+                </v-text-field>
                 <v-text-field
-                    v-model="item.description"
+                    v-model="description"
                     label="作物描述"
                     variant="outlined"
                     density="comfortable"
@@ -266,8 +280,8 @@ async function submit() {
                     class="mt-4"
                 ></v-text-field>
                 <h2 class="ma-0 mt-4 mb-4">作物属性</h2>
-                <v-list class="mb-4" v-if="item.properties?.length">
-                    <draggable v-model="item.properties" item-key="name">
+                <v-list class="mb-4" v-if="properties.length">
+                    <draggable v-model="properties" item-key="name">
                         <template #item="{ element }">
                             <CropPropertyOverview 
                                 :props="element"
