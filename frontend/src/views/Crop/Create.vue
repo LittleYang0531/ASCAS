@@ -130,14 +130,14 @@ async function submit() {
                             <span style="color: red">&nbsp;*</span>
                         </template>
                     </v-text-field>
-                    <v-text-field
+                    <v-textarea
                         v-model="description"
                         label="作物描述"
                         variant="outlined"
                         density="comfortable"
                         hide-details
                         class="mt-4"
-                    ></v-text-field>
+                    ></v-textarea>
                 </div>
             </v-timeline-item>
             <v-timeline-item icon="$mdiDatabase" dot-color="purple-lighten-1">

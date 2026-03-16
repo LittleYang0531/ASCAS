@@ -283,14 +283,14 @@ async function submit() {
                         <span style="color: red">&nbsp;*</span>
                     </template>
                 </v-text-field>
-                <v-text-field
+                <v-textarea
                     v-model="description"
                     label="作物描述"
                     variant="outlined"
                     density="comfortable"
                     hide-details
                     class="mt-4"
-                ></v-text-field>
+                ></v-textarea>
                 <h2 class="ma-0 mt-4 mb-4">作物属性</h2>
                 <v-list class="mb-4" v-if="properties.length">
                     <draggable v-model="properties" item-key="name">
