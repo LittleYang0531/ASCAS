@@ -42,3 +42,4 @@ void quick_mysqli_close() {
 
 #include "utils/user.cpp"
 #include "utils/crop.cpp"
+#include "utils/record.cpp"
