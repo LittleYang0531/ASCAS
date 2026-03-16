@@ -1,6 +1,6 @@
 #pragma once
 #include "../ascas.h"
-
+#include<queue>
 class RecordUtils
 {
 private:
@@ -14,9 +14,119 @@ private:
             session += sessionStrings[rand() % sessionStrings.size()];
         return session;
     }
-
+    int pos(const std::vector<RecordProperty>& v,std::string s)
+    {
+        for(size_t i = 0;i < v.size();++i)
+        {
+            if(v[i].name == s)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+    bool isLegal(std::string type,SQLOperator op)
+    {
+        if(type == "FLOAT") {
+            if(op == SQLOperator::LIKE || op == SQLOperator::NOTLIKE || 
+            op == SQLOperator::REGEXP || op == SQLOperator::NOTREGEXP) return false;
+        }
+        else {
+            if(op == SQLOperator::GREATER || op == SQLOperator::GREATER_OR_EQUAL || 
+            op == SQLOperator::SMALLER || op == SQLOperator::SMALLER_OR_EQUAL) return false;
+        }
+        return true;
+    }
+    SQLOperator getOp(Json::Value posts)
+    {
+        return getEnumFromName(SQLOperator,posts["op"].asString());
+    }
+    std::string getColumnType(Json::Value posts)
+    {
+        return posts["column"].asString();
+    }
+    std::string getCropType(const std::vector<RecordProperty>& vrecord,size_t posi)
+    {
+        return (vrecord[posi].type == RecordPropertyType::NUMBER ? "FLOAT" : "TEXT");
+    }
+    bool isLeaf(Json::Value posts)
+    {
+        return posts["isLeaf"].asBool();
+    }
+    std::string opToSql(Json::Value posts,std::string type)
+    {
+        SQLOperator op = getOp(posts);
+        if(!isLegal(type,op)) return "";
+        if(op == SQLOperator::EQUAL) return "= ";
+        else if(op == SQLOperator::NOTEQUAL) return "!= ";
+        else if(op == SQLOperator::GREATER) return "> ";
+        else if(op == SQLOperator::GREATER_OR_EQUAL) return ">= ";
+        else if(op == SQLOperator::SMALLER) return "< ";
+        else if(op == SQLOperator::SMALLER_OR_EQUAL)   return "<= ";
+        else if(op == SQLOperator::LIKE) return "like ";
+        else if(op == SQLOperator::NOTLIKE) return "not like ";
+        else if(op == SQLOperator::REGEXP) return "regexp ";
+        else return "not regexp ";
+    }
+    std::string getValue(Json::Value posts)
+    {
+        return posts["value"].asString() + " ";
+    }
+    std::string getTypeName(const std::vector<RecordProperty>& v,int pos) //pos已经判断是否合法了
+    {
+        return v[pos].name + " ";
+    }
+    bool isAnd(Json::Value posts)
+    {
+        return posts["isAnd"].asBool();
+    }
+    std::string getWhereLine(Json::Value posts,const std::vector<RecordProperty>& vrecord)
+    {
+        int posi = pos(vrecord,getColumnType(posts));
+        if(posi == -1) return "";
+        std::string type = getCropType(vrecord,posi),op = opToSql(posts,type);
+        if(op.size() == 0) return "";
+        return (getTypeName(vrecord,posi) + op + getValue(posts));
+    }
 public:
-    void add(Crop crop, Json::Value posts, int uid)
+    int list(Crop crop,Json::Value posts)
+    {
+        std::string whereline,whereall,orderline,orderall,limitline,limitall;
+        std::vector<bool> vconnect;//记录下一条语句的连接关系的数组,最后一起拼接
+        std::vector<RecordProperty> vrecord = crop.properties;
+     //   std::vector<
+        std::queue<Json::Value> whereq;
+        if(posts.isMember("where")) {
+            whereq.push(posts);
+            if(isLeaf(posts)) {
+                std::string ret = getWhereLine(posts,vrecord);
+                if(ret.size() == 0) return -1;
+            } 
+            while(whereq.size())
+            {
+                auto p = whereq.front();
+                whereq.pop();
+                if(!isLeaf(p)) {
+                    vconnect.push_back(isAnd(p));
+
+                }
+            }
+        }
+
+        if(posts.isMember("order")) {
+
+        }
+
+        if(posts.isMember("limit")) {
+
+        }
+
+        quick_mysqli_connect();
+
+        //mysql_execute(mysql);
+    }
+
+     void add(Crop crop, Json::Value posts, int uid)
     {
 
         std::string all, sep = ",", c = "\"",var;
@@ -32,7 +142,7 @@ public:
             else
             {
                 newline += c;
-                newline += ((posts[crop.properties[i].name].asString()));
+                newline += quote_encode(posts[crop.properties[i].name].asString());
                 newline += c;
             }
             k.push_back("var_" + crop.properties[i].name);
@@ -51,4 +161,4 @@ public:
             uid,
             all.c_str());
     }
-} RecordUtils;
+}RecordUtils;

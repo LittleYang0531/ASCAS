@@ -19,6 +19,7 @@
 
 #include "models/user.cpp"
 #include "models/crop.cpp"
+#include "models/record.cpp"
 
 Json::Value appConfig;
 MYSQL mysql;

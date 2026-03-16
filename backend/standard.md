@@ -143,6 +143,7 @@ Func funcname(...) {
 - `extarr<T>(jsonarr, extfunc?)`：将 json 数组解包到一个 `std::vector<T>` 中。`extfunc` 为可选参数，默认使用 `json.as<T>()` 进行解包。
 - `packarr(arr, packfunc?)`：将一个 `std::vector<T>` 打包到一个 json 数组中。`packfunc` 为可选参数，默认使用显式类型转换进行打包。
 
+
 ### 日志相关
 
 - `writeLog(logLevel, format, ...)`：以 `logLevel` 输出日志。`logLevel` 详见 `include/log.h`。
@@ -247,7 +248,7 @@ curl "http://localhost:8080/crops/1/images/adc83b19e793491b1c6ea0fd8b46cd9f32e59
 - 向作物表中添加一行数据
 - 要求用户权限为 `UserPermission::OWNER` 或 `UserPermission::EDITOR`
 
-## POST `/crops/%s/records/list`
+## POST `/crops/%d/records/list`
 
 - 请将 route 文件写在 `api/records/list.cpp`
 - 拉取部分作物表中的数据
@@ -365,3 +366,4 @@ std::vector<node> order;
 ```sql
 A ASC, B DESC
 ```
+
