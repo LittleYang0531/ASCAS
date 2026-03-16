@@ -23,6 +23,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include "json.h"
 #include "log.h"
 #include "utils.h"
 #include "proc.h"
@@ -94,6 +95,7 @@ void putRequest(client_conn&, int, argvar);
 bool isCgi = false;
 std::string cgiRequest, cgiResponse;
 std::ofstream responseOut;
+client_conn currconn;
 
 /** WebSocket数据收发相关函数 */
 const int http_len = 1 << 12;
@@ -727,7 +729,7 @@ void putRequest(client_conn& conn, int code, argvar argv) {
         send(conn, buffer.str());
         exitRequest(conn);
         return;
-    } 
+    }
     writeLog(LOG_LEVEL_DEBUG, "Valid Response Code!");
 
     /** 构造响应头 */
@@ -1400,6 +1402,17 @@ void* ws_work_thread(void* arg) {
  * 
  */
 void thread_pool::work_thread() {
+    Log.errorHandler = [](){
+        Json::Value obj;
+        obj["code"] = 500;
+        obj["msg"] = http_code[500];
+        std::string msg = json_encode(obj);
+        auto request = __api_default_response;
+        request["Content-Length"] = std::to_string(msg.size());
+        putRequest(currconn, 500, request);
+        send(currconn, msg);
+        exitRequest(currconn);
+    };
     int id = this->get_thread_id();
     writeLog(LOG_LEVEL_DEBUG, "Created process #%d", id);
     char* msg = new char[13];
@@ -1439,6 +1452,7 @@ void thread_pool::work_thread() {
         conn2.conn = conn;
         conn2.client_addr = client_addr;
         conn2.thread_id = id;
+        currconn = conn2;
         http_request request = getRequest(conn2);
         writeLog(LOG_LEVEL_INFO, "New Connection: %s %s [%s:%d]", request.method.c_str(), request.path.c_str(), inet_ntoa(client_addr.sin_addr), client_addr.sin_port);
                                  

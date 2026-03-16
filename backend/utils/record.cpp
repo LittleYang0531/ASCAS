@@ -127,11 +127,10 @@ public:
                     whereall += (connectv[i] == true ? "and ": "or ");
                 }
             }
-            std::cout << whereall << std::endl;
         }
-        return 0;
-        if(posts.isMember("order")) {
-
+        if(posts.isMember("order"))
+        {
+           
         }
 
         if(posts.isMember("limit")) {

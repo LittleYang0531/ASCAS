@@ -63,13 +63,17 @@ function remove(options: Array<string>, element: string) {
                 ></v-select>
                 <v-text-field
                     v-model="props.title"
-                    label="属性名称"
                     variant="outlined"
                     density="comfortable"
                     hide-details
                     class="mt-4"
                     :disabled="title.disabled"
-                ></v-text-field>
+                >
+                    <template v-slot:label>
+                        <span>属性名称</span>  
+                        <span style="color: red">&nbsp;*</span>
+                    </template>
+                </v-text-field>
                 <div v-if="props.type != 'RecordPropertyType::GEOMETRY' && props.type != 'RecordPropertyType::IMAGE'">
                     <v-text-field
                         v-model="props.unit"
@@ -81,6 +85,10 @@ function remove(options: Array<string>, element: string) {
                         :disabled="title.disabled"
                     ></v-text-field>
                     <VOutlined label="可选选项" v-if="props.type == 'RecordPropertyType::SELECT' || props.type == 'RecordPropertyType::MULTI'" class="mt-4">
+                        <template v-slot:label>
+                            <span>可选选项</span>  
+                            <span style="color: red">&nbsp;*</span>
+                        </template>
                         <div class="d-flex flex-column" style="width: 100%">
                             <v-list class="pa-0" v-if="props.options?.length" :disabled="title.disabled">
                                 <draggable v-model="props.options">
@@ -143,7 +151,12 @@ function remove(options: Array<string>, element: string) {
                                     hide-details
                                     active
                                     :disabled="title.disabled"
-                                ></v-text-field>
+                                >
+                                    <template v-slot:label>
+                                        <span>添加选项</span>  
+                                        <span style="color: red">&nbsp;*</span>
+                                    </template>
+                                </v-text-field>
                                 <v-btn
                                     icon="$mdiPlus"
                                     @click="() => { addOption && props.options?.push(addOption); addOption = ''; }"
