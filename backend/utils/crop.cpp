@@ -101,8 +101,11 @@ class CropUtils {
         );
 
         std::vector<std::string> columns;
-        for (int i = 0; i < crop.properties.size(); i++)
-            columns.push_back("var_" + crop.properties[i].name + " text");
+        std::string type;
+        for (int i = 0; i < crop.properties.size(); i++){
+            type = (crop.properties[i].type == RecordPropertyType::NUMBER ? " float": " text");
+            columns.push_back("var_" + crop.properties[i].name + type);
+        }
         std::string columnString = join(", ", columns);
         mysqli_execute(
             mysql,
@@ -222,6 +225,7 @@ class CropUtils {
             for(int j = 0;j < previous_crop.properties.size();++j)
             {
                 if(current_crop.properties[i].name == previous_crop.properties[j].name) {
+                
                     a = true;
                     break;
                 }
@@ -258,7 +262,9 @@ class CropUtils {
         }
         for(size_t i = 0;i < add.size();++i) 
         { 
-            std::string v1 = " add var_" + add[i] + " text";
+            std::string v1 = " add var_" + add[i];
+            std::string type = (current_crop.properties[i].type == RecordPropertyType::NUMBER ? " FLOAT" : " TEXT");
+            v1 += type;
             v.push_back(v1);
         }  
 
@@ -282,17 +288,23 @@ class CropUtils {
             quote_encode(previous_crop.name).c_str(),
             quote_encode(all).c_str()
         );
+
+        //修改顺序的逻辑
         std::vector<std::string> astr;
         for(int i = 1;i < current_crop.properties.size();++i)
         {
-            astr.push_back("modify var_" + current_crop.properties[i].name + " text after var_" + current_crop.properties[i - 1].name);
+            std::string type = (current_crop.properties[i].type == RecordPropertyType::NUMBER ? " FLOAT" : " TEXT");
+            astr.push_back("modify var_" + current_crop.properties[i].name + type + " after var_" + current_crop.properties[i - 1].name);
         }
         std::string l = join(sep,astr);
+        if(l != "") l = ',' + l;
+        std::string type1 = (current_crop.properties[0].type == RecordPropertyType::NUMBER ? " FLOAT" : " TEXT");
         mysqli_execute(mysql,
-            "alter table table_%s modify var_%s text first,"
+            "alter table table_%s modify var_%s %s first"
             "%s",
             quote_encode(previous_crop.name).c_str(),
             quote_encode(current_crop.properties[0].name).c_str(),
+            quote_encode(type1).c_str(),
             quote_encode(l).c_str()
         );
 

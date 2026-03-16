@@ -11,14 +11,20 @@
     std::string all,sep = ",",c = "\"";
     size_t n = crop.properties.size();
     std::vector<std::string> vjoin;
-    for(int i = 0;i < n;++i) {
+    for(int i = 0;i < n; ++i) {
         std::string newline;
+        if(crop.properties[i].type == RecordPropertyType::NUMBER) {
+            newline += (posts[crop.properties[i].name].asString());
+        }
+        else {
         newline += c;
         newline += ((posts[crop.properties[i].name].asString()));
         newline += c;
+        }
         vjoin.push_back(newline);
-    }
+    }       
     all = join(sep,vjoin);
+    std::cout << all << std::endl;
     quick_mysqli_connect();
     mysqli_execute(
         mysql,

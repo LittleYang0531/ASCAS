@@ -13,6 +13,10 @@ auto CropsEdit = [](client_conn conn, http_request request, param argv) {
     auto editors = extarr<User>(posts["editors"], [](Json::Value obj){ return User({ .uid = obj.asInt() }); });
     auto viewers = extarr<User>(posts["viewers"], [](Json::Value obj){ return User({ .uid = obj.asInt() }); });
     auto properties = extarr<RecordProperty>(posts["properties"]);
+    for(int i = 0;i < properties.size();++i)
+        for(int j = 0;j < previous_crop.properties.size();++j)
+            if(properties[i].name == previous_crop.properties[j].name && properties[i].type != previous_crop.properties[j].type) 
+                quickSendCode(401);   
     Crop current_crop = Crop({
         .cid = previous_crop.cid,
         .title = title,
