@@ -242,13 +242,19 @@ async function submit() {
                     :cropId="item.cid!"
                     class="mt-4"
                 ></PropertyControl>
-                <div class="mt-4 d-flex align-center justify-end">
+                <div class="mt-4 d-flex align-center justify-end ga-4">
+                    <v-btn
+                        prepend-icon="$mdiExitToApp"
+                        color="error"
+                        @click="addRecord()"
+                        :disabled="fetching"
+                    >结束添加</v-btn>
                     <v-btn
                         prepend-icon="$mdiCheck"
                         color="primary"
                         @click="addRecord()"
                         :disabled="fetching"
-                    >添加</v-btn>
+                    >继续添加</v-btn>
                 </div>
             </v-tabs-window-item>
             <!-- 协作编辑 -->

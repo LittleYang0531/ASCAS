@@ -2,7 +2,7 @@
 import { useTheme } from 'vuetify';
 import Message from './components/Message.vue';
 import NavigationDrawer from './components/NavigationDrawer.vue';
-import { errorText, isError, showMsg, type } from './utils/message';
+import { showMsg } from './utils/message';
 import { onBeforeMount, ref, watch, type Ref } from 'vue';
 import { newFetch } from './utils/fetch';
 import { MessageType } from './models/message';
@@ -76,7 +76,7 @@ onBeforeMount(() => {
             <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </div>
     </transition>
-    <Message :isError="isError" :errorText="errorText" :type="type" :hasAppBar="showAppBar && loaded"></Message>
+    <Message :hasAppBar="showAppBar && loaded"></Message>
 </template>
 
 <style lang="css" scoped>

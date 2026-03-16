@@ -2,7 +2,7 @@
 import NProgress from 'nprogress';
 import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
 import { API_BASE_URL, login_background_urls } from '../../config';
-import { errorText, isError, showMsg, type } from '../../utils/message';
+import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
 import Message from '../../components/Message.vue';
 import { sleep } from '../../utils/sleep';
@@ -580,7 +580,7 @@ onBeforeUnmount(() => {
             <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </div>
     </transition>
-    <Message :isError="isError" :errorText="errorText" :type="type"></Message>
+    <Message></Message>
 </template>
 
 <style lang="css" scoped>
