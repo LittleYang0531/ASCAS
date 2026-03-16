@@ -13,6 +13,7 @@ import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
 import { sleep } from '../../utils/sleep';
 import type { User } from '../../models/user';
+import PropertyControl from '../../components/Crop/PropertyControl.vue';
 
 async function load(to: any, from: any, next: any) {
     to; from;
@@ -42,12 +43,17 @@ const propertiesDialog = ref(false);
 const editingIndex = ref(-1);
 const editors: Ref<Array<User> > = ref([]);
 const viewers: Ref<Array<User> > = ref([]);
+const values: Ref<Record<string, string>> = ref({});
 
 function loading(data: any) {
     item.value = data.crop;
     editors.value = item.value.editors!;
     viewers.value = item.value.viewers!;
     if (data.param.page != undefined) tab.value = data.param.page;
+    for (var i = 0; i < item.value.properties!.length; i++) {
+        var prop = item.value.properties![i]!;
+        values.value[prop.name!] = prop.def!;
+    }
     
     loaded.value = true;
 }
@@ -60,6 +66,29 @@ function showPropertyDetails(prop: RecordProperty) {
 }
 
 defineExpose({ loading });
+
+async function addRecord() {
+    for (var i = 0; i < item.value.properties!.length; i++) {
+        var prop = item.value.properties![i]!;
+        if (prop.required) {
+            if (prop.type == "RecordPropertyType::MULTI") {
+                if (JSON.parse(values.value[prop.name!]!).length == 0) {
+                    showMsg(MessageType.Error, `${prop.title}不能为空`);
+                    return;
+                }
+            } else {
+                if (values.value[prop.name!] == "") {
+                    showMsg(MessageType.Error, `${prop.title}不能为空`);
+                    return;
+                }
+            }
+        }
+    }
+    await (await newFetch(`${API_BASE_URL}/crops/${item.value.cid}/records/add`, {
+        method: "POST",
+        body: JSON.stringify(values.value)
+    }));
+}
 
 const property: Ref<RecordProperty> = ref({
     name: (new Date().getTime()).toString(),
@@ -160,6 +189,7 @@ async function submit() {
         <v-tabs v-model="tab" color="primary">
             <v-tab value="properties">属性列表</v-tab>
             <v-tab value="simple">样例数据</v-tab>
+            <v-tab value="add">添加数据</v-tab>
             <v-tab value="editors">协作编辑</v-tab>
             <v-tab value="viewers">协作查看</v-tab>
             <v-tab value="edit" v-if="item.permission == 'UserPermission::OWNER'">作物表编辑</v-tab>
@@ -177,12 +207,33 @@ async function submit() {
                         :hasDetails="true"
                         @details="showPropertyDetails(prop)"
                         :props="prop"
+                        @click="showPropertyDetails(prop)"
                     ></CropPropertyOverview>
                 </v-list>
             </v-tabs-window-item>
             <!-- 简要数据 -->
             <v-tabs-window-item value="simple">
 
+            </v-tabs-window-item>
+            <!-- 添加数据 -->
+            <v-tabs-window-item value="add" class="pa-4">
+                <h2 class="ma-0 mb-4">新记录信息</h2>
+                <PropertyControl 
+                    v-for="prop in item.properties"
+                    v-model:model="values[prop.name!]!"
+                    :props="prop"
+                    :label="prop.title!"
+                    :disabled="false"
+                    :cropId="item.cid!"
+                    class="mt-4"
+                ></PropertyControl>
+                <div class="mt-4 d-flex align-center justify-end">
+                    <v-btn
+                        prepend-icon="$mdiCheck"
+                        color="primary"
+                        @click="addRecord()"
+                    >添加</v-btn>
+                </div>
             </v-tabs-window-item>
             <!-- 协作编辑 -->
             <v-tabs-window-item value="editors">
@@ -240,7 +291,7 @@ async function submit() {
                     v-model:props="property" 
                     @submit="add"
                     :disabled="false"
-                    :disableType="true"
+                    :disableType="editingIndex != -1"
                 ></CropPropertyDialog>
                 <h2 class="ma-0 mt-4 mb-4">成员权限</h2>
                 <UserMultipleSelect

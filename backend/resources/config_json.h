@@ -29,5 +29,7 @@ const std::string config_json = std::string("{\n"
                                             "    \"smtp.ssl\": true,\n"
                                             "    \"smtp.tls\": false,\n"
                                             "    \"smtp.user\": \"testuser@example.com\",\n"
-                                            "    \"smtp.passwd\": \"password\"\n"
-                                            "}", 761);
+                                            "    \"smtp.passwd\": \"password\",\n"
+                                            "\n"
+                                            "    \"images.maxSize\": 2048\n"
+                                            "}", 790);

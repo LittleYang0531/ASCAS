@@ -10,11 +10,14 @@ import NProgress from 'nprogress';
 import { API_BASE_URL } from './config';
 import type { User } from './models/user';
 import { useRoute } from 'vue-router';
+import AppBarHint from './components/AppBarHint.vue';
+import { type as versionType } from './version'
 
 const theme = useTheme();
 const route = useRoute();
 const loaded = ref(false);
 const userInfo: Ref<User> = ref({});
+const showAppBar = ref(versionType == 'dev');
 
 async function loading() {
     NProgress.start();
@@ -61,6 +64,7 @@ onBeforeMount(() => {
 <template>
     <transition>
         <v-app v-if="loaded">
+            <AppBarHint v-model:showAppBar="showAppBar"></AppBarHint>
             <NavigationDrawer :user="userInfo"></NavigationDrawer>
             <v-main class="Main">
                 <router-view v-slot="{ Component }">
@@ -72,7 +76,7 @@ onBeforeMount(() => {
             <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </div>
     </transition>
-    <Message :isError="isError" :errorText="errorText" :type="type"></Message>
+    <Message :isError="isError" :errorText="errorText" :type="type" :hasAppBar="showAppBar && loaded"></Message>
 </template>
 
 <style lang="css" scoped>

@@ -76,7 +76,7 @@ function themeToggle() {
         <v-list dense nav density="compact">
             <v-list-item
                 prepend-icon="$mdiCog"
-                title="服务器设置"
+                title="应用设置"
                 :active="active('/settings')"
                 @click="locate('/settings')"
             ></v-list-item>

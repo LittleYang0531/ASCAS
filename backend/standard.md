@@ -158,7 +158,9 @@ Func funcname(...) {
 
 用户头像存储在 `/backend/data/avatars/{uid}.png` 下。
 
-图片数据存储在 `/backend/data/images/{sha1}.png` 下，图片名称统一使用其 sha1 码，然后将其 sha1 码作为文本内容存储在数据库中。
+图片数据存储在 `/backend/data/images/{sha1}.jpg` 下，图片名称统一使用其 sha1 码，然后将其 sha1 码作为文本内容存储在数据库中。
+
+注意用户头像使用 png 存储，图片数据使用 jpg 存储
 
 协作者请将已经实现了的接口直接删除，建议按照该文档的顺序实现接口。
 
@@ -227,7 +229,7 @@ curl "http://localhost:8080/crops/1/images" \
 ## GET `/crops/%d/images/%s`
 
 - 请将 route 文件写在 `api/records/images.cpp`
-- 根据图片 sha1 码获取图片，直接返回 image/png 格式即可。
+- 根据图片 sha1 码获取图片，直接返回 **image/jpeg** 格式即可。
 - `%s` 即为图片 sha1 码，`%d` 参数实际无用处。
 - 要求用户权限为 `UserPermission::OWNER` 或 `UserPermission::EDITOR` 或 `UserPermission::VIEWER`
 
