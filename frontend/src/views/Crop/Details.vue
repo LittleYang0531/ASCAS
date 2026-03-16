@@ -99,6 +99,18 @@ async function addRecord() {
     fetching.value = true;
     showMsg(MessageType.Success, "添加成功");
 }
+async function addRecordAndExit() {
+    await addRecord();
+    await sleep(1000);
+    window.location.href = `/crops/${item.value.cid}?page=simple`;
+}
+async function addRecordAndContinue() {
+    await addRecord();
+    for (var i = 0; i < item.value.properties!.length; i++) {
+        var prop = item.value.properties![i]!;
+        values.value[prop.name!] = prop.def!;
+    }
+}
 
 const property: Ref<RecordProperty> = ref({
     name: (new Date().getTime()).toString(),
@@ -246,15 +258,15 @@ async function submit() {
                     <v-btn
                         prepend-icon="$mdiExitToApp"
                         color="error"
-                        @click="addRecord()"
+                        @click="addRecordAndExit()"
                         :disabled="fetching"
-                    >结束添加</v-btn>
+                    >添加并终止</v-btn>
                     <v-btn
                         prepend-icon="$mdiCheck"
                         color="primary"
-                        @click="addRecord()"
+                        @click="addRecordAndContinue()"
                         :disabled="fetching"
-                    >继续添加</v-btn>
+                    >添加并继续</v-btn>
                 </div>
             </v-tabs-window-item>
             <!-- 协作编辑 -->

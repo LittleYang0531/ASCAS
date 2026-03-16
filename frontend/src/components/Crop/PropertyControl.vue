@@ -373,7 +373,7 @@ onBeforeMount(() => {
                 <span class="text-medium-emphasis">尚未上传图片。请点击选择，或将图片拖拽到此处</span>
             </div>
             <div 
-                class="d-flex align-center justify-center ga-1" 
+                class="d-flex align-center justify-center ga-1 text-truncate" 
                 style="width: 100%; height: 32px;" 
                 v-else-if="model == ''"
             >
@@ -386,8 +386,8 @@ onBeforeMount(() => {
                     </span>
                 </span>
             </div>
-            <div class="d-flex align-center justify-space-between" style="width: 100%; height: 32px; padding: 0 6px" v-else>
-                <div class="d-flex align-center ga-1">
+            <div class="d-flex align-center justify-space-between" style="width: 100%; height: 32px; padding: 0 6px; gap: 6px;" v-else>
+                <div class="d-flex align-center ga-1 text-truncate">
                     <v-icon icon="$mdiImage" color="primary"></v-icon>
                     <span class="text-medium-emphasis">{{ model }}.jpg</span>
                     <span class="text-medium-emphasis">
@@ -421,7 +421,8 @@ onBeforeMount(() => {
 
 <style lang="css" scoped>
 .clearButton {
-    display: none;
+    opacity: 0;
+    transition: opacity 0.28s;
 }
 </style>
 
@@ -431,7 +432,7 @@ onBeforeMount(() => {
         --v-field-border-opacity: var(--v-high-emphasis-opacity);
     }
     .myHoverOutlined.v-field:hover .clearButton {
-        display: block;
+        opacity: var(--v-high-emphasis-opacity);
     }
 }
 .hovering .v-field__outline {

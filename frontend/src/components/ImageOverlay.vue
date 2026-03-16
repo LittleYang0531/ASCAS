@@ -59,7 +59,8 @@ function onwheel(e: WheelEvent) {
     lastWheelTime = currTime;
     var delta = -e.deltaY / 1000.0;
     var newScale = scale.value + scale.value * delta;
-    newScale = Math.max(newScale, 0.01);
+    var standardScale = Math.min(1, window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
+    newScale = Math.max(newScale, standardScale);
     newScale = Math.min(newScale, 8);
     calc(newScale, e.clientX, e.clientY);
     wheelInterval = setInterval(() => {
@@ -116,13 +117,20 @@ function onresize(e: Event) {
     var deltaHeight = window.innerHeight - lastWindowHeight;
     top.value += deltaHeight / 2;
     left.value += deltaWidth / 2;
+    var lastStandardScale = Math.min(1, lastWindowWidth / naturalWidth.value, lastWindowHeight / naturalHeight.value);
+    var standardScale = Math.min(1, window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
+    if (scale.value <= lastStandardScale) scale.value = standardScale;
     if (window.innerHeight < scale.value * naturalHeight.value) {
         top.value = Math.min(top.value, 0);
         top.value = Math.max(top.value, window.innerHeight - scale.value * naturalHeight.value);
+    } else {
+        top.value = (window.innerHeight - scale.value * naturalHeight.value) / 2;
     }
     if (window.innerWidth < scale.value * naturalWidth.value) {
         left.value = Math.min(left.value, 0);
         left.value = Math.max(left.value, window.innerWidth - scale.value * naturalWidth.value);
+    } else {
+        left.value = (window.innerWidth - scale.value * naturalWidth.value) / 2;
     }
     lastWindowWidth = window.innerWidth;
     lastWindowHeight = window.innerHeight;
@@ -135,7 +143,6 @@ function onload() {
     lastWindowWidth = window.innerWidth;
     lastWindowHeight = window.innerHeight;
     var newScale = Math.min(1, window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
-    newScale = Math.max(newScale, 0.01);
     newScale = Math.min(newScale, 8);
     calc(newScale, 0, 0);
     window.onwheel = onwheel;
