@@ -166,21 +166,21 @@ onBeforeUnmount(() => {
             @mousedown="onmousedown"
             :draggable="false"
         ></v-img>
-        <v-icon
-            icon="$mdiCloseCircle"
+        <v-btn
+            icon="$mdiClose"
             class="ButtonBase CloseButton ButtonHover"
             @mousedown="onclick(close)"
-        ></v-icon>
-        <v-icon
-            icon="$mdiArrowLeftBoldCircle"
+        ></v-btn>
+        <v-btn
+            icon="$mdiArrowLeftBold"
             :class="`ButtonBase LeftButton ${src.enableLeft == undefined || !src.enableLeft ? 'DisabledButton' : 'ButtonHover'}`"
             @mousedown="onclick(emits('click:left'))"
-        ></v-icon>
-        <v-icon
-            icon="$mdiArrowRightBoldCircle"
+        ></v-btn>
+        <v-btn
+            icon="$mdiArrowRightBold"
             :class="`ButtonBase RightButton ${src.enableLeft == undefined || !src.enableLeft ? 'DisabledButton' : 'ButtonHover'}`"
             @mousedown="onclick(emits('click:right'))"
-        ></v-icon>
+        ></v-btn>
     </v-overlay>
 </template>
 
@@ -209,14 +209,14 @@ onBeforeUnmount(() => {
 }
 
 .LeftButton {
-    top: calc( 50vh - 8px );
+    top: calc( 50vh - 24px );
     left: 16px;
     width: 48px;
     height: 48px;
 }
 
 .RightButton {
-    top: calc( 50vh - 8px );
+    top: calc( 50vh - 24px );
     right: 16px;
     width: 48px;
     height: 48px;

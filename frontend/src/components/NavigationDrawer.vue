@@ -17,7 +17,6 @@ function active(prefix: string) {
 
 function themeToggle() {
     theme.toggle();
-    console.log(theme.name.value);
     localStorage.setItem("theme", theme.name.value);
 }
 </script>

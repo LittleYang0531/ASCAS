@@ -1,12 +1,13 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Sun Mar 15 21:55:12 CST 2026
+// Generated on Mon Mar 16 09:34:25 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
 import { mdiAccountGroup } from '@mdi/js';
 import { mdiAlphabetical } from '@mdi/js';
-import { mdiArrowLeftBoldCircle } from '@mdi/js';
-import { mdiArrowRightBoldCircle } from '@mdi/js';
+import { mdiArrowLeftBold } from '@mdi/js';
+import { mdiArrowRightBold } from '@mdi/js';
+import { mdiCamera } from '@mdi/js';
 import { mdiCheck } from '@mdi/js';
 import { mdiCheckCircle } from '@mdi/js';
 import { mdiChevronLeft } from '@mdi/js';
@@ -48,8 +49,9 @@ export const mdi_aliases = {
     mdiAccountCog,
     mdiAccountGroup,
     mdiAlphabetical,
-    mdiArrowLeftBoldCircle,
-    mdiArrowRightBoldCircle,
+    mdiArrowLeftBold,
+    mdiArrowRightBold,
+    mdiCamera,
     mdiCheck,
     mdiCheckCircle,
     mdiChevronLeft,

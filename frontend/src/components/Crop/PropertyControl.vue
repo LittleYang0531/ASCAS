@@ -7,6 +7,7 @@ import VOutlined from '../VOutlined.vue';
 import { API_BASE_URL, imageMaxSize } from '../../config';
 import ImageOverlay from '../ImageOverlay.vue';
 import { isJSON } from '../../utils/json';
+import CameraOverlay from '../CameraOverlay.vue';
 
 const label = defineProps<{ props: RecordProperty, label: string, class: string, disabled: boolean, cropId?: number }>();
 const model = defineModel<string>("model", { required: true });
@@ -25,6 +26,7 @@ const uploaded = ref(0);
 const uploadTotal = ref(1);
 const uploadSpeed = ref(0);
 const imagePreview = ref(false);
+const cameraPreview = ref(false);
 
 async function uploadImage(file: string) {
     uploaded.value = 0, uploadTotal.value = 1;
@@ -61,11 +63,7 @@ async function uploadImage(file: string) {
             lastUploaded = loaded;
         });
         xhr.open("POST", `${API_BASE_URL}/crops/${label.cropId}/images`);
-        try {
-            xhr.setRequestHeader("Authorization", "SessionToken " + document.cookie.substr(document.cookie.indexOf("session=") + 8));
-        } catch (e) {
-            e;
-        }
+        xhr.setRequestHeader("Authorization", "SessionToken " + document.cookie.substr(document.cookie.indexOf("session=") + 8));
         xhr.send(file);
     });
 }
@@ -408,7 +406,14 @@ onBeforeMount(() => {
                 v-if="uploadingImage"
             ></v-progress-linear>
         </VOutlined>
+        <v-btn
+            icon="$mdiCamera"
+            color="primary"
+            :disabled="model != ''"
+            @click="cameraPreview = true"
+        ></v-btn>
         <ImageOverlay v-model:model="imagePreview" :src="`${API_BASE_URL}/crops/${label.cropId}/images/${model}`"></ImageOverlay>
+        <CameraOverlay v-model:model="cameraPreview" @takephoto="solveImage"></CameraOverlay>
     </div>
 </template>
 
