@@ -57,7 +57,7 @@ private:
     {
         SQLOperator op = getOp(posts);
         if(!isLegal(type,op)) return "";
-        if(op == SQLOperator::EQUAL) return "= ";
+        if(op == SQLOperator::EQUAL) return "== ";
         else if(op == SQLOperator::NOTEQUAL) return "!= ";
         else if(op == SQLOperator::GREATER) return "> ";
         else if(op == SQLOperator::GREATER_OR_EQUAL) return ">= ";
@@ -70,7 +70,7 @@ private:
     }
     std::string getValue(Json::Value posts)
     {
-        return posts["value"].asString() + " ";
+        return posts["value"].asString() + ") ";
     }
     std::string getTypeName(const std::vector<RecordProperty>& v,int pos) //pos已经判断是否合法了
     {
@@ -86,33 +86,50 @@ private:
         if(posi == -1) return "";
         std::string type = getCropType(vrecord,posi),op = opToSql(posts,type);
         if(op.size() == 0) return "";
-        return (getTypeName(vrecord,posi) + op + getValue(posts));
+        return ('(' + getTypeName(vrecord,posi) + op + getValue(posts));
     }
 public:
     int list(Crop crop,Json::Value posts)
     {
-        std::string whereline,whereall,orderline,orderall,limitline,limitall;
-        std::vector<bool> vconnect;//记录下一条语句的连接关系的数组,最后一起拼接
+        std::string whereall,orderline,orderall,limitline,limitall;
+        std::vector<bool> connectv;//记录下一条语句的连接关系的数组,最后一起拼接
         std::vector<RecordProperty> vrecord = crop.properties;
-     //   std::vector<
-        std::queue<Json::Value> whereq;
-        if(posts.isMember("where")) {
-            whereq.push(posts);
-            if(isLeaf(posts)) {
-                std::string ret = getWhereLine(posts,vrecord);
-                if(ret.size() == 0) return -1;
-            } 
+        std::vector<std::string> wherev; //记录语句，最后拼接
+        std::queue<Json::Value> whereq; //遍历树的队列
+        if(posts.isMember("where"))
+        {
+            whereq.push(posts["where"]);
             while(whereq.size())
             {
                 auto p = whereq.front();
                 whereq.pop();
-                if(!isLeaf(p)) {
-                    vconnect.push_back(isAnd(p));
+                if(!isLeaf(p))
+                {
+                    connectv.push_back(isAnd(p));
 
+                    for(int i = 0;i < p["params"].size();++i)
+                    {
+                        whereq.push(p["params"][i]);
+                    }
+                }
+                else 
+                {
+                    std::string ret = getWhereLine(p,vrecord);
+                    if(ret.size() == 0) return -1;
+                    wherev.push_back(ret);
                 }
             }
+            for(int i = 0;i < wherev.size();++i)
+            {
+                whereall += wherev[i];
+                
+                if(i != wherev.size() - 1) {
+                    whereall += (connectv[i] == true ? "and ": "or ");
+                }
+            }
+            std::cout << whereall << std::endl;
         }
-
+        return 0;
         if(posts.isMember("order")) {
 
         }
