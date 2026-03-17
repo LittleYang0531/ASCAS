@@ -82,22 +82,27 @@ private:
     }
     std::string getWhereLine(Json::Value posts,const std::vector<RecordProperty>& vrecord)
     {
+        std::string ctype = getColumnType(posts);
         int posi = pos(vrecord,getColumnType(posts));
-        if(posi == -1) return "";
+        if(posi == -1) return ""; // id uid
         std::string type = getCropType(vrecord,posi),op = opToSql(posts,type);
         if(op.size() == 0) return "";
-        return ('(' + getTypeName(vrecord,posi) + op + getValue(posts));
+        return ('(' + "var_" + getTypeName(vrecord,posi) + op + getValue(posts));
+    }
+    std::string getOrder(Json::Value posts)
+    {
+        return (posts["isASC"].asBool() == true ?  "asc" : "desc");
     }
 public:
     int list(Crop crop,Json::Value posts)
     {
-        std::string whereall,orderline,orderall,limitline,limitall;
-        std::vector<bool> connectv;//记录下一条语句的连接关系的数组,最后一起拼接
+        std::string whereall,orderall,limitall;
         std::vector<RecordProperty> vrecord = crop.properties;
-        std::vector<std::string> wherev; //记录语句，最后拼接
-        std::queue<Json::Value> whereq; //遍历树的队列
         if(posts.isMember("where"))
         {
+        std::vector<bool> connectv;//记录下一条语句的连接关系的数组,最后一起拼接
+        std::vector<std::string> wherev; //记录语句，最后拼接
+        std::queue<Json::Value> whereq; //遍历树的队列
             whereq.push(posts["where"]);
             while(whereq.size())
             {
@@ -130,16 +135,40 @@ public:
         }
         if(posts.isMember("order"))
         {
-           
+            std::vector<std::string> v;
+           for(int i = 0;i < posts["order"].size();++i)
+           {
+               std::string type = getColumnType(posts["order"][i]);
+               if(type == "id") {}
+               else if(type == "uid") {}
+               else if(type == "name") {}
+               else
+               {
+               int ret = pos(vrecord,type);
+               if(ret == -1) return -1;
+               }
+               type = "var_" + type;
+               std::string order = getOrder(posts["order"][i]);
+               v.push_back(type + " " + order);
+           }
+           orderall = "order by " + join(",",v);
         }
 
         if(posts.isMember("limit")) {
-
+            int a = posts["limit"].asInt(), b = posts["offset"].asInt();
+            limitall = "limit " + std::to_string(a) +  " offset " + std::to_string(b);
         }
 
         quick_mysqli_connect();
-
-        //mysql_execute(mysql);
+        std::string all = whereall + " " + orderall + " " + limitall;
+        std::cout << all << std::endl;
+        mysqli_execute(mysql,"select * from table_%s "
+            "%s",
+            quote_encode(crop.name).c_str(),
+            quote_encode(all).c_str()
+        );
+        
+        return 0;
     }
 
      void add(Crop crop, Json::Value posts, int uid)
