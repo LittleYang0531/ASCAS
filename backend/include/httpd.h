@@ -123,7 +123,7 @@ int ws_recv_data(client_conn __fd, char __buf[http_len], int len) {
         writeLog(LOG_LEVEL_WARNING, "Failed to recieve data!");
         return 0;
     }
-    writeLog(LOG_LEVEL_DEBUG, "Recieve %d bytes from client.", s);
+    // writeLog(LOG_LEVEL_DEBUG, "Recieve %d bytes from client.", s);
     return s;
 }
 
@@ -144,7 +144,7 @@ ssize_t send(client_conn __fd, std::string __buf) {
     delete[] ch;
     if (s == -1) writeLog(LOG_LEVEL_WARNING, "Failed to send data to client!");
     else if (s != __buf.size()) writeLog(LOG_LEVEL_WARNING, "The data wasn't send completely! Send %d/%d bytes.", s, __buf.size());
-    else writeLog(LOG_LEVEL_DEBUG, "Send %d bytes to client.", s);
+    else ;// writeLog(LOG_LEVEL_DEBUG, "Send %d bytes to client.", s);
     return s;
 }
 
@@ -165,7 +165,7 @@ ssize_t send(client_conn __fd, char* __buf, int len) {
     else return SSL_write(__fd.ssl, __buf, len); 
     if (s == -1) writeLog(LOG_LEVEL_WARNING, "Failed to send data to client!");
     else if (s != len) writeLog(LOG_LEVEL_WARNING, "The data wasn't send completely! Send %d/%d bytes.", s, len);
-    else writeLog(LOG_LEVEL_DEBUG, "Send %d bytes to client.", s);
+    else // writeLog(LOG_LEVEL_DEBUG, "Send %d bytes to client.", s);
     return s;
 }
 
@@ -207,7 +207,7 @@ ssize_t ws_send(client_conn __fd, std::string __buf, int opcode = 1) {
 
     /** 构造数据帧 */
     for (int i = 0; i < len; i++) dat[pt++] = __buf[i];
-    writeLog(LOG_LEVEL_DEBUG, "Date Frame length: %d", pt);
+    // writeLog(LOG_LEVEL_DEBUG, "Date Frame length: %d", pt);
     
     /** 发送数据帧 */
     int s = -1;
@@ -218,7 +218,7 @@ ssize_t ws_send(client_conn __fd, std::string __buf, int opcode = 1) {
         ws_exitRequest(__fd, true);
         exit(0);
     } else if (s != pt) writeLog(LOG_LEVEL_WARNING, "The data wasn't send completely! Send %d/%d bytes.", s, pt);
-    else writeLog(LOG_LEVEL_DEBUG, "Send %d bytes to client.", s);
+    else // writeLog(LOG_LEVEL_DEBUG, "Send %d bytes to client.", s);
 
     /** 分段发送 */
     if (__buf.size() > MaxL) s += ws_send(__fd, __buf.substr(MaxL), 0);
@@ -271,7 +271,7 @@ std::string recv(client_conn __fd, int siz = -1) {
             }
             __buf.push_back(char(ch));
         } 
-        writeLog(LOG_LEVEL_DEBUG, "Recieve %d bytes from client.", __buf.size());
+        // writeLog(LOG_LEVEL_DEBUG, "Recieve %d bytes from client.", __buf.size());
         return __buf;
     } else {
         while (__buf.size() != siz) {
@@ -282,7 +282,7 @@ std::string recv(client_conn __fd, int siz = -1) {
             }
             __buf.push_back(char(ch));
         } 
-        writeLog(LOG_LEVEL_DEBUG, "Recieve %d bytes from client.", __buf.size());
+        // writeLog(LOG_LEVEL_DEBUG, "Recieve %d bytes from client.", __buf.size());
         return __buf;
     }
 }
@@ -405,7 +405,7 @@ SSL_CTX *ctx;
  * 
  */
 void http_init() {
-    writeLog(LOG_LEVEL_DEBUG, "Initializing WebServer Core...");
+    // writeLog(LOG_LEVEL_DEBUG, "Initializing WebServer Core...");
 
     /** 设置默认响应头 */
     __default_response["Server"] = "Web Server Version " + httpd_version;
@@ -413,7 +413,7 @@ void http_init() {
     __default_response["Content-Type"] = "text/html; charset=utf-8";
     __api_default_response = __default_response;
     __api_default_response["Content-Type"] = "application/json; charset=utf-8";
-    writeLog(LOG_LEVEL_DEBUG, "Successfully make default Response Header!");
+    // writeLog(LOG_LEVEL_DEBUG, "Successfully make default Response Header!");
     
     if (https) {
         /** SSL 库初始化 */
@@ -428,25 +428,25 @@ void http_init() {
             writeLog(LOG_LEVEL_ERROR, "Failed to create new CTX!");
             exit(3);
         }
-        writeLog(LOG_LEVEL_DEBUG, "Successfully create new CTX!");
+        // writeLog(LOG_LEVEL_DEBUG, "Successfully create new CTX!");
         /** 载入用户的数字证书 */
         if (SSL_CTX_use_certificate_file(ctx, http_cacert.c_str(), SSL_FILETYPE_PEM) <= 0) {
             writeLog(LOG_LEVEL_ERROR, "Failed to load cacert!");
             exit(3);
         }
-        writeLog(LOG_LEVEL_DEBUG, "Successfully load cacert!");
+        // writeLog(LOG_LEVEL_DEBUG, "Successfully load cacert!");
         /** 载入用户私钥 */
         if (SSL_CTX_use_PrivateKey_file(ctx, http_privkey.c_str(), SSL_FILETYPE_PEM) <= 0) {
             writeLog(LOG_LEVEL_ERROR, "Failed to load privkey!");
             exit(3);
         }
-        writeLog(LOG_LEVEL_DEBUG, "Successfully load privkey!");
+        // writeLog(LOG_LEVEL_DEBUG, "Successfully load privkey!");
         /** 检查用户私钥是否正确 */
         if (!SSL_CTX_check_private_key(ctx)) {
             writeLog(LOG_LEVEL_ERROR, "Incorrect privkey!");
             exit(3);
         }
-        writeLog(LOG_LEVEL_DEBUG, "Successfully check correctness of the cacert and privkey!");
+        // writeLog(LOG_LEVEL_DEBUG, "Successfully check correctness of the cacert and privkey!");
     }
     
     /** 初始化服务端socket */
@@ -473,7 +473,7 @@ void http_init() {
         writeLog(LOG_LEVEL_ERROR, "Failed to initialize socket!");
         exit(3);
     }
-    writeLog(LOG_LEVEL_DEBUG, "Successfully initialize socket!");
+    // writeLog(LOG_LEVEL_DEBUG, "Successfully initialize socket!");
 
     /** 绑定服务端socket */
     #ifdef __linux__
@@ -485,7 +485,7 @@ void http_init() {
         writeLog(LOG_LEVEL_ERROR, "Failed to bind socket!");
         exit(3);
     }
-    writeLog(LOG_LEVEL_DEBUG, "Successfully bind socket!");
+    // writeLog(LOG_LEVEL_DEBUG, "Successfully bind socket!");
 
     /** 设置服务端监听态 */
     ret = listen(sock,1);
@@ -493,7 +493,7 @@ void http_init() {
         writeLog(LOG_LEVEL_ERROR, "Failed to listen to client!");
         exit(3);
     }
-    writeLog(LOG_LEVEL_DEBUG, "Successfully listen to client!");
+    // writeLog(LOG_LEVEL_DEBUG, "Successfully listen to client!");
 
     http_code[100] = "Continue";
     http_code[101] = "Switching Protocols";
@@ -562,7 +562,7 @@ int accept(sockaddr_in& client_addr) {
         return -1;
     }
     client_addr = client;
-    writeLog(LOG_LEVEL_DEBUG, "Connect to the client, socket id: %d", ret);
+    // writeLog(LOG_LEVEL_DEBUG, "Connect to the client, socket id: %d", ret);
     return ret;
 }
 
@@ -602,7 +602,7 @@ void exitRequest(client_conn& conn) {
     #endif
     if (https) SSL_clear(conn.ssl);
 
-    writeLog(LOG_LEVEL_DEBUG, "Close connection of conn %d", conn.conn);
+    // writeLog(LOG_LEVEL_DEBUG, "Close connection of conn %d", conn.conn);
     longjmp(buf[conn.thread_id], 0);
 }
 
@@ -642,7 +642,7 @@ http_request getRequest(client_conn& conn) {
         writeLog(LOG_LEVEL_WARNING, "Empty Request Header!");
         exitRequest(conn);
     }
-    writeLog(LOG_LEVEL_DEBUG, "Recieved Request Header from client!");
+    // writeLog(LOG_LEVEL_DEBUG, "Recieved Request Header from client!");
 
     /** 判断请求方式 */
     std::vector<std::string> __arg = explode("\r\n", s);
@@ -660,7 +660,7 @@ http_request getRequest(client_conn& conn) {
         send(conn, buffer.str());
         exitRequest(conn);
     }
-    writeLog(LOG_LEVEL_DEBUG, "Request Header lines: %d", __arg.size());
+    // writeLog(LOG_LEVEL_DEBUG, "Request Header lines: %d", __arg.size());
 
 
     /** 读取请求头的第一行 */
@@ -687,7 +687,7 @@ http_request getRequest(client_conn& conn) {
     request.method = header[0];
     request.path = header[1];
     request.protocol = header[2];
-    writeLog(LOG_LEVEL_DEBUG, "Request Info: %s %s %s", header[0].c_str(), header[1].c_str(), header[2].c_str());
+    // writeLog(LOG_LEVEL_DEBUG, "Request Info: %s %s %s", header[0].c_str(), header[1].c_str(), header[2].c_str());
 
     /** 读取请求头参数 */
     int pt = 1;
@@ -700,7 +700,7 @@ http_request getRequest(client_conn& conn) {
         request.argv.insert(make_pair(key, value));
     }
     if (request.argv["content-length"] != "0") request.postdata = recv(conn, atoi(request.argv["content-length"].c_str()));
-    writeLog(LOG_LEVEL_DEBUG, "Request Parameters: %d", request.argv.size());
+    // writeLog(LOG_LEVEL_DEBUG, "Request Parameters: %d", request.argv.size());
 
     /** 返回请求头信息 */
     return request;
@@ -731,12 +731,12 @@ void putRequest(client_conn& conn, int code, argvar argv) {
         exitRequest(conn);
         return;
     }
-    writeLog(LOG_LEVEL_DEBUG, "Valid Response Code!");
+    // writeLog(LOG_LEVEL_DEBUG, "Valid Response Code!");
 
     /** 构造响应头 */
     std::stringstream __buf;
     __buf << "HTTP/1.1 " << code << " " << http_code[code] << "\r\n";
-    writeLog(LOG_LEVEL_DEBUG, "Response Info: HTTP/1.1 %d %s", code, http_code[code].c_str());
+    // writeLog(LOG_LEVEL_DEBUG, "Response Info: HTTP/1.1 %d %s", code, http_code[code].c_str());
     argv["Execute-Time"] = std::to_string(clock2() - runTime[conn.thread_id]);
     for (auto it = argv.begin(); it != argv.end(); it++)
         __buf << (*it).first << ": " << (*it).second << "\r\n";
@@ -744,7 +744,7 @@ void putRequest(client_conn& conn, int code, argvar argv) {
     // cout << __buf.str() << std::endl;
 
     /** 发送响应头 */
-    writeLog(LOG_LEVEL_DEBUG, "Send Response Header to client");
+    // writeLog(LOG_LEVEL_DEBUG, "Send Response Header to client");
     int s = send(conn, __buf.str());
 }
 
@@ -755,30 +755,30 @@ void putRequest(client_conn& conn, int code, argvar argv) {
  * @return argvar
  */
 argvar getParam(http_request request) {
-    writeLog(LOG_LEVEL_DEBUG, "Analysing GET parameters...");
+    // writeLog(LOG_LEVEL_DEBUG, "Analysing GET parameters...");
 
     /** 读取路径信息 */
     std::string path = request.path;
     if (path.find("?") == std::string::npos) {
-        writeLog(LOG_LEVEL_DEBUG, "Empty GET parameters!");
+        // writeLog(LOG_LEVEL_DEBUG, "Empty GET parameters!");
         return _e;
     }
 
     /** 提取参数信息 */
     std::string param = path.substr(path.find("?") + 1);
     std::vector<std::string> __arg = explode("&", param);
-    writeLog(LOG_LEVEL_DEBUG, "GET parameter length: %d", __arg.size());
+    // writeLog(LOG_LEVEL_DEBUG, "GET parameter length: %d", __arg.size());
 
     /** 逐个处理 */
     argvar $_GET;
     for (int i = 0; i < __arg.size(); i++) {
         if (__arg[i].find("=") == std::string::npos) 
-            writeLog(LOG_LEVEL_DEBUG, "Could find value of key \"%s\"", __arg[i].c_str()),
+            // writeLog(LOG_LEVEL_DEBUG, "Could find value of key \"%s\"", __arg[i].c_str()),
             $_GET.insert(make_pair(__arg[i], ""));
         else {
             std::string key = __arg[i].substr(0, __arg[i].find("="));
             std::string val = __arg[i].substr(__arg[i].find("=") + 1);
-            writeLog(LOG_LEVEL_DEBUG, "Add key \"%s\" to $_GET", key.c_str());
+            // writeLog(LOG_LEVEL_DEBUG, "Add key \"%s\" to $_GET", key.c_str());
             $_GET.insert(make_pair(key, val));
         }
     } 
@@ -795,18 +795,18 @@ argvar getParam(http_request request) {
  */
 argvar getParam(std::string param) {
     std::vector<std::string> __arg = explode("&", param);
-    writeLog(LOG_LEVEL_DEBUG, "GET parameter length: %d", __arg.size());
+    // writeLog(LOG_LEVEL_DEBUG, "GET parameter length: %d", __arg.size());
 
     /** 逐个处理 */
     argvar $_GET;
     for (int i = 0; i < __arg.size(); i++) {
         if (__arg[i].find("=") == std::string::npos) 
-            writeLog(LOG_LEVEL_DEBUG, "Could find value of key \"%s\"", __arg[i].c_str()),
+            // writeLog(LOG_LEVEL_DEBUG, "Could find value of key \"%s\"", __arg[i].c_str()),
             $_GET.insert(make_pair(__arg[i], ""));
         else {
             std::string key = __arg[i].substr(0, __arg[i].find("="));
             std::string val = __arg[i].substr(__arg[i].find("=") + 1);
-            writeLog(LOG_LEVEL_DEBUG, "Add key \"%s\" to $_GET", key.c_str());
+            // writeLog(LOG_LEVEL_DEBUG, "Add key \"%s\" to $_GET", key.c_str());
             $_GET.insert(make_pair(key, val));
         }
     } 
@@ -837,24 +837,24 @@ std::string getStringfy(argvar $_GET) {
  * @return argvar 
  */
 argvar postParam(http_request request) {
-    writeLog(LOG_LEVEL_DEBUG, "Analysing POST parameters...");
+    // writeLog(LOG_LEVEL_DEBUG, "Analysing POST parameters...");
 
 
     /** 提取参数信息 */
     std::vector<std::string> __arg = explode("&", request.postdata);
-    writeLog(LOG_LEVEL_DEBUG, "POST parameter length: %d", __arg.size());
+    // writeLog(LOG_LEVEL_DEBUG, "POST parameter length: %d", __arg.size());
 
     /** 逐个处理 */
     argvar $_POST;
     for (int i = 0; i < __arg.size(); i++) {
         if (__arg[i] == "") continue;
         if (__arg[i].find("=") == std::string::npos) 
-            writeLog(LOG_LEVEL_DEBUG, "Could find value of key \"%s\"", __arg[i].c_str()),
+            // writeLog(LOG_LEVEL_DEBUG, "Could find value of key \"%s\"", __arg[i].c_str()),
             $_POST.insert(make_pair(__arg[i], ""));
         else {
             std::string key = __arg[i].substr(0, __arg[i].find("="));
             std::string val = __arg[i].substr(__arg[i].find("=") + 1);
-            writeLog(LOG_LEVEL_DEBUG, "Add key \"%s\" to $_POST", key.c_str());
+            // writeLog(LOG_LEVEL_DEBUG, "Add key \"%s\" to $_POST", key.c_str());
             $_POST.insert(make_pair(key, val));
         }
     } 
@@ -870,24 +870,24 @@ argvar postParam(http_request request) {
  * @return argvar 
  */
 argvar cookieParam(http_request request) {
-    writeLog(LOG_LEVEL_DEBUG, "Analysing COOKIE parameters...");
+    // writeLog(LOG_LEVEL_DEBUG, "Analysing COOKIE parameters...");
     
     /**  获取Cookie字符串 */
     if (request.argv.find("cookie") == request.argv.end()) {
-        writeLog(LOG_LEVEL_DEBUG, "Empty COOKIE parameters!");
+        // writeLog(LOG_LEVEL_DEBUG, "Empty COOKIE parameters!");
         return _e;
     }
     std::string s = request.argv["cookie"];
 
     /** 拆散字符串 */
     std::vector<std::string> arr = explode("; ", s);
-    writeLog(LOG_LEVEL_DEBUG, "COOKIE parameter length: %d", arr.size());
+    // writeLog(LOG_LEVEL_DEBUG, "COOKIE parameter length: %d", arr.size());
     argvar $_COOKIE;
     for (int i = 0; i < arr.size(); i++) {
         if (arr[i].find("=") != std::string::npos) {
             std::string key = arr[i].substr(0, arr[i].find("="));
             std::string val = arr[i].substr(arr[i].find("=") + 1);
-            writeLog(LOG_LEVEL_DEBUG, "Add key \"%s\" to $_COOKIE", key.c_str());
+            // writeLog(LOG_LEVEL_DEBUG, "Add key \"%s\" to $_COOKIE", key.c_str());
             $_COOKIE.insert(make_pair(key, val));
         } else writeLog(LOG_LEVEL_WARNING, "Invalid COOKIE parameter!");
     }
@@ -1028,13 +1028,13 @@ class thread_pool {
          */
         int getConn(int proc_id, sockaddr_in& client_addr) {
             if (data->busy[proc_id]) updateBusy(proc_id);
-            // writeLog(LOG_LEVEL_DEBUG, "Waiting connection from master process, proc_id = %d", proc_id);
+            // // writeLog(LOG_LEVEL_DEBUG, "Waiting connection from master process, proc_id = %d", proc_id);
             int conn = proc_getfd(data->sockfd[proc_id][1]);
             updateBusy(proc_id);
             sockaddr_in* sockAddr = new sockaddr_in;
             recv(data->sockfd[proc_id][1], (void*)sockAddr, sizeof(sockaddr_in), 0);
             client_addr = *sockAddr;
-            writeLog(LOG_LEVEL_DEBUG, "Get connection %d from master process", conn);
+            // writeLog(LOG_LEVEL_DEBUG, "Get connection %d from master process", conn);
             return conn;
         }
 
@@ -1102,7 +1102,7 @@ class thread_pool {
                     continue;
                 }
                 lastproc = id;
-                writeLog(LOG_LEVEL_DEBUG, "Send connection %d to worker %d", conn, id);
+                // writeLog(LOG_LEVEL_DEBUG, "Send connection %d to worker %d", conn, id);
                 proc_sendfd(data->sockfd[id][0], conn);
                 send(data->sockfd[id][0], (void*)&client_addr, sizeof(sockaddr_in), 0);
                 close(conn);
@@ -1217,13 +1217,13 @@ class application {
          * @param port 运行端口
          */
         void run() {
-            writeLog(LOG_LEVEL_DEBUG, "Successfully initialize log system!");
-            writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_ENABLE_SSL = %d", https);
-            writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_LISTEN_HOST = \"%s\"", http_host.c_str());
-            writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_LISTEN_PORT = %d", http_port);
-            writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_SSL_CACERT = \"%s\"", http_cacert.c_str());
-            writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_SSL_PRIVKEY = \"%s\"", http_privkey.c_str());
-            writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_MULTI_THREAD = %d", http_thread_num);
+            // writeLog(LOG_LEVEL_DEBUG, "Successfully initialize log system!");
+            // writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_ENABLE_SSL = %d", https);
+            // writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_LISTEN_HOST = \"%s\"", http_host.c_str());
+            // writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_LISTEN_PORT = %d", http_port);
+            // writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_SSL_CACERT = \"%s\"", http_cacert.c_str());
+            // writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_SSL_PRIVKEY = \"%s\"", http_privkey.c_str());
+            // writeLog(LOG_LEVEL_DEBUG, "Read option HTTP_MULTI_THREAD = %d", http_thread_num);
 
             #ifdef __linux__
             sigset_t signal_mask;
@@ -1234,10 +1234,10 @@ class application {
                 writeLog(LOG_LEVEL_ERROR, "Failed to block SIGPIPE!");
                 exit(3);
             }
-            writeLog(LOG_LEVEL_DEBUG, "Successfully block SIGPIPE!");
+            // writeLog(LOG_LEVEL_DEBUG, "Successfully block SIGPIPE!");
 
             signal(SIGCHLD, SIG_IGN); // block sigchld to avoid defunct
-            writeLog(LOG_LEVEL_DEBUG, "Successfully block SIGCHLD!");
+            // writeLog(LOG_LEVEL_DEBUG, "Successfully block SIGCHLD!");
             #endif
             
             http_init(); pool.init(http_thread_num);
@@ -1280,7 +1280,7 @@ class application {
 			/** 分发路由 */
 			for (int i = 0; i < route.size(); i++) {
 				if (matchPath(route[i], rlpath)) {
-					writeLog(LOG_LEVEL_DEBUG, "Matched route \"%s\"", route[i].path.c_str());
+					// writeLog(LOG_LEVEL_DEBUG, "Matched route \"%s\"", route[i].path.c_str());
 
 					/** 参数提取 */
 					param argv;
@@ -1416,7 +1416,7 @@ void thread_pool::work_thread() {
         exitRequest(currconn);
     };
     int id = this->get_thread_id();
-    writeLog(LOG_LEVEL_DEBUG, "Created process #%d", id);
+    // writeLog(LOG_LEVEL_DEBUG, "Created process #%d", id);
     char* msg = new char[13];
     memset(msg, 0, 13);
     int len = recv(data->sockfd[id][1], msg, 12, 0);
@@ -1468,7 +1468,7 @@ void thread_pool::work_thread() {
 		if (request.argv.find("sec-websocket-key") != request.argv.end()) {
 			for (int i = 0; i < app.ws_route.size(); i++) {
 		        if (app.matchPath(app.ws_route[i], rlpath)) {
-		            writeLog(LOG_LEVEL_DEBUG, "Matched websocket route \"%s\"", app.ws_route[i].path.c_str());
+		            // writeLog(LOG_LEVEL_DEBUG, "Matched websocket route \"%s\"", app.ws_route[i].path.c_str());
 		
 		            /** 计算Sec_WebSocket_Accept的值 */
 		            std::string req_key = request.argv["sec-websocket-key"];
@@ -1516,7 +1516,7 @@ void thread_pool::work_thread() {
         runTime[id] = clock2();
         for (int i = 0; i < app.route.size(); i++) {
             if (app.matchPath(app.route[i], rlpath)) {
-                writeLog(LOG_LEVEL_DEBUG, "Matched route \"%s\"", app.route[i].path.c_str());
+                // writeLog(LOG_LEVEL_DEBUG, "Matched route \"%s\"", app.route[i].path.c_str());
 
                 /** 参数提取 */
                 param argv;
@@ -1541,7 +1541,16 @@ void thread_pool::work_thread() {
                     exitRequest(conn2);
                     break;
                 }
-                app.route[i].main(conn2, request, argv);
+                try {
+                    app.route[i].main(conn2, request, argv);
+                }
+                catch(std::exception &e) {
+                    writeLog(LOG_LEVEL_ERROR, "Terminate called after throwing an instance. what(): %s", e.what());
+                    return;
+                } catch(...) {
+                    writeLog(LOG_LEVEL_ERROR, "Terminate called after throwing an instance.");
+                    return;
+                }
                 putRequest(conn2, 200, __default_response);
                 send(conn2, "");
                 exitRequest(conn2);
@@ -1550,7 +1559,7 @@ void thread_pool::work_thread() {
         }
 
         /** 无效路由 */
-        writeLog(LOG_LEVEL_DEBUG, "Couldn't find any routes for this request!");
+        // writeLog(LOG_LEVEL_DEBUG, "Couldn't find any routes for this request!");
         std::stringstream buffer;
         buffer << "<html>" << std::endl;
         buffer << "<head><title>404 Not Found</title></head>" << std::endl;
