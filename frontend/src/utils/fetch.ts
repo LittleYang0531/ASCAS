@@ -16,10 +16,10 @@ export async function myFetch(url: string, options?: RequestInit): Promise<Respo
     }
 }
 
-export async function newFetch(url: string, options?: RequestInit, callback?: () => {}): Promise<Response> {
+export async function newFetch(url: string, options?: RequestInit, callback = () => {}): Promise<Response> {
+    var response;
     try {
-        const response = await myFetch(url, options);
-        return response;
+        response = await myFetch(url, options);
     }
     catch (error) {
         NProgress.done();
@@ -27,4 +27,11 @@ export async function newFetch(url: string, options?: RequestInit, callback?: ()
         callback && callback();
         throw error;
     }
+    if (response.status == 500) {
+        NProgress.done();
+        showMsg(MessageType.Error, "服务器错误，请稍后再试");
+        callback && callback();
+        throw new Error("500 Internal Server Error");
+    }
+    return response;
 }

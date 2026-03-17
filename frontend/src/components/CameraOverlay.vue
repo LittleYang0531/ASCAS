@@ -83,6 +83,11 @@ watch(model, (newVal) => {
 
 onBeforeMount(() => {
     window.onresize = onresize;
+    if (window.innerWidth > window.innerHeight) { // 横屏
+        cameraClass.value = "CameraButton-right flex-column";
+    } else { // 竖屏
+        cameraClass.value = "CameraButton-bottom";
+    }
 })
 onBeforeUnmount(() => {
     window.onresize = () => {};

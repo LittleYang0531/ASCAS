@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+// (model = '') => (solvingImage) => (uploadingImage) => (model != '')
+
 import { onBeforeMount, ref } from 'vue';
 import type { RecordProperty } from '../../models/crop';
 import { showMsg } from '../../utils/message';
@@ -8,6 +10,7 @@ import { API_BASE_URL, imageMaxSize } from '../../config';
 import ImageOverlay from '../ImageOverlay.vue';
 import { isJSON } from '../../utils/json';
 import CameraOverlay from '../CameraOverlay.vue';
+import { useDisplay } from 'vuetify';
 
 const label = defineProps<{ props: RecordProperty, label: string, class: string, disabled: boolean, cropId?: number }>();
 const model = defineModel<string>("model", { required: true });
@@ -27,6 +30,7 @@ const uploadTotal = ref(1);
 const uploadSpeed = ref(0);
 const imagePreview = ref(false);
 const cameraPreview = ref(false);
+const mobile = useDisplay().mobile;
 
 async function uploadImage(file: string) {
     uploaded.value = 0, uploadTotal.value = 1;
@@ -207,8 +211,8 @@ function loadGeolocation() {
             showMsg(MessageType.Error, `获取地理位置失败（${err.code}）：${err.message}`);
             geometryLoaded.value = true;
         }, {
-            enableHighAccuracy: true, // 提高精度
-            maximumAge: 0 // 不使用缓存位置
+            enableHighAccuracy: true,
+            maximumAge: 0
         });
     } else {
         showMsg(MessageType.Error, "浏览器不支持获取地理位置，请使用支持的浏览器！");
@@ -371,7 +375,7 @@ onBeforeMount(() => {
                 <span class="text-medium-emphasis">尚未上传图片。请点击选择，或将图片拖拽到此处</span>
             </div>
             <div 
-                class="d-flex align-center justify-center ga-1" 
+                class="d-flex align-center justify-center ga-1 text-truncate" 
                 style="width: 100%; height: 32px;" 
                 v-else-if="model == ''"
             >
@@ -384,8 +388,8 @@ onBeforeMount(() => {
                     </span>
                 </span>
             </div>
-            <div class="d-flex align-center justify-space-between" style="width: 100%; height: 32px; padding: 0 6px" v-else>
-                <div class="d-flex align-center ga-1">
+            <div class="d-flex align-center justify-space-between" style="width: 100%; height: 32px; padding: 0 6px; gap: 6px;" v-else>
+                <div class="d-flex align-center ga-1 text-truncate">
                     <v-icon icon="$mdiImage" color="primary"></v-icon>
                     <span class="text-medium-emphasis">{{ model }}.jpg</span>
                     <span class="text-medium-emphasis">
@@ -394,7 +398,7 @@ onBeforeMount(() => {
                 </div>
                 <v-icon
                     icon="$mdiCloseCircle"
-                    class="text-medium-emphasis clearButton"
+                    :class="`clearButton ${mobile ? 'mobile' : ''}`"
                     @click="clearImage"
                 ></v-icon>
             </div>
@@ -409,7 +413,7 @@ onBeforeMount(() => {
         <v-btn
             icon="$mdiCamera"
             color="primary"
-            :disabled="model != ''"
+            :disabled="model != '' || solvingImage || uploadingImage"
             @click="cameraPreview = true"
         ></v-btn>
         <ImageOverlay v-model:model="imagePreview" :src="`${API_BASE_URL}/crops/${label.cropId}/images/${model}`"></ImageOverlay>
@@ -419,7 +423,11 @@ onBeforeMount(() => {
 
 <style lang="css" scoped>
 .clearButton {
-    display: none;
+    opacity: 0;
+    transition: opacity 0.28s;
+}
+.mobile.clearButton {
+    opacity: var(--v-medium-emphasis-opacity);
 }
 </style>
 
@@ -429,7 +437,7 @@ onBeforeMount(() => {
         --v-field-border-opacity: var(--v-high-emphasis-opacity);
     }
     .myHoverOutlined.v-field:hover .clearButton {
-        display: block;
+        opacity: var(--v-medium-emphasis-opacity);
     }
 }
 .hovering .v-field__outline {

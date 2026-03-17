@@ -21,16 +21,16 @@ const top = ref(0);
 const previousScale = ref(1);
 const scale = ref(1);
 
-function calc(newScale: number, screenX: number, screenY: number) {
+function calc(newScale: number, clientX: number, clientY: number) {
     previousScale.value = scale.value;
     scale.value = newScale;
 
     if (window.innerHeight >= scale.value * naturalHeight.value) {
         top.value = (window.innerHeight - scale.value * naturalHeight.value) / 2;
     } else {
-        var imageY = screenY - top.value;
+        var imageY = clientY - top.value;
         var newImageY = imageY / previousScale.value * scale.value;
-        top.value = screenY - newImageY;
+        top.value = clientY - newImageY;
         top.value = Math.min(top.value, 0);
         top.value = Math.max(top.value, window.innerHeight - scale.value * naturalHeight.value);
     }
@@ -38,9 +38,9 @@ function calc(newScale: number, screenX: number, screenY: number) {
     if (window.innerWidth >= scale.value * naturalWidth.value) {
         left.value = (window.innerWidth - scale.value * naturalWidth.value) / 2;
     } else {
-        var imageX = screenX - left.value;
+        var imageX = clientX - left.value;
         var newImageX = imageX / previousScale.value * scale.value;
-        left.value = screenX - newImageX;
+        left.value = clientX - newImageX;
         left.value = Math.min(left.value, 0);
         left.value = Math.max(left.value, window.innerWidth - scale.value * naturalWidth.value);
     }
@@ -59,9 +59,10 @@ function onwheel(e: WheelEvent) {
     lastWheelTime = currTime;
     var delta = -e.deltaY / 1000.0;
     var newScale = scale.value + scale.value * delta;
-    newScale = Math.max(newScale, 0.01);
+    var standardScale = Math.min(1, window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
+    newScale = Math.max(newScale, standardScale);
     newScale = Math.min(newScale, 8);
-    calc(newScale, e.screenX, e.screenY);
+    calc(newScale, e.clientX, e.clientY);
     wheelInterval = setInterval(() => {
         imgclass.value = "image";
     }, 280);
@@ -72,11 +73,11 @@ function onmousedown(e: MouseEvent) {
     if (e.button != 0) return;
     document.body.style.cursor = "grab";
     forbidWheel = true;
-    var lastX = e.screenX; 
-    var lastY = e.screenY;
+    var lastX = e.clientX; 
+    var lastY = e.clientY;
     window.onmousemove = (e: MouseEvent) => {
-        var currX = e.screenX;
-        var currY = e.screenY;
+        var currX = e.clientX;
+        var currY = e.clientY;
         var deltaX = currX - lastX;
         var deltaY = currY - lastY;
         if (window.innerHeight < scale.value * naturalHeight.value) {
@@ -116,13 +117,20 @@ function onresize(e: Event) {
     var deltaHeight = window.innerHeight - lastWindowHeight;
     top.value += deltaHeight / 2;
     left.value += deltaWidth / 2;
+    var lastStandardScale = Math.min(1, lastWindowWidth / naturalWidth.value, lastWindowHeight / naturalHeight.value);
+    var standardScale = Math.min(1, window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
+    if (scale.value <= lastStandardScale) scale.value = standardScale;
     if (window.innerHeight < scale.value * naturalHeight.value) {
         top.value = Math.min(top.value, 0);
         top.value = Math.max(top.value, window.innerHeight - scale.value * naturalHeight.value);
+    } else {
+        top.value = (window.innerHeight - scale.value * naturalHeight.value) / 2;
     }
     if (window.innerWidth < scale.value * naturalWidth.value) {
         left.value = Math.min(left.value, 0);
         left.value = Math.max(left.value, window.innerWidth - scale.value * naturalWidth.value);
+    } else {
+        left.value = (window.innerWidth - scale.value * naturalWidth.value) / 2;
     }
     lastWindowWidth = window.innerWidth;
     lastWindowHeight = window.innerHeight;
@@ -135,7 +143,6 @@ function onload() {
     lastWindowWidth = window.innerWidth;
     lastWindowHeight = window.innerHeight;
     var newScale = Math.min(1, window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
-    newScale = Math.max(newScale, 0.01);
     newScale = Math.min(newScale, 8);
     calc(newScale, 0, 0);
     window.onwheel = onwheel;

@@ -13,6 +13,7 @@ import type { User } from '../../models/user';
 import UserMultipleSelect from '../../components/User/MultipleSelect.vue';
 
 const loaded = ref(true);
+const fetching = ref(false);
 const title = ref("");
 const description = ref("");
 const property: Ref<RecordProperty> = ref({
@@ -93,6 +94,7 @@ async function submit() {
         showMsg(MessageType.Error, "请至少添加一个属性");
         return;
     }
+    fetching.value = true;
     var res = await (await newFetch(`${API_BASE_URL}/crops/create`, {
         method: "POST",
         body: JSON.stringify({
@@ -102,7 +104,7 @@ async function submit() {
             editors: editors.value.map((e) => e.uid!),
             viewers: viewers.value.map((e) => e.uid!)
         })
-    })).json();
+    }, () => { fetching.value = false; })).json();
     var id = res["id"];
     showMsg(MessageType.Success, "创建成功，正在跳转...");
     await sleep(1000);
@@ -128,14 +130,14 @@ async function submit() {
                             <span style="color: red">&nbsp;*</span>
                         </template>
                     </v-text-field>
-                    <v-text-field
+                    <v-textarea
                         v-model="description"
                         label="作物描述"
                         variant="outlined"
                         density="comfortable"
                         hide-details
                         class="mt-4"
-                    ></v-text-field>
+                    ></v-textarea>
                 </div>
             </v-timeline-item>
             <v-timeline-item icon="$mdiDatabase" dot-color="purple-lighten-1">
@@ -186,6 +188,7 @@ async function submit() {
                 prepend-icon="$mdiCheck"
                 color="primary"
                 @click="submit()"
+                :disabled="fetching"
             >新建</v-btn>
         </div>
     </div>

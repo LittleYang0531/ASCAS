@@ -36,6 +36,7 @@ export default defineComponent({
 
 <script lang="ts" setup>
 const loaded = ref(false);
+const fetching = ref(false);
 const item: Ref<Crop> = ref({});
 const tab = ref("properties");
 
@@ -73,7 +74,7 @@ function showPropertyDetails(prop: RecordProperty) {
 
 defineExpose({ loading });
 
-async function addRecord() {
+async function addRecord(callback = () => {}) {
     for (var i = 0; i < item.value.properties!.length; i++) {
         var prop = item.value.properties![i]!;
         if (prop.required) {
@@ -90,10 +91,28 @@ async function addRecord() {
             }
         }
     }
+    fetching.value = true;
     await (await newFetch(`${API_BASE_URL}/crops/${item.value.cid}/records/add`, {
         method: "POST",
         body: JSON.stringify(values.value)
-    }));
+    }, () => { fetching.value = false; }));
+    fetching.value = false;
+    showMsg(MessageType.Success, "添加成功");
+    callback();
+}
+async function addRecordAndExit() {
+    await addRecord(async () => {
+        await sleep(1000);
+        window.location.href = `/crops/${item.value.cid}?page=simple`;
+    });
+}
+async function addRecordAndContinue() {
+    await addRecord(() => {
+        for (var i = 0; i < item.value.properties!.length; i++) {
+            var prop = item.value.properties![i]!;
+            values.value[prop.name!] = prop.def!;
+        }
+    });
 }
 
 const property: Ref<RecordProperty> = ref({
@@ -166,6 +185,7 @@ async function submit() {
         showMsg(MessageType.Error, "请至少添加一个属性");
         return;
     }
+    fetching.value = true;
     await (await newFetch(`${API_BASE_URL}/crops/${item.value.cid}/edit`, {
         method: "POST",
         body: JSON.stringify({
@@ -176,7 +196,7 @@ async function submit() {
             editors: editors.value.map((e) => e.uid!),
             viewers: viewers.value.map((e) => e.uid!)
         })
-    })).json();
+    }, () => { fetching.value = false; })).json();
     showMsg(MessageType.Success, "修改成功");
     await sleep(1000);
     window.location.href = `/crops/${item.value.cid}`;
@@ -237,12 +257,19 @@ async function submit() {
                     :cropId="item.cid!"
                     class="mt-4"
                 ></PropertyControl>
-                <div class="mt-4 d-flex align-center justify-end">
+                <div class="mt-4 d-flex align-center justify-end ga-4">
+                    <v-btn
+                        prepend-icon="$mdiExitToApp"
+                        color="error"
+                        @click="addRecordAndExit()"
+                        :disabled="fetching"
+                    >添加并终止</v-btn>
                     <v-btn
                         prepend-icon="$mdiCheck"
                         color="primary"
-                        @click="addRecord()"
-                    >添加</v-btn>
+                        @click="addRecordAndContinue()"
+                        :disabled="fetching"
+                    >添加并继续</v-btn>
                 </div>
             </v-tabs-window-item>
             <!-- 协作编辑 -->
@@ -271,14 +298,14 @@ async function submit() {
                         <span style="color: red">&nbsp;*</span>
                     </template>
                 </v-text-field>
-                <v-text-field
+                <v-textarea
                     v-model="description"
                     label="作物描述"
                     variant="outlined"
                     density="comfortable"
                     hide-details
                     class="mt-4"
-                ></v-text-field>
+                ></v-textarea>
                 <h2 class="ma-0 mt-4 mb-4">作物属性</h2>
                 <v-list class="mb-4" v-if="properties.length">
                     <draggable v-model="properties" item-key="name">
@@ -322,6 +349,7 @@ async function submit() {
                         prepend-icon="$mdiCheck"
                         color="primary"
                         @click="submit()"
+                        :disabled="fetching"
                     >修改</v-btn>
                 </div>
             </v-tabs-window-item>
