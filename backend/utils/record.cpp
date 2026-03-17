@@ -57,7 +57,7 @@ private:
     {
         SQLOperator op = getOp(posts);
         if(!isLegal(type,op)) return "";
-        if(op == SQLOperator::EQUAL) return "== ";
+        if(op == SQLOperator::EQUAL) return "= ";
         else if(op == SQLOperator::NOTEQUAL) return "!= ";
         else if(op == SQLOperator::GREATER) return "> ";
         else if(op == SQLOperator::GREATER_OR_EQUAL) return ">= ";
@@ -70,7 +70,7 @@ private:
     }
     std::string getValue(Json::Value posts)
     {
-        return posts["value"].asString() + ") ";
+        return posts["value"].asString();
     }
     std::string getTypeName(const std::vector<RecordProperty>& v,int pos) //pos已经判断是否合法了
     {
@@ -87,7 +87,10 @@ private:
         if(posi == -1) return ""; // id uid
         std::string type = getCropType(vrecord,posi),op = opToSql(posts,type);
         if(op.size() == 0) return "";
-        return ('(' + "var_" + getTypeName(vrecord,posi) + op + getValue(posts));
+        std::string value = getValue(posts);
+        if(type == "TEXT") value = "\"" + value + "\"";
+        value += ")";
+        return ("(var_" + getTypeName(vrecord,posi) + op + value);
     }
     std::string getOrder(Json::Value posts)
     {
@@ -132,6 +135,7 @@ public:
                     whereall += (connectv[i] == true ? "and ": "or ");
                 }
             }
+            std::cout << whereall << std::endl;
         }
         if(posts.isMember("order"))
         {
@@ -161,11 +165,10 @@ public:
 
         quick_mysqli_connect();
         std::string all = whereall + " " + orderall + " " + limitall;
-        std::cout << all << std::endl;
-        mysqli_execute(mysql,"select * from table_%s "
+        mysqli_execute(mysql,"select * from table_%s where "
             "%s",
             quote_encode(crop.name).c_str(),
-            quote_encode(all).c_str()
+            (all).c_str()
         );
         
         return 0;
