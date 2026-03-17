@@ -137,6 +137,7 @@ async function submit() {
                         density="comfortable"
                         hide-details
                         class="mt-4"
+                        auto-grow
                     ></v-textarea>
                 </div>
             </v-timeline-item>
