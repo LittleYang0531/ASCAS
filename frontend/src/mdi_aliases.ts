@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Tue Mar 17 23:57:29 CST 2026
+// Generated on Thu Mar 19 00:16:35 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -22,6 +22,7 @@ import { mdiCrownCircle } from '@mdi/js';
 import { mdiDatabase } from '@mdi/js';
 import { mdiDrag } from '@mdi/js';
 import { mdiExitToApp } from '@mdi/js';
+import { mdiExport } from '@mdi/js';
 import { mdiEye } from '@mdi/js';
 import { mdiFilterMultiple } from '@mdi/js';
 import { mdiFormatListBulleted } from '@mdi/js';
@@ -42,7 +43,11 @@ import { mdiPencilCircle } from '@mdi/js';
 import { mdiPlus } from '@mdi/js';
 import { mdiProgressAlert } from '@mdi/js';
 import { mdiRefresh } from '@mdi/js';
+import { mdiSortAscending } from '@mdi/js';
+import { mdiSortDescending } from '@mdi/js';
 import { mdiTrashCan } from '@mdi/js';
+import { mdiVectorArrangeAbove } from '@mdi/js';
+import { mdiVectorArrangeBelow } from '@mdi/js';
 import { mdiWeatherNight } from '@mdi/js';
 import { mdiWhiteBalanceSunny } from '@mdi/js';
 
@@ -68,6 +73,7 @@ export const mdi_aliases = {
     mdiDatabase,
     mdiDrag,
     mdiExitToApp,
+    mdiExport,
     mdiEye,
     mdiFilterMultiple,
     mdiFormatListBulleted,
@@ -88,7 +94,11 @@ export const mdi_aliases = {
     mdiPlus,
     mdiProgressAlert,
     mdiRefresh,
+    mdiSortAscending,
+    mdiSortDescending,
     mdiTrashCan,
+    mdiVectorArrangeAbove,
+    mdiVectorArrangeBelow,
     mdiWeatherNight,
     mdiWhiteBalanceSunny,
 };

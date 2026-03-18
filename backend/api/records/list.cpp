@@ -14,6 +14,5 @@ auto CropsRecordsList = [](client_conn conn, http_request request, param argv) {
     Json::Value items = packarr(RecordUtils.list(crop, where, order, limit, offset, count));
     if (count == -1) quickSendCode(404);
     if (count == -2) quickSendCode(400);
-    int pageCount = (count + limit - 1) / limit;
-    quickSendData(200, pageCount, items);
+    quickSendData(200, count, items);
 };

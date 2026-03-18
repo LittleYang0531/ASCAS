@@ -59,7 +59,7 @@ defineExpose({ loading });
 
         <v-tabs v-model="tab" color="primary">
             <v-tab value="properties">属性列表</v-tab>
-            <v-tab value="simple">样例数据</v-tab>
+            <v-tab value="simple">数据查询</v-tab>
             <v-tab value="add">添加数据</v-tab>
             <v-tab value="editors">协作编辑</v-tab>
             <v-tab value="viewers">协作查看</v-tab>
@@ -72,9 +72,9 @@ defineExpose({ loading });
             <v-tabs-window-item value="properties">
                 <DetailsProperties :item="item"></DetailsProperties>
             </v-tabs-window-item>
-            <!-- 简要数据 -->
+            <!-- 数据查询 -->
             <v-tabs-window-item value="simple">
-                <DetailsListRecord :item="item"></DetailsListRecord>
+                <DetailsListRecord :crop="item"></DetailsListRecord>
             </v-tabs-window-item>
             <!-- 添加数据 -->
             <v-tabs-window-item value="add" class="pa-4">

@@ -4,8 +4,10 @@ import { onBeforeUnmount, ref } from 'vue';
 const model = defineModel<boolean>("model", { required: true });
 const src = defineProps<{
     src: string,
-    enableLeft?: boolean
-    enableRight?: boolean
+    enableLeft?: boolean,
+    enableRight?: boolean,
+    opacity?: number,
+    title?: string
 }>();
 const emits = defineEmits<{
     (e: 'click:left'): void,
@@ -17,6 +19,7 @@ const naturalWidth = ref(0);
 const naturalHeight = ref(0);
 const left = ref(0);
 const top = ref(0);
+const display = ref(0);
 
 const previousScale = ref(1);
 const scale = ref(1);
@@ -71,8 +74,11 @@ function onwheel(e: WheelEvent) {
 function onmousedown(e: MouseEvent) {
     e.stopPropagation();
     if (e.button != 0) return;
-    document.body.style.cursor = "grab";
+    var canSwipe = window.innerWidth > scale.value * naturalWidth.value;
+    if (!canSwipe) document.body.style.cursor = "grab";
     forbidWheel = true;
+    var realDeltaX = 0;
+    var realDeltaY = 0;
     var lastX = e.clientX; 
     var lastY = e.clientY;
     window.onmousemove = (e: MouseEvent) => {
@@ -80,6 +86,8 @@ function onmousedown(e: MouseEvent) {
         var currY = e.clientY;
         var deltaX = currX - lastX;
         var deltaY = currY - lastY;
+        realDeltaX += deltaX;
+        realDeltaY += deltaY;
         if (window.innerHeight < scale.value * naturalHeight.value) {
             top.value += deltaY;
             top.value = Math.min(top.value, 0);
@@ -99,6 +107,40 @@ function onmousedown(e: MouseEvent) {
         document.body.style.cursor = "";
         window.onmousemove = () => {};
         window.onmouseup = () => {};
+        if (canSwipe && Math.abs(realDeltaX) > Math.abs(realDeltaY) && Math.abs(realDeltaX) > 40) {
+            if (realDeltaX > 0) {
+                src.enableLeft && emits('click:left');
+            } else if (realDeltaX < -0) {
+                src.enableRight && emits('click:right');
+            }
+        }
+    }
+}
+
+function ontouchstart(e: TouchEvent) {
+    e.stopPropagation();
+    var realDeltaX = 0;
+    var realDeltaY = 0;
+    var lastX = e.touches[0]!.clientX; 
+    var lastY = e.touches[0]!.clientY;
+    window.ontouchmove = (e: TouchEvent) => {
+        var currX = e.touches[0]!.clientX;
+        var currY = e.touches[0]!.clientY;
+        var deltaX = currX - lastX;
+        var deltaY = currY - lastY;
+        realDeltaX += deltaX;
+        realDeltaY += deltaY;
+        lastX = currX, lastY = currY;
+    }
+    window.ontouchend = (e: TouchEvent) => {
+        e;
+        window.ontouchmove = () => {};
+        window.ontouchend = () => {};
+        if (realDeltaX > 0) {
+            src.enableLeft && emits('click:left');
+        } else if (realDeltaX < -0) {
+            src.enableRight && emits('click:right');
+        }
     }
 }
 
@@ -137,6 +179,7 @@ function onresize(e: Event) {
 }
 
 function onload() {
+    display.value = 1;
     var image: HTMLImageElement = img.value.image;
     naturalWidth.value = image.naturalWidth;
     naturalHeight.value = image.naturalHeight;
@@ -164,29 +207,41 @@ onBeforeUnmount(() => {
     <v-overlay v-model="model" @mousedown="onclick(close)" width="100%" height="100vh">
         <v-img 
             :class="imgclass"
-            :style="`left: ${left}px; top: ${top}px;`"
+            :style="`left: ${left}px; top: ${top}px; opacity: ${(src.opacity ?? 1) * display};`"
             ref="img"
             :src="src.src"
             :width="scale * naturalWidth"
             :height="scale * naturalHeight"
+            @loadstart="display = 0"
             @load="onload"
             @mousedown="onmousedown"
+            @touchstart="ontouchstart"
             :draggable="false"
         ></v-img>
+        <v-snackbar
+            :model-value="true"
+            :timeout="-1"
+            :text="src.title"
+            contained
+            @click="$event.stopPropagation()"
+            @mousedown="$event.stopPropagation()"
+            class="ImageTitle"
+            v-if="src.title"
+        ></v-snackbar>
         <v-btn
             icon="$mdiClose"
             class="ButtonBase CloseButton ButtonHover"
-            @mousedown="onclick(close)"
+            @mousedown="$event.stopPropagation(); onclick(close)"
         ></v-btn>
         <v-btn
             icon="$mdiArrowLeftBold"
             :class="`ButtonBase LeftButton ${src.enableLeft == undefined || !src.enableLeft ? 'DisabledButton' : 'ButtonHover'}`"
-            @mousedown="onclick(emits('click:left'))"
+            @mousedown="$event.stopPropagation(); onclick(() => src.enableLeft && emits('click:left'))"
         ></v-btn>
         <v-btn
             icon="$mdiArrowRightBold"
-            :class="`ButtonBase RightButton ${src.enableLeft == undefined || !src.enableLeft ? 'DisabledButton' : 'ButtonHover'}`"
-            @mousedown="onclick(emits('click:right'))"
+            :class="`ButtonBase RightButton ${src.enableRight == undefined || !src.enableRight ? 'DisabledButton' : 'ButtonHover'}`"
+            @mousedown="$event.stopPropagation(); onclick(() => src.enableRight && emits('click:right'))"
         ></v-btn>
     </v-overlay>
 </template>
@@ -196,10 +251,19 @@ onBeforeUnmount(() => {
     position: absolute;
     max-width: none;
     max-height: none;
+    transition: opacity 0.28s;
 }
 
 .imageTransition {
-    transition: width 0.28s linear, height 0.28s linear, left 0.28s linear, top 0.28s linear;
+    transition: width 0.28s linear, height 0.28s linear, left 0.28s linear, top 0.28s linear, opacity 0.28s;
+}
+
+.ImageTitle {
+    opacity: 0.7;
+    transition: opacity 0.28s;
+}
+.ImageTitle:hover {
+    opacity: 1;
 }
 
 .ButtonBase {
