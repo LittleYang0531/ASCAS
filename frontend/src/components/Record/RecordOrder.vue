@@ -2,7 +2,7 @@
 import type { OrderNode } from '../../models/record';
 
 const props = defineProps<{
-    order: OrderNode
+    order: OrderNode,
     title: Record<string, string>
 }>();
 const emits = defineEmits<{
@@ -31,7 +31,7 @@ function updateASC() {
     >
         <p class="d-flex align-center ma-0 mr-4 ga-2">
             <v-icon
-                :icon="props.order.isASC ? '$mdiSortDescending' : '$mdiSortAscending'"
+                :icon="props.order.isASC ? '$mdiSortAlphabeticalAscending' : '$mdiSortAlphabeticalDescending'"
                 class="me-2"
                 :title="props.order.isASC ? '升序排序' : '降序排序'"
                 @click="updateASC()"

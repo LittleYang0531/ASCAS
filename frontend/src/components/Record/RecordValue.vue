@@ -19,10 +19,10 @@ const emits = defineEmits<{
     <td v-if="item.property.type == 'RecordPropertyType::STRING'" class="text-truncate" style="max-width: 200px;" :title="(value as string)">
         {{ value }}
     </td>
-    <td v-if="item.property.type == 'RecordPropertyType::SELECT'" class="d-flex align-center justify-center">
+    <td v-if="item.property.type == 'RecordPropertyType::SELECT'" align="center">
         <v-chip size="x-small" variant="outlined" color="primary">{{ value }}</v-chip>
     </td>
-    <td v-if="item.property.type == 'RecordPropertyType::MULTI'">
+    <td v-if="item.property.type == 'RecordPropertyType::MULTI'" align="center">
         <div class="d-flex flex-column align-center justify-center">
             <div v-for="val in JSON.parse(value as string)">
                 <v-chip size="x-small" variant="outlined" color="primary">{{ val }}</v-chip>

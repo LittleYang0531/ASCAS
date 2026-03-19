@@ -18,21 +18,19 @@ const emits = defineEmits<{
     (e: 'submit'): void,
 }>();
 const addOption = ref("");
-const editingOption = ref("");
+const editingIndex = ref(-1);
 const editingValue = ref("");
 
-function edit(element: string) {
-    editingValue.value = element;
-    editingOption.value = element;
+function edit(index: number) {
+    editingValue.value = props.value.options![index]!;
+    editingIndex.value = index;
 }
-function submitEdit(options: Array<string>, element: string) {
-    const index = options.indexOf(element);
-    if (index > -1) options[index] = editingValue.value;
-    editingOption.value = "";
+function submitEdit(index: number) {
+    if (index > -1) props.value.options![index] = editingValue.value;
+    editingIndex.value = -1;
 }
-function remove(options: Array<string>, element: string) {
-    const index = options.indexOf(element);
-    if (index > -1) options.splice(index, 1);
+function remove(index: number) {
+    props.value.options!.splice(index, 1);
 }
 </script>
 
@@ -92,12 +90,9 @@ function remove(options: Array<string>, element: string) {
                         <div class="d-flex flex-column" style="width: 100%">
                             <v-list class="pa-0" v-if="props.options?.length" :disabled="title.disabled">
                                 <draggable v-model="props.options">
-                                    <template #item="{ element }">
-                                        <v-list-item
-                                            :key="element"
-                                            prepend-icon="$mdiDrag"
-                                        >
-                                            <span v-if="editingOption != element">{{ element }}</span>
+                                    <template #item="{ element, index }">
+                                        <v-list-item prepend-icon="$mdiDrag">
+                                            <span v-if="editingIndex != index">{{ element }}</span>
                                             <v-text-field
                                                 v-else
                                                 v-model="editingValue"
@@ -109,16 +104,16 @@ function remove(options: Array<string>, element: string) {
                                                 hide-details
                                                 @click.stop
                                                 @keydown.stop
-                                                @keyup.enter="submitEdit(props.options!, element)"
+                                                @keyup.enter="submitEdit(index)"
                                                 @mousedown.stop
                                             ></v-text-field>
                                             <template v-slot:append>
                                                 <v-btn
-                                                    :icon="editingOption != element ? `$mdiPencil` : `$mdiCheck`"
-                                                    :color="editingOption != element ? 'info' : 'success'"
+                                                    :icon="editingIndex != index ? `$mdiPencil` : `$mdiCheck`"
+                                                    :color="editingIndex != index ? 'info' : 'success'"
                                                     size="small"
                                                     variant="text"
-                                                    @click="editingOption != element ? edit(element) : submitEdit(props.options!, element)"
+                                                    @click="editingIndex != index ? edit(index) : submitEdit(index)"
                                                     :disabled="title.disabled"
                                                 ></v-btn>
                                                 <v-btn
@@ -126,7 +121,7 @@ function remove(options: Array<string>, element: string) {
                                                     color="error"
                                                     size="small"
                                                     variant="text"
-                                                    @click="remove(props.options!, element)"
+                                                    @click="remove(index)"
                                                     :disabled="title.disabled"
                                                 ></v-btn>
                                             </template>

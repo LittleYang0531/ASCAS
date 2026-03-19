@@ -40,13 +40,11 @@ function addWhere() {
     //     value: "" 
     // });
 }
-function updateOrder(oldOrder: OrderNode, order: OrderNode) {
-    const index = orderNodes.value.findIndex((o) => o.column == oldOrder.column);
-    if (index != -1) orderNodes.value[index] = order;
+function updateOrder(index: number, order: OrderNode) {
+    orderNodes.value[index] = order;
 }
-function removeOrder(order: OrderNode) {
-    const index = orderNodes.value.findIndex((o) => o.column == order.column);
-    if (index != -1) orderNodes.value.splice(index, 1);
+function removeOrder(index: number) {
+    orderNodes.value.splice(index, 1);
 }
 function resetOrder() {
     orderNodes.value = [{
@@ -186,12 +184,12 @@ function exportResults() {
         <h2 class="ma-0 mb-4">排序方式</h2>
         <v-list class="mb-4" v-if="orderNodes.length">
             <draggable v-model="orderNodes" item-key="name">
-                <template #item="{ element }">
+                <template #item="{ element, index }">
                     <RecordOrder 
                         :order="element" 
                         :title="columnTitle"
-                        @update="(order) => updateOrder(element, order)"
-                        @remove="removeOrder(element)"
+                        @update="(order) => updateOrder(index, order)"
+                        @remove="removeOrder(index)"
                     ></RecordOrder>
                 </template>
             </draggable>

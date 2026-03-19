@@ -73,16 +73,13 @@ function add() {
 
     propertiesDialog.value = false;
 }
-function edit(props: RecordProperty) {
-    property.value = JSON.parse(JSON.stringify(props));
-    editingIndex.value = properties.value.indexOf(props);
+function edit(index: number) {
+    property.value = properties.value[index]!
+    editingIndex.value = index;
     propertiesDialog.value = true;
 }
-function delete2(props: RecordProperty) {
-    var index = properties.value.indexOf(props);
-    if (index > -1) {
-        properties.value.splice(index, 1);
-    }
+function delete2(index: number) {
+    properties.value.splice(index, 1);
 }
 async function submit() {
     if (title.value == "") {
@@ -144,14 +141,14 @@ onBeforeMount(() => {
     <h2 class="ma-0 mt-4 mb-4">作物属性</h2>
     <v-list class="mb-4" v-if="properties.length">
         <draggable v-model="properties" item-key="name">
-            <template #item="{ element }">
+            <template #item="{ element, index }">
                 <CropPropertyOverview 
                     :props="element"
                     :hasEdit="true"
                     :hasRemove="true"
                     :hasDetails="false"
-                    @edit="edit(element)"
-                    @remove="delete2(element)"
+                    @edit="edit(index)"
+                    @remove="delete2(index)"
                 ></CropPropertyOverview>
             </template>
         </draggable>

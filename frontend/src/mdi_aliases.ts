@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Thu Mar 19 00:16:35 CST 2026
+// Generated on Thu Mar 19 17:31:31 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -43,8 +43,8 @@ import { mdiPencilCircle } from '@mdi/js';
 import { mdiPlus } from '@mdi/js';
 import { mdiProgressAlert } from '@mdi/js';
 import { mdiRefresh } from '@mdi/js';
-import { mdiSortAscending } from '@mdi/js';
-import { mdiSortDescending } from '@mdi/js';
+import { mdiSortAlphabeticalAscending } from '@mdi/js';
+import { mdiSortAlphabeticalDescending } from '@mdi/js';
 import { mdiTrashCan } from '@mdi/js';
 import { mdiVectorArrangeAbove } from '@mdi/js';
 import { mdiVectorArrangeBelow } from '@mdi/js';
@@ -94,8 +94,8 @@ export const mdi_aliases = {
     mdiPlus,
     mdiProgressAlert,
     mdiRefresh,
-    mdiSortAscending,
-    mdiSortDescending,
+    mdiSortAlphabeticalAscending,
+    mdiSortAlphabeticalDescending,
     mdiTrashCan,
     mdiVectorArrangeAbove,
     mdiVectorArrangeBelow,
