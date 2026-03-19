@@ -89,8 +89,8 @@ function remove(index: number) {
                         </template>
                         <div class="d-flex flex-column" style="width: 100%">
                             <v-list class="pa-0" v-if="props.options?.length" :disabled="title.disabled">
-                                <draggable v-model="props.options">
-                                    <template #item="{ element, index }">
+                                <draggable v-model="props.options" animation="200">
+                                    <template v-slot:item="{ element, index }">
                                         <v-list-item prepend-icon="$mdiDrag">
                                             <span v-if="editingIndex != index">{{ element }}</span>
                                             <v-text-field

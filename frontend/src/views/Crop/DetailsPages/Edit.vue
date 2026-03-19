@@ -140,8 +140,8 @@ onBeforeMount(() => {
     ></v-textarea>
     <h2 class="ma-0 mt-4 mb-4">作物属性</h2>
     <v-list class="mb-4" v-if="properties.length">
-        <draggable v-model="properties" item-key="name">
-            <template #item="{ element, index }">
+        <draggable v-model="properties" animation="200">
+            <template v-slot:item="{ element, index }">
                 <CropPropertyOverview 
                     :props="element"
                     :hasEdit="true"

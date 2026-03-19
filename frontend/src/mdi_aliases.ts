@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Thu Mar 19 17:31:31 CST 2026
+// Generated on Thu Mar 19 21:19:30 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';

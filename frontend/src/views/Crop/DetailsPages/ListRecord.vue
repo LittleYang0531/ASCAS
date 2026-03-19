@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, type Ref } from 'vue';
+import { onBeforeMount, ref, watchEffect, type Ref } from 'vue';
 import type { Crop, RecordProperty } from '../../../models/crop';
 import type { OrderNode, WhereNode } from '../../../models/record';
 import { API_BASE_URL } from '../../../config';
@@ -23,22 +23,28 @@ const headers: Ref<Array<Object>>  = ref([]);
 
 // 数据筛选器模块
 const columnTitle: Ref<Record<string, string>> = ref({});
+const columnType: Ref<Record<string, string>> = ref({});
 const whereNodes: Ref<WhereNode> = ref({ isLeaf: false, isAnd: true, params: [] });
-const orderNodes: Ref<Array<OrderNode> > = ref([{
-    column: "id",
-    isASC: true
-}]);
+const whereString = ref("");
+const orderNodes: Ref<Array<OrderNode> > = ref([{ column: "id", isASC: true }]);
+const orderString = ref("");
 function resetWhere() {
     whereNodes.value = { isLeaf: false, isAnd: true, params: [] };
 }
-function addWhere() {
-    showMsg(MessageType.Info, "功能开发中...");
-    // (whereNodes.value as any).params!.push({ 
-    //     isLeaf: true, 
-    //     column: "id", 
-    //     operator: "SQLOperator::EQUAL", 
-    //     value: "" 
-    // });
+function addWhereNode() {
+    (whereNodes.value as any).params!.push({ 
+        isLeaf: false, 
+        isAnd: true,
+        params: []
+    });
+}
+function addWhereLeaf() {
+    (whereNodes.value as any).params!.push({ 
+        isLeaf: true, 
+        column: "id", 
+        op: "SQLOperator::EQUAL", 
+        value: "0" 
+    });
 }
 function updateOrder(index: number, order: OrderNode) {
     orderNodes.value[index] = order;
@@ -58,6 +64,44 @@ function addOrder() {
         isASC: true
     });
 }
+
+const opTable = {
+    "SQLOperator::EQUAL": "=",
+    "SQLOperator::NOTEQUAL": "!=",
+    "SQLOperator::GREATER": ">",
+    "SQLOperator::GREATER_OR_EQUAL": ">=",
+    "SQLOperator::SMALLER": "<",
+    "SQLOperator::SMALLER_OR_EQUAL": "<=",
+    "SQLOperator::LIKE": "LIKE",
+    "SQLOperator::NOTLIKE": "NOT LIKE",
+    "SQLOperator::REGEXP": "REGEXP",
+    "SQLOperator::NOTREGEXP": "NOT REGEXP",
+};
+function quote_encode(source: string) {
+    if (source == null) return "";
+    return source.replace(/\\/g, "\\\\").replace(/\"/g, "\\\"").replace(/\n/g, "\\n");
+}
+function whereToString(where: WhereNode) {
+    if (where.isLeaf) {
+        var column = columnTitle.value[where.column!];
+        var op = opTable[where.op as keyof typeof opTable];
+        var value = columnType.value[where.column!] == 'RecordPropertyType::NUMBER' ? where.value : `"${ quote_encode(where.value!) }"`;
+        return column + ' ' + op + ' ' + value;
+    } else {
+        var strings: Array<string> = [];
+        for (var i = 0; i < where.params!.length; i++) strings.push(whereToString(where.params![i]!));
+        return "(" + (where.params!.length ? strings.join(where.isAnd ? " AND " : " OR ") : "TRUE") + ")";
+    }
+}
+watchEffect(() => {
+    whereString.value = "WHERE " + whereToString(whereNodes.value);
+    var strings: Array<string> = [];
+    for (var i = 0; i < orderNodes.value.length; i++) {
+        var column = columnTitle.value[orderNodes.value[i]?.column!];
+        strings.push(column + ' ' + (orderNodes.value[i]?.isASC ? 'ASC' : 'DESC'));
+    }
+    orderString.value = "ORDER BY " + strings.join(", "); 
+});
 
 // ImageOverlay 模块
 const imageUrls: Ref<Array<string>> = ref([]);
@@ -148,17 +192,29 @@ async function load() {
     }
 
     showMsg(MessageType.Success, `查询完成，找到 ${res.count} 条记录`);
+    var query = JSON.parse(localStorage.getItem("queryCache") ?? "{}");
+    query[crop.crop.cid!] = {
+        where: whereNodes.value,
+        order: orderNodes.value
+    };
+    localStorage.setItem("queryCache", JSON.stringify(query));
     loading.value = false;
 }
 onBeforeMount(async () => {
+    var query = JSON.parse(localStorage.getItem("queryCache") ?? "{}");
+    whereNodes.value = query[crop.crop.cid!]?.where ?? { isLeaf: false, isAnd: true, params: [] };
+    orderNodes.value = query[crop.crop.cid!]?.order ?? [{ column: "id", isASC: true }];
+
     columnTitle.value["id"] = "编号";
+    columnType.value["id"] = "RecordPropertyType::NUMBER";
     for (var i = 0; i < crop.crop.properties?.length!; i++) {
         var prop = crop.crop.properties![i]!;
         headers.value.push({
             title: prop.title + (prop.unit ? "（" + prop.unit + "）" : ""),
             value: prop.name
         });
-        columnTitle.value[prop.name!] = prop.title!;
+        columnTitle.value[prop.name!] = prop.title + (prop.unit ? "（" + prop.unit + "）" : "");
+        columnType.value[prop.name!] = prop.type!;
     }
     await load();
 });
@@ -175,25 +231,52 @@ function exportResults() {
         <v-list class="mb-4">
             <RecordWhere
                 :where="whereNodes"
+                :title="columnTitle"
+                :type="columnType"
+                root
             ></RecordWhere>
         </v-list>
+        <v-textarea
+            v-model="whereString"
+            label="WHERE 子句"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            class="mb-4 Textarea"
+            auto-grow
+            disabled
+        ></v-textarea>
         <div class="d-flex align-center justify-space-between mb-4">
             <v-btn prepend-icon="$mdiRefresh" color="error" @click="resetWhere()">重置筛选</v-btn>
-            <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhere()">添加筛选</v-btn>
+            <div class="d-flex align-center ga-2">
+                <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhereNode()">逻辑运算</v-btn>
+                <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhereLeaf()">比较运算</v-btn>
+            </div>
         </div>
         <h2 class="ma-0 mb-4">排序方式</h2>
         <v-list class="mb-4" v-if="orderNodes.length">
-            <draggable v-model="orderNodes" item-key="name">
-                <template #item="{ element, index }">
+            <draggable v-model="orderNodes" animation="200">
+                <template v-slot:item="{ element, index }">
                     <RecordOrder 
                         :order="element" 
                         :title="columnTitle"
+                        :type="columnType"
                         @update="(order) => updateOrder(index, order)"
                         @remove="removeOrder(index)"
                     ></RecordOrder>
                 </template>
             </draggable>
         </v-list>
+        <v-textarea
+            v-model="orderString"
+            label="ORDER 子句"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            class="mb-4 Textarea"
+            auto-grow
+            disabled
+        ></v-textarea>
         <div class="d-flex align-center justify-space-between">
             <v-btn prepend-icon="$mdiRefresh" color="error" @click="resetOrder()">重置排序</v-btn>
             <v-btn prepend-icon="$mdiPlus" color="primary" @click="addOrder()">添加排序</v-btn>
@@ -238,7 +321,7 @@ function exportResults() {
         </template>
         <template v-slot:item="{ index, item }">
             <tr class="text-no-wrap">
-                <td align="center">#{{ index + 1 }}</td>
+                <td align="center">#{{ item.id }}</td>
                 <template v-for="(prop, j) in crop.crop.properties">
                     <RecordValue 
                         :cid="crop.crop.cid!"
@@ -262,3 +345,9 @@ function exportResults() {
         @click:right="showImage(findNextImage(imageIndex))"
     ></ImageOverlay>
 </template>
+
+<style lang="css" scoped>
+.Textarea {
+    font-family: 'Cascadia Mono', 'Consolas'
+}
+</style>

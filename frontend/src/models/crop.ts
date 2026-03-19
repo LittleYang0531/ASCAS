@@ -30,3 +30,12 @@ export const UserPermission_icons = {
     "UserPermission::EDITOR": "$mdiPencilCircle",
     "UserPermission::OWNER": "$mdiCrownCircle",
 };
+
+export const RecordPropertyType_icons = {
+    "RecordPropertyType::NUMBER": "$mdiNumeric",
+    "RecordPropertyType::STRING": "$mdiAlphabetical",
+    "RecordPropertyType::SELECT": "$mdiFormatListBulleted",
+    "RecordPropertyType::MULTI": "$mdiFormatListChecks",
+    "RecordPropertyType::GEOMETRY": "$mdiMapMarker",
+    "RecordPropertyType::IMAGE": "$mdiImage"
+};

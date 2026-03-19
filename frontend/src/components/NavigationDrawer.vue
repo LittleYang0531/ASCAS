@@ -4,6 +4,9 @@ import type { User } from '../models/user';
 import { locate } from '../router';
 import { useRoute } from 'vue-router';
 import UserCard from './User/Card.vue';
+import { showMsg } from '../utils/message';
+import { MessageType } from '../models/message';
+import { sleep } from '../utils/sleep';
 
 const theme = useTheme();
 const route = useRoute();
@@ -18,6 +21,23 @@ function active(prefix: string) {
 function themeToggle() {
     theme.toggle();
     localStorage.setItem("theme", theme.name.value);
+}
+
+function setCookie(name: string, value: string, days: number) {
+    var expires = "";
+    if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+    }
+    document.cookie = name + "=" + value + expires + "; path=/";
+}
+
+async function logout() {
+    setCookie("session", "", -1);
+    showMsg(MessageType.Success, "退出登录成功");
+    await sleep(1000);
+    location.href = location.href;
 }
 </script>
 
@@ -82,7 +102,7 @@ function themeToggle() {
             <v-list-item
                 prepend-icon="$mdiLogout"
                 title="退出登录"
-                @click=""
+                @click="logout()"
             ></v-list-item>
         </v-list>
 

@@ -6,3 +6,11 @@ export const login_background_urls = [
     `${import.meta.env.BASE_URL}bg1.jpg`,
     `${import.meta.env.BASE_URL}bg2.jpg`,
 ];
+
+// const defaultConfig = {
+//     apiBase: API_BASE_URL
+// };
+
+// export function getConfig() {
+    
+// }

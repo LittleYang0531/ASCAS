@@ -1,9 +1,11 @@
 <script setup lang="ts">
+import { RecordPropertyType_icons } from '../../models/crop';
 import type { OrderNode } from '../../models/record';
 
 const props = defineProps<{
     order: OrderNode,
-    title: Record<string, string>
+    title: Record<string, string>,
+    type: Record<string, string>
 }>();
 const emits = defineEmits<{
     (e: 'update', order: OrderNode): void,
@@ -29,7 +31,7 @@ function updateASC() {
         class="cursor-pointer"
         prepend-icon="$mdiDrag"
     >
-        <p class="d-flex align-center ma-0 mr-4 ga-2">
+        <div class="d-flex align-center ma-0 mr-4 ga-2">
             <v-icon
                 :icon="props.order.isASC ? '$mdiSortAlphabeticalAscending' : '$mdiSortAlphabeticalDescending'"
                 class="me-2"
@@ -37,15 +39,36 @@ function updateASC() {
                 @click="updateASC()"
             ></v-icon>
             <v-select
+                :label="props.order.isASC ? '升序排序（ASC）' : '降序排序（DESC）'"
                 :model-value="props.order.column"
-                :items="Object.keys(title).map((key) => ({ title: title[key], value: key }))"
+                :items="Object.keys(props.title).map((key) => ({ title: props.title[key], value: key }))"
                 variant="outlined"
                 density="comfortable"
                 hide-details
                 focused
+                class="mt-2"
                 @update:model-value="updateColumn"
-            ></v-select>
-        </p>
+            >
+                <template v-slot:selection="{ item }">
+                    <div class="d-flex align-center ga-2">
+                        <v-icon
+                            :icon="RecordPropertyType_icons[type[item.value!]! as keyof typeof RecordPropertyType_icons]"
+                        ></v-icon>
+                        <span>{{ item.title }}</span>
+                    </div>
+                </template>
+                <template v-slot:item="{ props, item }">
+                    <v-list-item v-bind="props" :title="undefined">
+                        <div class="d-flex align-center ga-2">
+                            <v-icon
+                                :icon="RecordPropertyType_icons[type[item.value!]! as keyof typeof RecordPropertyType_icons]"
+                            ></v-icon>
+                            <span>{{ item.title }}</span>
+                        </div>
+                    </v-list-item>
+                </template>
+            </v-select>
+        </div>
         <template v-slot:append>
             <v-btn
                 color="error"

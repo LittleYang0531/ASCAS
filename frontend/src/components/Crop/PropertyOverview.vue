@@ -1,14 +1,5 @@
 <script lang="ts" setup>
-import type { RecordProperty } from '../../models/crop';
-
-const icons = {
-    "RecordPropertyType::NUMBER": "$mdiNumeric",
-    "RecordPropertyType::STRING": "$mdiAlphabetical",
-    "RecordPropertyType::SELECT": "$mdiFormatListBulleted",
-    "RecordPropertyType::MULTI": "$mdiFormatListChecks",
-    "RecordPropertyType::GEOMETRY": "$mdiMapMarker",
-    "RecordPropertyType::IMAGE": "$mdiImage"
-};
+import { RecordPropertyType_icons, type RecordProperty } from '../../models/crop';
 
 const props = defineProps<{
     props: RecordProperty,
@@ -30,7 +21,7 @@ const emits = defineEmits<{
         prepend-icon="$mdiDrag"
     >
         <p class="d-flex align-center ma-0">
-            <v-icon :icon="icons[props.props.type as keyof typeof icons]" class="me-2"></v-icon>
+            <v-icon :icon="RecordPropertyType_icons[props.props.type as keyof typeof RecordPropertyType_icons]" class="me-2"></v-icon>
             {{ props.props.title }}
             <span v-if="props.props.required" style="color: red">&nbsp;*</span>
             <span v-if="props.props.unit != ''">（{{ props.props.unit }}）</span>
