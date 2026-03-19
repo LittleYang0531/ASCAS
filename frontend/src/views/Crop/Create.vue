@@ -140,7 +140,7 @@ async function submit() {
             <v-timeline-item icon="$mdiDatabase" dot-color="purple-lighten-1">
                 <h2 class="ma-0 font-weight-light mb-4">作物属性</h2>
                 <v-list class="mb-4" v-if="properties.length">
-                    <draggable v-model="properties" animation="200">
+                    <draggable v-model="properties" animation="200" item-key="name">
                         <template v-slot:item="{ element, index }">
                             <CropPropertyOverview 
                                 :props="element"

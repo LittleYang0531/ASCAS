@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Thu Mar 19 21:19:30 CST 2026
+// Generated on Fri Mar 20 00:21:51 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -25,6 +25,7 @@ import { mdiExitToApp } from '@mdi/js';
 import { mdiExport } from '@mdi/js';
 import { mdiEye } from '@mdi/js';
 import { mdiFilterMultiple } from '@mdi/js';
+import { mdiFilterVariant } from '@mdi/js';
 import { mdiFormatListBulleted } from '@mdi/js';
 import { mdiFormatListChecks } from '@mdi/js';
 import { mdiHome } from '@mdi/js';
@@ -38,6 +39,7 @@ import { mdiMagnify } from '@mdi/js';
 import { mdiMapMarker } from '@mdi/js';
 import { mdiMessage } from '@mdi/js';
 import { mdiNumeric } from '@mdi/js';
+import { mdiOrderAlphabeticalAscending } from '@mdi/js';
 import { mdiPencil } from '@mdi/js';
 import { mdiPencilCircle } from '@mdi/js';
 import { mdiPlus } from '@mdi/js';
@@ -76,6 +78,7 @@ export const mdi_aliases = {
     mdiExport,
     mdiEye,
     mdiFilterMultiple,
+    mdiFilterVariant,
     mdiFormatListBulleted,
     mdiFormatListChecks,
     mdiHome,
@@ -89,6 +92,7 @@ export const mdi_aliases = {
     mdiMapMarker,
     mdiMessage,
     mdiNumeric,
+    mdiOrderAlphabeticalAscending,
     mdiPencil,
     mdiPencilCircle,
     mdiPlus,

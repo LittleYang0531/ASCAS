@@ -22,12 +22,15 @@ const loading = ref(false);
 const headers: Ref<Array<Object>>  = ref([]);
 
 // 数据筛选器模块
+const filterModel: Ref<number | undefined> = ref(undefined);
 const columnTitle: Ref<Record<string, string>> = ref({});
 const columnType: Ref<Record<string, string>> = ref({});
 const whereNodes: Ref<WhereNode> = ref({ isLeaf: false, isAnd: true, params: [] });
 const whereString = ref("");
+const whereCount = ref(0);
 const orderNodes: Ref<Array<OrderNode> > = ref([{ column: "id", isASC: true }]);
 const orderString = ref("");
+const orderCount = ref(0);
 function resetWhere() {
     whereNodes.value = { isLeaf: false, isAnd: true, params: [] };
 }
@@ -51,6 +54,7 @@ function updateOrder(index: number, order: OrderNode) {
 }
 function removeOrder(index: number) {
     orderNodes.value.splice(index, 1);
+    if (orderNodes.value.length == 0) orderNodes.value.push({ column: "id", isASC: true });
 }
 function resetOrder() {
     orderNodes.value = [{
@@ -93,14 +97,23 @@ function whereToString(where: WhereNode) {
         return "(" + (where.params!.length ? strings.join(where.isAnd ? " AND " : " OR ") : "TRUE") + ")";
     }
 }
+function getWhereCount(where: WhereNode): number {
+    if (where.isLeaf) return 1;
+    var cnt = 0;
+    for (var i = 0; i < where.params!.length; i++) cnt += getWhereCount(where.params![i]!);
+    return cnt;
+}
 watchEffect(() => {
     whereString.value = "WHERE " + whereToString(whereNodes.value);
+    whereCount.value = getWhereCount(whereNodes.value);
+
     var strings: Array<string> = [];
     for (var i = 0; i < orderNodes.value.length; i++) {
         var column = columnTitle.value[orderNodes.value[i]?.column!];
         strings.push(column + ' ' + (orderNodes.value[i]?.isASC ? 'ASC' : 'DESC'));
     }
     orderString.value = "ORDER BY " + strings.join(", "); 
+    orderCount.value = orderNodes.value.length;
 });
 
 // ImageOverlay 模块
@@ -226,62 +239,84 @@ function exportResults() {
 </script>
 
 <template>
-    <div class="pa-4">
-        <h2 class="ma-0 mb-4">筛选器</h2>
-        <v-list class="mb-4">
-            <RecordWhere
-                :where="whereNodes"
-                :title="columnTitle"
-                :type="columnType"
-                root
-            ></RecordWhere>
-        </v-list>
-        <v-textarea
-            v-model="whereString"
-            label="WHERE 子句"
-            variant="outlined"
-            density="comfortable"
-            hide-details
-            class="mb-4 Textarea"
-            auto-grow
-            disabled
-        ></v-textarea>
-        <div class="d-flex align-center justify-space-between mb-4">
-            <v-btn prepend-icon="$mdiRefresh" color="error" @click="resetWhere()">重置筛选</v-btn>
-            <div class="d-flex align-center ga-2">
-                <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhereNode()">逻辑运算</v-btn>
-                <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhereLeaf()">比较运算</v-btn>
-            </div>
-        </div>
-        <h2 class="ma-0 mb-4">排序方式</h2>
-        <v-list class="mb-4" v-if="orderNodes.length">
-            <draggable v-model="orderNodes" animation="200">
-                <template v-slot:item="{ element, index }">
-                    <RecordOrder 
-                        :order="element" 
+    <v-expansion-panels static bg-color="transparent" v-model="filterModel">
+        <v-expansion-panel value="0">
+            <v-expansion-panel-title class="pa-4 MyExpansionPanelTitle">
+                <div class="d-flex align-center ga-2">
+                    <h2 class="ma-0">
+                        筛选器
+                        <span v-if="filterModel == undefined">& 排序方式</span>
+                    </h2>
+                    <v-badge location="top right" color="primary" :content="whereCount" v-if="whereCount > 0">
+                        <v-icon icon="$mdiFilterVariant"></v-icon>
+                    </v-badge>
+                    <v-badge location="top right" color="primary" :content="orderCount" v-if="orderCount > 0 && filterModel == undefined">
+                        <v-icon icon="$mdiOrderAlphabeticalAscending"></v-icon>
+                    </v-badge>
+                </div>
+            </v-expansion-panel-title>
+            <v-expansion-panel-text class="MyExpansionPanelText pa-4 pt-0">
+                <v-list class="mb-4">
+                    <RecordWhere
+                        :where="whereNodes"
                         :title="columnTitle"
                         :type="columnType"
-                        @update="(order) => updateOrder(index, order)"
-                        @remove="removeOrder(index)"
-                    ></RecordOrder>
-                </template>
-            </draggable>
-        </v-list>
-        <v-textarea
-            v-model="orderString"
-            label="ORDER 子句"
-            variant="outlined"
-            density="comfortable"
-            hide-details
-            class="mb-4 Textarea"
-            auto-grow
-            disabled
-        ></v-textarea>
-        <div class="d-flex align-center justify-space-between">
-            <v-btn prepend-icon="$mdiRefresh" color="error" @click="resetOrder()">重置排序</v-btn>
-            <v-btn prepend-icon="$mdiPlus" color="primary" @click="addOrder()">添加排序</v-btn>
-        </div>
-    </div>
+                        root
+                    ></RecordWhere>
+                </v-list>
+                <v-textarea
+                    v-model="whereString"
+                    label="WHERE 子句"
+                    variant="outlined"
+                    density="comfortable"
+                    hide-details
+                    class="mb-4 Textarea"
+                    auto-grow
+                    disabled
+                ></v-textarea>
+                <div class="d-flex align-center justify-space-between mb-4">
+                    <v-btn prepend-icon="$mdiRefresh" color="error" @click="resetWhere()">重置筛选</v-btn>
+                    <div class="d-flex align-center ga-2">
+                        <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhereNode()">逻辑运算</v-btn>
+                        <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhereLeaf()">比较运算</v-btn>
+                    </div>
+                </div>
+                <div class="d-flex align-center ga-2 mb-4">
+                    <h2 class="ma-0">排序方式</h2>
+                    <v-badge location="top right" color="primary" :content="orderCount" v-if="orderCount > 0">
+                        <v-icon icon="$mdiOrderAlphabeticalAscending"></v-icon>
+                    </v-badge>
+                </div>
+                <v-list class="mb-4" v-if="orderNodes.length">
+                    <draggable v-model="orderNodes" animation="200" item-key="name">
+                        <template v-slot:item="{ element, index }">
+                            <RecordOrder 
+                                :order="element" 
+                                :title="columnTitle"
+                                :type="columnType"
+                                @update="(order) => updateOrder(index, order)"
+                                @remove="removeOrder(index)"
+                            ></RecordOrder>
+                        </template>
+                    </draggable>
+                </v-list>
+                <v-textarea
+                    v-model="orderString"
+                    label="ORDER 子句"
+                    variant="outlined"
+                    density="comfortable"
+                    hide-details
+                    class="mb-4 Textarea"
+                    auto-grow
+                    disabled
+                ></v-textarea>
+                <div class="d-flex align-center justify-space-between">
+                    <v-btn prepend-icon="$mdiRefresh" color="error" @click="resetOrder()">重置排序</v-btn>
+                    <v-btn prepend-icon="$mdiPlus" color="primary" @click="addOrder()">添加排序</v-btn>
+                </div>
+            </v-expansion-panel-text>
+        </v-expansion-panel>
+    </v-expansion-panels>
     <v-divider></v-divider>
     <div class="d-flex align-center justify-space-between pa-4">
         <h2 class="ma-0">查询结果</h2>
@@ -347,7 +382,22 @@ function exportResults() {
 </template>
 
 <style lang="css" scoped>
+.MyExpansionPanelTitle h2 {
+    font-size: 24px;
+    height: 36px;
+    line-height: 36px;
+}
+
 .Textarea {
     font-family: 'Cascadia Mono', 'Consolas'
+}
+</style>
+
+<style lang="css">
+.MyExpansionPanelTitle > .v-expansion-panel-title__overlay {
+    opacity: 0!important;
+}
+.MyExpansionPanelText > .v-expansion-panel-text__wrapper {
+    padding: 0;
 }
 </style>

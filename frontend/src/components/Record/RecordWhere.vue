@@ -104,7 +104,7 @@ function updateColumn() {
                         class="mt-2"
                     >
                         <div style="width: 100%" v-if="where.params!.length">
-                            <draggable v-model="where.params" group="where" animation="200">
+                            <draggable v-model="where.params" group="where" animation="200" item-key="name">
                                 <template v-slot:item="{ index }">
                                     <RecordWhere
                                         v-model:where="where.params![index]!"
@@ -116,7 +116,7 @@ function updateColumn() {
                             </draggable>
                         </div>
                         <div style="width: 100%; height: 64px;" v-else>
-                            <draggable v-model="where.params" group="where" animation="200">
+                            <draggable v-model="where.params" group="where" animation="200" item-key="name">
                                 <template v-slot:item="{}"></template>
                                 <template v-slot:footer v-if="!where.params?.length">
                                     <div class="d-flex align-center justify-center" style="width: 100%; height: 64px;">
