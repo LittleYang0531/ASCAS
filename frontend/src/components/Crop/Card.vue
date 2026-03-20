@@ -1,6 +1,11 @@
 <script lang="ts" setup>
+import { API_BASE_URL } from '../../config';
 import { UserPermission_icons, type Crop } from '../../models/crop';
+import { MessageType } from '../../models/message';
 import { locate } from '../../router';
+import { newFetch } from '../../utils/fetch';
+import { showMsg } from '../../utils/message';
+import { sleep } from '../../utils/sleep';
 
 const props = defineProps<{
     crop: Crop
@@ -26,6 +31,16 @@ function formatDate(date: number) {
                dateObj.getMinutes().toString().padStart(2, '0') + ':' + 
                dateObj.getSeconds().toString().padStart(2, '0');
     }
+}
+
+async function remove() {
+    if (!confirm('确定要删除吗？')) return;
+    await (await newFetch(`${API_BASE_URL}/crops/${props.crop.cid}/remove`, {
+        method: 'POST'
+    })).json();
+    showMsg(MessageType.Success, '删除成功');
+    await sleep(1000);
+    location.href = location.href;
 }
 </script>
 
@@ -53,13 +68,19 @@ function formatDate(date: number) {
                 <span class="text-body-small text-medium-emphasis">{{ formatDate(props.crop.updatedAt!) }}</span>
             </div>
         </div>
-        <div>
+        <div class="d-flex flex-column ga-2">
             <v-btn
                 color="primary"
                 prepend-icon="$mdiPencil"
                 @click="locate(`/crops/${props.crop.cid}?page=edit`)"
                 v-if="props.crop.permission == 'UserPermission::OWNER'"
             >编辑</v-btn>
+            <v-btn
+                color="error"
+                prepend-icon="$mdiTrashCan"
+                @click="remove"
+                v-if="props.crop.permission == 'UserPermission::OWNER'"
+            >删除</v-btn>
         </div>
     </div>
     <v-divider></v-divider>

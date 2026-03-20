@@ -217,6 +217,16 @@ async function submitEdit() {
     await sleep(1000);
     await load();
 }
+async function removeRecord() {
+    if (!confirm('确定要删除吗？')) return;
+    await (await newFetch(`${API_BASE_URL}/crops/${crop.crop.cid}/records/${editId.value}/remove`, {
+        method: 'POST'
+    })).json();
+    showMsg(MessageType.Success, '记录删除成功');
+    editDialog.value = false;
+    await sleep(1000);
+    await load();
+}
 
 // 数据加载模块
 async function load() {
@@ -442,6 +452,7 @@ async function getFullData(callback = (_: Array<Record<string, string>>) => {}) 
         :properties="crop.crop.properties!"
         :cid="crop.crop.cid!"
         @submit="submitEdit()"
+        @remove="removeRecord()"
     ></EditDialog>
     <ExportDialog
         v-model:open="exportDialog"

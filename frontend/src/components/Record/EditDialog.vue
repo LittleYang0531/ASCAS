@@ -10,6 +10,7 @@ const props = defineProps<{
 }>();
 const emits = defineEmits<{
     (e: 'submit'): void,
+    (e: 'remove'): void
 }>();
 </script>
 
@@ -30,7 +31,12 @@ const emits = defineEmits<{
                     :cropId="props.cid!"
                     class="mt-4"
                 ></PropertyControl>
-                <div class="mt-4 d-flex align-center justify-end ga-4">
+                <div class="mt-4 d-flex align-center justify-space-between ga-4">
+                    <v-btn
+                        prepend-icon="$mdiTrashCan"
+                        color="error"
+                        @click="emits('remove')"
+                    >删除记录</v-btn>
                     <v-btn
                         prepend-icon="$mdiPencil"
                         color="primary"
