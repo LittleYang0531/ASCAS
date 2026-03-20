@@ -15,7 +15,7 @@ import { useDisplay } from 'vuetify';
 const label = defineProps<{ props: RecordProperty, label: string, class: string, disabled: boolean, cropId?: number }>();
 const model = defineModel<string>("model", { required: true });
 const geometry = ref("");
-const geometryLoaded = ref(false);
+const geometryLoaded = ref(true);
 const isDragging = ref(false);
 const imageProperty = ref({
     isCropped: false,
@@ -224,7 +224,9 @@ onBeforeMount(() => {
     if (label.props.type == "RecordPropertyType::NUMBER") {
         if (model.value == "") model.value = "0";
     }
-    if (label.props.type == "RecordPropertyType::GEOMETRY") loadGeolocation();
+    if (label.props.type == "RecordPropertyType::GEOMETRY") {
+        if (model.value == "") loadGeolocation();
+    }
 });
 </script>
 
@@ -392,7 +394,7 @@ onBeforeMount(() => {
                 <div class="d-flex align-center ga-1 text-truncate">
                     <v-icon icon="$mdiImage" color="primary"></v-icon>
                     <span class="text-medium-emphasis">{{ model }}.jpg</span>
-                    <span class="text-medium-emphasis">
+                    <span class="text-medium-emphasis" v-if="imageProperty.size">
                         ({{ Math.round(imageProperty.size / 10.24) / 100.0 }}kb{{ imageProperty.isCropped ? `，已裁剪至 ${imageProperty.width}x${imageProperty.height}` : "" }})
                     </span>
                 </div>

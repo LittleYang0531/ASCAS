@@ -33,7 +33,11 @@ const emits = defineEmits<{
         {{ value }}
     </td>
     <td v-if="item.property.type == 'RecordPropertyType::IMAGE'">
-        <div v-if="value != ''" @click="enableClick && emits('click')" class="d-flex align-center ga-1 cursor-pointer">
+        <div 
+            v-if="value != ''" 
+            @click="(e) => { enableClick && emits('click'); e.stopPropagation(); }" 
+            class="d-flex align-center ga-1 cursor-pointer"
+        >
             <v-icon icon="$mdiImage" color="primary"></v-icon>
             <span>{{ value }}.jpg</span>
         </div>

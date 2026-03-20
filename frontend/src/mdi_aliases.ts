@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Fri Mar 20 00:21:51 CST 2026
+// Generated on Fri Mar 20 14:37:46 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -16,6 +16,7 @@ import { mdiClock } from '@mdi/js';
 import { mdiClose } from '@mdi/js';
 import { mdiCloseCircle } from '@mdi/js';
 import { mdiCloudUpload } from '@mdi/js';
+import { mdiCodeJson } from '@mdi/js';
 import { mdiCog } from '@mdi/js';
 import { mdiCrown } from '@mdi/js';
 import { mdiCrownCircle } from '@mdi/js';
@@ -24,6 +25,7 @@ import { mdiDrag } from '@mdi/js';
 import { mdiExitToApp } from '@mdi/js';
 import { mdiExport } from '@mdi/js';
 import { mdiEye } from '@mdi/js';
+import { mdiFileTable } from '@mdi/js';
 import { mdiFilterMultiple } from '@mdi/js';
 import { mdiFilterVariant } from '@mdi/js';
 import { mdiFormatListBulleted } from '@mdi/js';
@@ -38,6 +40,7 @@ import { mdiLogout } from '@mdi/js';
 import { mdiMagnify } from '@mdi/js';
 import { mdiMapMarker } from '@mdi/js';
 import { mdiMessage } from '@mdi/js';
+import { mdiMicrosoftExcel } from '@mdi/js';
 import { mdiNumeric } from '@mdi/js';
 import { mdiOrderAlphabeticalAscending } from '@mdi/js';
 import { mdiPencil } from '@mdi/js';
@@ -69,6 +72,7 @@ export const mdi_aliases = {
     mdiClose,
     mdiCloseCircle,
     mdiCloudUpload,
+    mdiCodeJson,
     mdiCog,
     mdiCrown,
     mdiCrownCircle,
@@ -77,6 +81,7 @@ export const mdi_aliases = {
     mdiExitToApp,
     mdiExport,
     mdiEye,
+    mdiFileTable,
     mdiFilterMultiple,
     mdiFilterVariant,
     mdiFormatListBulleted,
@@ -91,6 +96,7 @@ export const mdi_aliases = {
     mdiMagnify,
     mdiMapMarker,
     mdiMessage,
+    mdiMicrosoftExcel,
     mdiNumeric,
     mdiOrderAlphabeticalAscending,
     mdiPencil,

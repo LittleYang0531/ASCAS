@@ -60,7 +60,7 @@ defineExpose({ loading });
         <v-tabs v-model="tab" color="primary">
             <v-tab value="properties">属性列表</v-tab>
             <v-tab value="simple">数据查询</v-tab>
-            <v-tab value="add">添加数据</v-tab>
+            <v-tab value="add" v-if="item.permission != 'UserPermission::VIEWER'">添加数据</v-tab>
             <v-tab value="editors">协作编辑</v-tab>
             <v-tab value="viewers">协作查看</v-tab>
             <v-tab value="edit" v-if="item.permission == 'UserPermission::OWNER'">作物表编辑</v-tab>
@@ -77,7 +77,7 @@ defineExpose({ loading });
                 <DetailsListRecord :crop="item"></DetailsListRecord>
             </v-tabs-window-item>
             <!-- 添加数据 -->
-            <v-tabs-window-item value="add" class="pa-4">
+            <v-tabs-window-item value="add" class="pa-4" v-if="item.permission != 'UserPermission::VIEWER'">
                 <DetailsAddRecord :item="item"></DetailsAddRecord>
             </v-tabs-window-item>
             <!-- 协作编辑 -->

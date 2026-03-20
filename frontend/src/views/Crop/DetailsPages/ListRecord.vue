@@ -11,6 +11,9 @@ import RecordOrder from '../../../components/Record/RecordOrder.vue';
 import RecordWhere from '../../../components/Record/RecordWhere.vue';
 import { showMsg } from '../../../utils/message';
 import { MessageType } from '../../../models/message';
+import EditDialog from '../../../components/Record/EditDialog.vue';
+import { sleep } from '../../../utils/sleep';
+import ExportDialog from '../../../components/Record/ExportDialog.vue';
 
 const crop = defineProps<{
     crop: Crop
@@ -165,6 +168,9 @@ function showImage(index: number, fadeIn = true) {
 }
 
 // TableCell 模块
+const editDialog = ref(false);
+const editId = ref(0);
+const editValues: Ref<Record<string, string>> = ref({});
 function enableClick(prop: RecordProperty) {
     return prop.type == "RecordPropertyType::IMAGE";
 }
@@ -173,6 +179,24 @@ function onclick(prop: RecordProperty, row: number, column: number) {
         var index = row * (imageUrls.value.length / data.value.length) + imageColumns.value[column]!;
         showImage(index, false);
     }
+}
+function edit(index: number) {
+    var item = data.value[index]!;
+    for (var i = 0; i < crop.crop.properties?.length!; i++) {
+        var prop = crop.crop.properties![i]!;
+        editValues.value[prop.name!] = item[prop.name!]!.toString();
+    }
+    editId.value = Number(item.id!);
+    editDialog.value = true;
+}
+async function submitEdit() {
+    await (await newFetch(`${API_BASE_URL}/crops/${crop.crop.cid}/records/${editId.value}/edit`, {
+        method: "POST",
+        body: JSON.stringify(editValues.value)
+    })).json();
+    showMsg(MessageType.Success, "记录修改成功");
+    await sleep(1000);
+    await load();
 }
 
 // 数据加载模块
@@ -233,8 +257,21 @@ onBeforeMount(async () => {
 });
 
 // 数据导出模块
+const exportDialog = ref(false);
 function exportResults() {
-    showMsg(MessageType.Info, "功能开发中...");
+    exportDialog.value = true;
+}
+async function getFullData(callback = (_: Array<Record<string, string>>) => {}) {
+    var res = await (await newFetch(`${API_BASE_URL}/crops/${crop.crop.cid}/records/list`, {
+        method: "POST",
+        body: JSON.stringify({
+            where: whereNodes.value,
+            order: [{ column: "id", isASC: true }],
+            limit: itemLength.value,
+            offset: 0
+        })
+    })).json();
+    callback(res.items);
 }
 </script>
 
@@ -341,6 +378,7 @@ function exportResults() {
         items-per-page-text="每页记录数："
         @update:options="load()"
         class="mb-4"
+        hover
     >
         <template v-slot:headers="{ columns }">
             <tr>
@@ -355,7 +393,7 @@ function exportResults() {
             </tr>
         </template>
         <template v-slot:item="{ index, item }">
-            <tr class="text-no-wrap">
+            <tr class="text-no-wrap" @click="edit(index)">
                 <td align="center">#{{ item.id }}</td>
                 <template v-for="(prop, j) in crop.crop.properties">
                     <RecordValue 
@@ -379,6 +417,19 @@ function exportResults() {
         @click:left="showImage(findPreviousImage(imageIndex))"
         @click:right="showImage(findNextImage(imageIndex))"
     ></ImageOverlay>
+    <EditDialog
+        v-model:open="editDialog"
+        v-model:values="editValues"
+        :properties="crop.crop.properties!"
+        :cid="crop.crop.cid!"
+        @submit="submitEdit()"
+    ></EditDialog>
+    <ExportDialog
+        v-model:open="exportDialog"
+        :properties="crop.crop.properties!"
+        :cid="crop.crop.cid!"
+        @getData="getFullData"
+    ></ExportDialog>
 </template>
 
 <style lang="css" scoped>

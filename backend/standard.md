@@ -157,14 +157,6 @@ Func funcname(...) {
 
 # 当前规划
 
-用户头像存储在 `/backend/data/avatars/{uid}.png` 下。
-
-图片数据存储在 `/backend/data/images/{sha1}.jpg` 下，图片名称统一使用其 sha1 码，然后将其 sha1 码作为文本内容存储在数据库中。
-
-注意用户头像使用 png 存储，图片数据使用 jpg 存储
-
-协作者请将已经实现了的接口直接删除，建议按照该文档的顺序实现接口。
-
 ## GET `/users/%d`
 
 - 请将 route 文件写在 `api/users/details.cpp`
@@ -179,192 +171,26 @@ curl "http://localhost:8080/users/1" \
     -H "Authorization: SessionToken <session>"
 ```
 
-## GET `/users/%d/avatar`
+## POST `/crops/%d/remove`
 
-- 请将 route 文件写在 `api/users/avatar.cpp`
-- 获取用户头像，直接返回 image/png 格式即可。
-- `%d` 参数为用户 uid。
-- 需要判断用户是否登录。
+- 请将 route 文件写在 `api/crops/remove.cpp`
+- 删除记录信息
+- `%d` 参数为 crop id
+- 需要判断用户权限为 `UserPermission::OWNER`，否则返回 `401`
+- POST data 无内容
 
-例：
+## POST `/crops/%d/records/%d/edit`
 
-```bash
-curl "http://localhost:8080/users/1/avatar" \
-    -o avatar.png \
-    -H "Authorization: SessionToken <session>"
-```
+- 请将 route 文件写在 `api/records/edit.cpp`
+- 修改记录信息
+- 第一个 `%d` 参数为 crop id，第二个 `%d` 参数为 record id
+- 需要判断用户 uid 是否与该 record 匹配，或者用户权限为 `UserPermission::OWNER`，否则返回 `401`
+- POST 参数同 `records/add`
 
-## POST `/users/%d/avatar`
+## POST `/crops/%d/records/%d/remove`
 
-- 请将 route 文件写在 `api/users/avatar.cpp`
-- 更新用户头像，postdata 内为图像 base64 码。
-- `%d` 参数为用户 uid。
-- 需要判断是否为本人调用。
-
-例：
-
-```bash
-curl "http://localhost:8080/users/1/avatar" \
-    -X POST \
-    -H "Authorization: SessionToken <session>" \
-    -d "iVBORw0KGgoAAAANSUhEUgAAB4AAAAScCAYA..."
-```
-
-## POST `/crops/%d/images`
-
-- 请将 route 文件写在 `api/records/uploadImages.cpp`
-- 上传一张新图片，postdata 内为图片 base64 码。
-- `%d` 参数实际无用处。
-- 需要向前端返回图片 sha1 码。
-- 要求用户权限为 `UserPermission::OWNER` 或 `UserPermission::EDITOR`
-
-例：
-
-```bash
-curl "http://localhost:8080/crops/1/images" \
-    -X POST \
-    -H "Authorization: SessionToken <session>" \
-    -d "iVBORw0KGgoAAAANSUhEUgAAB4AAAAScCAYA..."
-```
-
-## GET `/crops/%d/images/%s`
-
-- 请将 route 文件写在 `api/records/images.cpp`
-- 根据图片 sha1 码获取图片，直接返回 **image/jpeg** 格式即可。
-- `%s` 即为图片 sha1 码，`%d` 参数实际无用处。
-- 要求用户权限为 `UserPermission::OWNER` 或 `UserPermission::EDITOR` 或 `UserPermission::VIEWER`
-
-例：
-
-```bash
-curl "http://localhost:8080/crops/1/images/adc83b19e793491b1c6ea0fd8b46cd9f32e592fc" \
-    -o images.png \
-    -H "Authorization: SessionToken <session>"
-```
-
-## POST `/crops/%d/records/add`
-
-- 请将 route 文件写在 `api/records/add.cpp`
-- 向作物表中添加一行数据
-- 要求用户权限为 `UserPermission::OWNER` 或 `UserPermission::EDITOR`
-
-## POST `/crops/%d/records/list`
-
-- 请将 route 文件写在 `api/records/list.cpp`
-- 拉取部分作物表中的数据
-- 需要支持 `where`, `order`, `limit`, `offset` 等 query 参数，均在 `request.postdata` 中，json 格式
-- 要求用户权限为 `UserPermission::OWNER` 或 `UserPermission::EDITOR` 或 `UserPermission::VIEWER`
-
-### where 参数
-
-```cpp
-enum class SQLOperator {
-    // 通用筛选
-    EQUAL, // 等于
-    NOTEQUAL, // 不等于
-    // 数值筛选
-    GREATER, // 大于
-    GREATER_OR_EQUAL, // 大于等于
-    SMALLER, // 小于
-    SMALLER_OR_EQUAL, // 小于等于
-    // 字符串筛选
-    LIKE, // like
-    NOTLIKE, // notlike
-    REGEXP, // regexp
-    NOTREGEXP, // !regexp
-};
-class node {
-    public:
-
-    bool isLeaf; // 是否为叶子节点
-    if (isLeaf) {
-        std::string column; // 列名
-        SQLOperator op; // 操作符
-        std::string value; // 比较值
-    } else {
-        bool isAnd; // 是否使用 AND 连接
-        std::vector<node> params; // 连接参数
-    }
-};
-```
-
-例如输入为：
-
-```json
-{
-    "where": {
-        "isLeaf": false,
-        "isAnd": true,
-        "params": [
-            {
-                "isLeaf": true,
-                "column": "A",
-                "op": "SQLOperator::EQUAL",
-                "value": "123.08"
-            },
-            {
-                "isLeaf": false,
-                "isAnd": false,
-                "params": [
-                    {
-                        "isLeaf": true,
-                        "column": "B",
-                        "op": "SQLOperator::LIKE",
-                        "value": "%ASCAS%"
-                    },
-                    {
-                        "isLeaf": true,
-                        "column": "C",
-                        "op": "SQLOperator::GREATER",
-                        "value": "10"
-                    }
-                ]
-            }
-        ]
-    }
-}
-```
-
-生成的 SQL 为：
-
-```sql
-(A == 123.08) AND ((B LIKE "%ASCAS%") OR (C > 10))
-```
-
-需要判断 `SQLOperator` 是否匹配数据格式，例如 NUMBER 类型数据就不可以使用 REGEXP。
-
-### order 参数
-
-```cpp
-class node {
-    public:
-
-    std::string column; // 列名
-    bool isASC; // 是否为正序
-}
-std::vector<node> order;
-```
-
-例如输入为：
-
-```json
-{
-    "order": [
-        {
-            "column": "A",
-            "isASC": true
-        },
-        {
-            "column": "B",
-            "isASC": false
-        }
-    ]
-}
-```
-
-生成的 SQL 为：
-
-```sql
-A ASC, B DESC
-```
-
+- 请将 route 文件写在 `api/records/remove.cpp`
+- 删除记录信息
+- 第一个 `%d` 参数为 crop id，第二个 `%d` 参数为 record id
+- 需要判断用户 uid 是否与该 record 匹配，或者用户权限为 `UserPermission::OWNER`，否则返回 `401`
+- POST data 无内容
