@@ -195,6 +195,7 @@ async function submitEdit() {
         body: JSON.stringify(editValues.value)
     })).json();
     showMsg(MessageType.Success, "记录修改成功");
+    editDialog.value = false;
     await sleep(1000);
     await load();
 }
