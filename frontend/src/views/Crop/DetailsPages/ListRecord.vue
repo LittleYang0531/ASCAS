@@ -14,6 +14,7 @@ import { MessageType } from '../../../models/message';
 import EditDialog from '../../../components/Record/EditDialog.vue';
 import { sleep } from '../../../utils/sleep';
 import ExportDialog from '../../../components/Record/ExportDialog.vue';
+import { userId } from '../../../utils/user';
 
 const crop = defineProps<{
     crop: Crop
@@ -182,6 +183,7 @@ function onclick(prop: RecordProperty, row: number, column: number) {
 }
 function edit(index: number) {
     var item = data.value[index]!;
+    if (crop.crop.permission != 'UserPermission::OWNER' && Number(item.uid) != userId.value) return;
     for (var i = 0; i < crop.crop.properties?.length!; i++) {
         var prop = crop.crop.properties![i]!;
         editValues.value[prop.name!] = item[prop.name!]!.toString();
@@ -190,6 +192,22 @@ function edit(index: number) {
     editDialog.value = true;
 }
 async function submitEdit() {
+    for (var i = 0; i < crop.crop.properties!.length; i++) {
+        var prop = crop.crop.properties![i]!;
+        if (prop.required) {
+            if (prop.type == "RecordPropertyType::MULTI") {
+                if (JSON.parse(editValues.value[prop.name!]!).length == 0) {
+                    showMsg(MessageType.Error, `${prop.title}不能为空`);
+                    return;
+                }
+            } else {
+                if (editValues.value[prop.name!] == "") {
+                    showMsg(MessageType.Error, `${prop.title}不能为空`);
+                    return;
+                }
+            }
+        }
+    }
     await (await newFetch(`${API_BASE_URL}/crops/${crop.crop.cid}/records/${editId.value}/edit`, {
         method: "POST",
         body: JSON.stringify(editValues.value)

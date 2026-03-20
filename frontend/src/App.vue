@@ -12,6 +12,7 @@ import type { User } from './models/user';
 import { useRoute } from 'vue-router';
 import AppBarHint from './components/AppBarHint.vue';
 import { type as versionType } from './version'
+import { userId } from './utils/user';
 
 const theme = useTheme();
 const route = useRoute();
@@ -33,6 +34,7 @@ async function loading() {
         return;
     }
 
+    userId.value = res.item.id!;
     userInfo.value = res.item;
     loaded.value = true;
 }
