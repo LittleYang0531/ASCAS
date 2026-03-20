@@ -22,6 +22,7 @@
 #include "api/records/uploadImages.cpp"
 #include "api/records/images.cpp"
 #include "api/records/list.cpp"
+#include "api/records/edit.cpp"
 #include "api/notFound.cpp"
 
 using Json::ValueType;
@@ -113,6 +114,7 @@ int main(int argc, char** argv) {
     app.addRoute("/crops/%d/images", RecordsUploadImages);
     app.addRoute("/crops/%d/images/%s", RecordsImages);
     app.addRoute("/crops/%d/records/list",CropsRecordsList);
+    app.addRoute("/crops/%d/records/%d/edit",CropsRecordsEdit);
     app.addRoute("*", NotFound);
     __default_response["Access-Control-Allow-Credentials"] = "true";
     __default_response["Access-Control-Allow-Headers"] = "*";
