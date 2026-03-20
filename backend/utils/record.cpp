@@ -147,4 +147,26 @@ public:
             all.c_str()
         );
     }
+
+    void edit(Crop crop,Json::Value posts,int rid)
+    {
+        //update table_* set var_xx=xxx,var_xx=xxx where id = rid;
+        std::string cropname = crop.name;
+        std::vector<std::string> update;
+        std::vector<RecordProperty> v = crop.properties;
+        for(int i = 0;i < v.size();++i)
+        {
+            std::string ins = "var_" + v[i].name + '=' + posts[v[i].name].asString();
+            update.push_back(ins);
+        }
+        std::string s = join(",",update);
+        quick_mysqli_connect();
+        mysqli_execute(
+            mysql,
+            "update table_%s set %s where id = %d",
+            quote_encode(cropname),
+            quote_encode(s).c_str(),
+            rid
+        );
+    }
 }RecordUtils;
