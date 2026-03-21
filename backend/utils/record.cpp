@@ -113,7 +113,7 @@ public:
         return vec;
     }
 
-    void add(Crop crop, Json::Value posts, int uid) {
+    void add(Crop crop, Json::Value posts, int uid,int cid) {
         quick_mysqli_connect();
         std::string all, sep = ",", c = "\"",var;
         size_t n = crop.properties.size();
@@ -146,27 +146,54 @@ public:
             uid,
             all.c_str()
         );
+        updatedat(cid);
     }
 
-    void edit(Crop crop,Json::Value posts,int rid)
+    void edit(Crop crop,Json::Value posts,int rid,int cid)
     {
-        //update table_* set var_xx=xxx,var_xx=xxx where id = rid;
         std::string cropname = crop.name;
         std::vector<std::string> update;
         std::vector<RecordProperty> v = crop.properties;
         for(int i = 0;i < v.size();++i)
         {
-            std::string ins = "var_" + v[i].name + '=' + posts[v[i].name].asString();
-            update.push_back(ins);
+            std::string str = posts[v[i].name].asString(),sep = "\"";
+            if(str.size())
+            {
+            std::string ins = "var_" +  v[i].name  + '=';
+             if(v[i].type == RecordPropertyType::STRING){
+                str = sep + str + sep;
+            }
+            update.push_back(ins + str);
+            }
         }
         std::string s = join(",",update);
         quick_mysqli_connect();
         mysqli_execute(
             mysql,
             "update table_%s set %s where id = %d",
-            quote_encode(cropname),
-            quote_encode(s).c_str(),
+            quote_encode(cropname).c_str(),
+            (s).c_str(),
             rid
+        );
+        updatedat(cid);
+    }
+    void remove(Crop crop,int rid)
+    {
+        quick_mysqli_connect(); 
+        std::string cropname = crop.name;
+        mysqli_execute(
+            mysql,
+            "delete from table_%s where id = %d",
+            quote_encode(cropname).c_str(),
+            rid
+        );
+    }
+    void updatedat(int cid)
+    {
+        mysqli_execute(mysql,
+            "update crops set updatedAt=%lld where id=%d",
+                time(NULL),
+                cid
         );
     }
 }RecordUtils;

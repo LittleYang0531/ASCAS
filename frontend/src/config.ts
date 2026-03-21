@@ -1,4 +1,4 @@
-export const API_BASE_URL = import.meta.env.PROD ? 'https://ascas.littleyang.com.cn/api' : 'http://localhost:8080';
+export const API_BASE_URL = import.meta.env.PROD ? 'https://ascas.littleyang.com.cn/api' : 'http://101.43.213.57:8080';
 export const WEB_NAME = 'ASCAS';
 export const imageMaxSize = 512;
 
