@@ -32,6 +32,9 @@ const emits = defineEmits<{
     <td v-if="item.property.type == 'RecordPropertyType::GEOMETRY'" class="text-truncate" style="max-width: 200px;" :title="(value as string)">
         {{ value }}
     </td>
+    <td v-if="item.property.type == 'RecordPropertyType::QRCODE'" class="text-truncate" style="max-width: 200px;" :title="(value as string)">
+        {{ value }}
+    </td>
     <td v-if="item.property.type == 'RecordPropertyType::IMAGE'">
         <div 
             v-if="value != ''" 

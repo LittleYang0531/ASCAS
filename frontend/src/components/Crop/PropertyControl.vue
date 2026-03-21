@@ -11,6 +11,7 @@ import ImageOverlay from '../ImageOverlay.vue';
 import { isJSON } from '../../utils/json';
 import CameraOverlay from '../CameraOverlay.vue';
 import { useDisplay } from 'vuetify';
+import QRCodeDialog from './QRCodeDialog.vue';
 
 const label = defineProps<{ props: RecordProperty, label: string, class: string, disabled: boolean, cropId?: number }>();
 const model = defineModel<string>("model", { required: true });
@@ -220,6 +221,11 @@ function loadGeolocation() {
     }
 }
 
+const QrcodeOpen = ref(false);
+function scanQrcode() {
+    QrcodeOpen.value = true;
+}
+
 onBeforeMount(() => {
     if (label.props.type == "RecordPropertyType::NUMBER") {
         if (model.value == "") model.value = "0";
@@ -350,6 +356,30 @@ onBeforeMount(() => {
             :disabled="!geometryLoaded"
             @click="loadGeolocation()"
         ></v-btn>
+    </div> 
+
+    <div
+        :class="`d-flex align-center justify-center ga-4 ${label.class}`"
+        v-if="label.props.type == 'RecordPropertyType::QRCODE'"
+    >
+        <v-text-field
+            v-model="model"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            :disabled="true"
+        >
+            <template v-slot:label>
+                <span>{{ label.label }}</span>
+                <span v-if="label.props.required" style="color: red">&nbsp;*</span>
+            </template>
+        </v-text-field>
+        <v-btn
+            icon="$mdiQrcodeScan"
+            color="primary"
+            @click="scanQrcode()"
+        ></v-btn>
+        <QRCodeDialog v-model:open="QrcodeOpen" v-model:model="model"></QRCodeDialog>
     </div>
 
     <div 
@@ -357,12 +387,13 @@ onBeforeMount(() => {
         v-if="label.props.type == 'RecordPropertyType::IMAGE'"
     >
         <VOutlined 
-            :class="`myHoverOutlined cursor-pointer ${isDragging ? 'hovering' : ''}`"
+            :class="`cursor-pointer ${isDragging ? 'hovering' : ''}`"
             @dragover="dragEnterEvent"
             @dragenter.prevent
             @dragleave="dragLeaveEvent"
             @drop="dropEvent"
             @click="clickEvent"
+            hover
         >
             <template v-slot:label>
                 <span>{{ label.label }}</span>
@@ -434,14 +465,6 @@ onBeforeMount(() => {
 </style>
 
 <style lang="css">
-@media (hover: hover) {
-    .myHoverOutlined.v-field:hover .v-field__outline {
-        --v-field-border-opacity: var(--v-high-emphasis-opacity);
-    }
-    .myHoverOutlined.v-field:hover .clearButton {
-        opacity: var(--v-medium-emphasis-opacity);
-    }
-}
 .hovering .v-field__outline {
     --v-field-border-opacity: var(--v-high-emphasis-opacity)!important;
 }

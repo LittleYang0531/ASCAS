@@ -1,9 +1,10 @@
 <script setup lang="ts">
+import { Html5Qrcode } from 'html5-qrcode';
 import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
 
 const model = defineModel<boolean>("model", { required: true });
 const emits = defineEmits<{
-    (e: 'takephoto', data: File): void,
+    (e: 'result', data: string): void,
 }>();
 const video = ref<HTMLVideoElement>();
 const naturalWidth = ref(0);
@@ -11,6 +12,7 @@ const naturalHeight = ref(0);
 const scale = ref(1);
 const top = ref(0);
 const left = ref(0);
+const areaSize = ref(0);
 const streaming = ref(false);
 const cameraClass = ref("CameraButton-right");
 
@@ -18,6 +20,7 @@ function onresize() {
     scale.value = Math.min(window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
     top.value = (window.innerHeight - scale.value * naturalHeight.value) / 2;
     left.value = (window.innerWidth - scale.value * naturalWidth.value) / 2;
+    areaSize.value = Math.min(window.innerWidth, window.innerHeight) * 0.8;
     if (window.innerWidth > window.innerHeight) { // 横屏
         cameraClass.value = "CameraButton-right flex-column";
     } else { // 竖屏
@@ -25,21 +28,35 @@ function onresize() {
     }
 };
 
-function takephoto() {
+const facingMode = ref<VideoFacingModeEnum>('environment');
+var intervalE: number;
+function scanQrcode() {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
-    canvas.width = naturalWidth.value;
-    canvas.height = naturalHeight.value;
-    context!.drawImage(video.value!, 0, 0, naturalWidth.value, naturalHeight.value);
+    canvas.width = areaSize.value / scale.value;
+    canvas.height = areaSize.value / scale.value;
+    context!.drawImage(
+        video.value!,
+        ((window.innerWidth - areaSize.value) / 2 - left.value) / scale.value,
+        ((window.innerHeight - areaSize.value) / 2 - top.value) / scale.value,
+        areaSize.value / scale.value,
+        areaSize.value / scale.value
+    );
     canvas.toBlob((blob) => {
         if (blob) {
             const file = new File([blob], `photo.jpg`, { type: 'image/jpeg' });
-            emits('takephoto', file);
+            const html5QrCode = new Html5Qrcode("qrcode-camera-reader");
+            html5QrCode.scanFile(file, true).then((result) => {
+                release();
+                model.value = false;
+                emits('result', result);
+            }).catch((_) => {
+
+            });
         }
     }, 'image/jpeg', 0.7);
 }
 
-const facingMode = ref<VideoFacingModeEnum>('environment');
 function register() {
     navigator.mediaDevices.getUserMedia({ video: { facingMode: facingMode.value }, audio: false })
         .then((stream) => {
@@ -49,6 +66,7 @@ function register() {
                     naturalHeight.value = video.value!.videoHeight;
                     onresize();
                     streaming.value = true;
+                    intervalE = setInterval(scanQrcode, 100);
                 }
             }, false);
 
@@ -67,6 +85,8 @@ function release() {
         tracks.forEach((track) => track.stop());
         video.value!.srcObject = null;
     }
+    streaming.value = false;
+    clearInterval(intervalE);
 }
 
 function reverse(e: Event) {
@@ -96,13 +116,28 @@ onBeforeUnmount(() => {
 
 <template>
     <v-overlay v-model="model" @click="model = false" width="100%" height="100vh">
-        <video 
-            ref="video" 
+        <video
+            ref="video"
             :width="naturalWidth * scale" 
             :height="naturalHeight * scale" 
             :style="`top: ${top}px; left: ${left}px;`"
             class="position-absolute"
         ></video>
+        <div
+            :style="`width: ${naturalWidth * scale}px; height: ${naturalHeight * scale}px;` +
+                `left: ${left}px; top: ${top}px;` +
+                `border-width: ${(naturalHeight * scale - areaSize) / 2}px ${(naturalWidth * scale - areaSize) / 2}px;`"
+            :class="`position-absolute AreaOverlay ${streaming ? '' : 'd-none'}`"
+        >
+            <div style="position: absolute; background-color: rgb(255, 255, 255); width: 40px; height: 5px; top: -5px; left: 0px;"></div>
+            <div style="position: absolute; background-color: rgb(255, 255, 255); width: 40px; height: 5px; top: -5px; right: 0px;"></div>
+            <div style="position: absolute; background-color: rgb(255, 255, 255); width: 40px; height: 5px; bottom: -5px; left: 0px;"></div>
+            <div style="position: absolute; background-color: rgb(255, 255, 255); width: 40px; height: 5px; bottom: -5px; right: 0px;"></div>
+            <div style="position: absolute; background-color: rgb(255, 255, 255); width: 5px; height: 45px; top: -5px; left: -5px;"></div>
+            <div style="position: absolute; background-color: rgb(255, 255, 255); width: 5px; height: 45px; bottom: -5px; left: -5px;"></div>
+            <div style="position: absolute; background-color: rgb(255, 255, 255); width: 5px; height: 45px; top: -5px; right: -5px;"></div>
+            <div style="position: absolute; background-color: rgb(255, 255, 255); width: 5px; height: 45px; bottom: -5px; right: -5px;"></div>
+        </div>
         <v-btn
             icon="$mdiClose"
             class="position-absolute ButtonBase CloseButton ButtonHover"
@@ -110,17 +145,13 @@ onBeforeUnmount(() => {
         ></v-btn>
         <div :class="`position-absolute ${cameraClass} d-flex justify-center align-center ga-2`" @click.prevent>
             <v-btn
-                icon="$mdiCamera"
-                class="ButtonBase CameraButton ButtonHover"
-                @click="takephoto"
-            ></v-btn>
-            <v-btn
                 icon="$mdiCameraFlip"
                 class="ButtonBase CameraButton ButtonHover"
                 @click="reverse"
             ></v-btn>
         </div>
     </v-overlay>
+    <div id="qrcode-camera-reader" class="d-none"></div>
 </template>
 
 <style lang="css" scoped>
@@ -151,12 +182,13 @@ onBeforeUnmount(() => {
     left: calc( 50% - 24px );
 }
 
-.DisabledButton {
-    opacity: 0.38;
-}
-
 .ButtonHover:hover {
     opacity: var(--v-high-emphasis-opacity);
     cursor: pointer;
+}
+
+.AreaOverlay {
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0.4);
 }
 </style>

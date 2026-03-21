@@ -59,7 +59,7 @@ function add() {
         property.value.options = [];
     }
 
-    if (property.value.type == "RecordPropertyType::GEOMETRY" || property.value.type == "RecordPropertyType::IMAGE") {
+    if (property.value.type == "RecordPropertyType::GEOMETRY" || property.value.type == "RecordPropertyType::QRCODE" || property.value.type == "RecordPropertyType::IMAGE") {
         property.value.required = true;
         property.value.def = "";
     }
