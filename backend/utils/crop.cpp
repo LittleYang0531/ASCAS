@@ -315,12 +315,19 @@ class CropUtils {
     }
     void remove(Crop crop)
     {
+        //delete from crops where name
         quick_mysqli_connect();
         std::string cropname = crop.name;
         mysqli_execute(
             mysql,
             "drop table table_%s",
             quote_encode(cropname).c_str()
+        );
+        std::string sep = "\"";
+        mysqli_execute(
+            mysql,
+            "delete from crops where name = %s",
+            (sep + cropname + sep).c_str()
         );
     }
 }CropUtils;
