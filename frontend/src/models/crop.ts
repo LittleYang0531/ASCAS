@@ -37,5 +37,6 @@ export const RecordPropertyType_icons = {
     "RecordPropertyType::SELECT": "$mdiFormatListBulleted",
     "RecordPropertyType::MULTI": "$mdiFormatListChecks",
     "RecordPropertyType::GEOMETRY": "$mdiMapMarker",
+    "RecordPropertyType::QRCODE": "$mdiQrcode",
     "RecordPropertyType::IMAGE": "$mdiImage"
 };

@@ -53,7 +53,8 @@ function remove(index: number) {
                         { title: "字符串型", value: "RecordPropertyType::STRING" },
                         { title: "单项选择", value: "RecordPropertyType::SELECT" },
                         { title: "多项选择", value: "RecordPropertyType::MULTI" },
-                        { title: "定位坐标", value: "RecordPropertyType::GEOMETRY" },
+                        { title: "定位坐标", value: "RecordPropertyType::GEOMETRY" }, 
+                        { title: "扫描二维码", value: "RecordPropertyType::QRCODE" }, 
                         { title: "上传图片", value: "RecordPropertyType::IMAGE" }
                     ]'
                     :disabled="title.disabled || title.disableType"
@@ -72,7 +73,8 @@ function remove(index: number) {
                         <span style="color: red">&nbsp;*</span>
                     </template>
                 </v-text-field>
-                <div v-if="props.type != 'RecordPropertyType::GEOMETRY' && props.type != 'RecordPropertyType::IMAGE'">
+
+                <div v-if="props.type != 'RecordPropertyType::GEOMETRY' && props.type != 'RecordPropertyType::IMAGE' && props.type != 'RecordPropertyType::QRCODE'">
                     <v-text-field
                         v-model="props.unit"
                         label="属性单位"

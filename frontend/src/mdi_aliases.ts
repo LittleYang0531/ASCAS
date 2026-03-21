@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Fri Mar 20 22:46:11 CST 2026
+// Generated on Sat Mar 21 13:15:24 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -18,6 +18,7 @@ import { mdiCloseCircle } from '@mdi/js';
 import { mdiCloudUpload } from '@mdi/js';
 import { mdiCodeJson } from '@mdi/js';
 import { mdiCog } from '@mdi/js';
+import { mdiContentPaste } from '@mdi/js';
 import { mdiCrown } from '@mdi/js';
 import { mdiCrownCircle } from '@mdi/js';
 import { mdiDatabase } from '@mdi/js';
@@ -47,6 +48,8 @@ import { mdiPencil } from '@mdi/js';
 import { mdiPencilCircle } from '@mdi/js';
 import { mdiPlus } from '@mdi/js';
 import { mdiProgressAlert } from '@mdi/js';
+import { mdiQrcode } from '@mdi/js';
+import { mdiQrcodeScan } from '@mdi/js';
 import { mdiRefresh } from '@mdi/js';
 import { mdiSortAlphabeticalAscending } from '@mdi/js';
 import { mdiSortAlphabeticalDescending } from '@mdi/js';
@@ -74,6 +77,7 @@ export const mdi_aliases = {
     mdiCloudUpload,
     mdiCodeJson,
     mdiCog,
+    mdiContentPaste,
     mdiCrown,
     mdiCrownCircle,
     mdiDatabase,
@@ -103,6 +107,8 @@ export const mdi_aliases = {
     mdiPencilCircle,
     mdiPlus,
     mdiProgressAlert,
+    mdiQrcode,
+    mdiQrcodeScan,
     mdiRefresh,
     mdiSortAlphabeticalAscending,
     mdiSortAlphabeticalDescending,

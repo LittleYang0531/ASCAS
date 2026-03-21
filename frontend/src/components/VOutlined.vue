@@ -2,6 +2,7 @@
 const props = defineProps<{
     label?: string
     class?: string
+    hover?: boolean
 }>();
 const slots = defineSlots<{
     default: () => any,
@@ -10,7 +11,13 @@ const slots = defineSlots<{
 </script>
 
 <template>
-    <v-field :class="`pa-2 outlined ${props.class || ''}`" :label="props.label" variant="outlined" active :focused="false">
+    <v-field 
+        :class="`pa-2 outlined ${props.class || ''} ${props.hover ? 'hoverOutlined' : ''}`" 
+        :label="props.label" 
+        variant="outlined" 
+        active 
+        :focused="false"
+    >
         <template v-if="$slots.label" v-slot:label>
             <span class="d-flex align-center">
                 <slot name="label"></slot>
@@ -30,6 +37,13 @@ const slots = defineSlots<{
     }
     .outlined.v-field .v-field:not(.outlined):hover .v-field__outline {
         --v-field-border-opacity: var(--v-high-emphasis-opacity);
+    }
+
+    .hoverOutlined.v-field:hover .v-field__outline {
+        --v-field-border-opacity: var(--v-high-emphasis-opacity);
+    }
+    .hoverOutlined.v-field:hover .clearButton {
+        opacity: var(--v-medium-emphasis-opacity);
     }
 }
 </style>
