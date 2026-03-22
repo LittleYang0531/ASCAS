@@ -4,6 +4,7 @@ import type { RecordProperty } from '../../models/crop';
 import PropertyControl from '../Property/Control.vue';
 import draggable from 'vuedraggable';
 import VOutlined from '../VOutlined.vue';
+import { propertyTypeMap, propertyTypes } from '../../utils/property';
 
 const props = defineModel<RecordProperty>("props", { required: true });
 const open = defineModel<boolean>("open", { required: true });
@@ -48,15 +49,7 @@ function remove(index: number) {
                     variant="outlined"
                     density="comfortable"
                     hide-details
-                    :items='[
-                        { title: "数值型", value: "RecordPropertyType::NUMBER" },
-                        { title: "字符串型", value: "RecordPropertyType::STRING" },
-                        { title: "单项选择", value: "RecordPropertyType::SELECT" },
-                        { title: "多项选择", value: "RecordPropertyType::MULTI" },
-                        { title: "定位坐标", value: "RecordPropertyType::GEOMETRY" }, 
-                        { title: "扫描二维码", value: "RecordPropertyType::QRCODE" }, 
-                        { title: "上传图片", value: "RecordPropertyType::IMAGE" }
-                    ]'
+                    :items='propertyTypes'
                     :disabled="title.disabled || title.disableType"
                     @click="props.def = ''"
                 ></v-select>
@@ -74,7 +67,7 @@ function remove(index: number) {
                     </template>
                 </v-text-field>
 
-                <div v-if="props.type != 'RecordPropertyType::GEOMETRY' && props.type != 'RecordPropertyType::IMAGE' && props.type != 'RecordPropertyType::QRCODE'">
+                <div v-if="propertyTypeMap[props.type!]?.allowDef">
                     <v-text-field
                         v-model="props.unit"
                         label="属性单位"
@@ -84,7 +77,7 @@ function remove(index: number) {
                         class="mt-4"
                         :disabled="title.disabled"
                     ></v-text-field>
-                    <VOutlined label="可选选项" v-if="props.type == 'RecordPropertyType::SELECT' || props.type == 'RecordPropertyType::MULTI'" class="mt-4">
+                    <VOutlined label="可选选项" v-if="propertyTypeMap[props.type!]?.options" class="mt-4">
                         <template v-slot:label>
                             <span>可选选项</span>  
                             <span style="color: red">&nbsp;*</span>

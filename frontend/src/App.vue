@@ -134,4 +134,11 @@ a:hover {
     transform: rotate(359deg);
   }
 }
+
+.MyExpansionPanelTitle > .v-expansion-panel-title__overlay {
+    opacity: 0!important;
+}
+.MyExpansionPanelText > .v-expansion-panel-text__wrapper {
+    padding: 0;
+}
 </style>

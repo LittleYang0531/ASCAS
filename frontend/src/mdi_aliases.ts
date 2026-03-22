@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Sat Mar 21 13:15:24 CST 2026
+// Generated on Sun Mar 22 22:06:24 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -9,6 +9,7 @@ import { mdiArrowLeftBold } from '@mdi/js';
 import { mdiArrowRightBold } from '@mdi/js';
 import { mdiCamera } from '@mdi/js';
 import { mdiCameraFlip } from '@mdi/js';
+import { mdiChartBoxOutline } from '@mdi/js';
 import { mdiCheck } from '@mdi/js';
 import { mdiCheckCircle } from '@mdi/js';
 import { mdiChevronLeft } from '@mdi/js';
@@ -68,6 +69,7 @@ export const mdi_aliases = {
     mdiArrowRightBold,
     mdiCamera,
     mdiCameraFlip,
+    mdiChartBoxOutline,
     mdiCheck,
     mdiCheckCircle,
     mdiChevronLeft,

@@ -11,6 +11,7 @@ import { API_BASE_URL } from '../../config';
 import { sleep } from '../../utils/sleep';
 import type { User } from '../../models/user';
 import UserMultipleSelect from '../../components/User/MultipleSelect.vue';
+import { propertyTypeMap } from '../../utils/property';
 
 const loaded = ref(true);
 const fetching = ref(false);
@@ -49,7 +50,7 @@ function add() {
         showMsg(MessageType.Error, "属性名不能为空");
         return;
     }
-    if (property.value.type == "RecordPropertyType::SELECT" || property.value.type == "RecordPropertyType::MULTI") {
+    if (propertyTypeMap[property.value.type!]?.options) {
         if (property.value.options?.length == 0) {
             showMsg(MessageType.Error, "至少需要添加一个选项");
             return;
@@ -58,7 +59,7 @@ function add() {
         property.value.options = [];
     }
 
-    if (property.value.type == "RecordPropertyType::GEOMETRY" || property.value.type == "RecordPropertyType::QRCODE" || property.value.type == "RecordPropertyType::IMAGE") {
+    if (!propertyTypeMap[property.value.type!]?.allowDef) {
         property.value.required = true;
         property.value.def = "";
     }

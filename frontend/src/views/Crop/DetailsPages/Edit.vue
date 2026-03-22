@@ -11,6 +11,7 @@ import PropertyOverview from '../../../components/Property/Overview.vue';
 import PropertyDialog from '../../../components/Dialog/PropertyDialog.vue';
 import UserMultipleSelect from '../../../components/User/MultipleSelect.vue';
 import draggable from 'vuedraggable';
+import { propertyTypeMap } from '../../../utils/property';
 
 const fetching = ref(false);
 const item = defineProps<{
@@ -50,7 +51,7 @@ function add() {
         showMsg(MessageType.Error, "属性名不能为空");
         return;
     }
-    if (property.value.type == "RecordPropertyType::SELECT" || property.value.type == "RecordPropertyType::MULTI") {
+    if (propertyTypeMap[property.value.type!]?.options) {
         if (property.value.options?.length == 0) {
             showMsg(MessageType.Error, "至少需要添加一个选项");
             return;
@@ -59,7 +60,7 @@ function add() {
         property.value.options = [];
     }
 
-    if (property.value.type == "RecordPropertyType::GEOMETRY" || property.value.type == "RecordPropertyType::QRCODE" || property.value.type == "RecordPropertyType::IMAGE") {
+    if (!propertyTypeMap[property.value.type!]?.allowDef) {
         property.value.required = true;
         property.value.def = "";
     }

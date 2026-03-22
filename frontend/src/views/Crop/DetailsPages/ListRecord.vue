@@ -15,6 +15,8 @@ import RecordEditDialog from '../../../components/Dialog/RecordEditDialog.vue';
 import { sleep } from '../../../utils/sleep';
 import RecordExportDialog from '../../../components/Dialog/RecordExportDialog.vue';
 import { userId } from '../../../utils/user';
+import VCollapse from '../../../components/VCollapse.vue';
+import Chart from '../../../components/Chart/Chart.vue';
 
 const crop = defineProps<{
     crop: Crop
@@ -302,88 +304,105 @@ async function getFullData(callback = (_: Array<Record<string, string>>) => {}) 
     })).json();
     callback(res.items);
 }
+
+// 图表创建模块
+const chartModel: Ref<number | undefined> = ref(undefined);
 </script>
 
 <template>
-    <v-expansion-panels static bg-color="transparent" v-model="filterModel">
-        <v-expansion-panel value="0">
-            <v-expansion-panel-title class="pa-4 MyExpansionPanelTitle">
-                <div class="d-flex align-center ga-2">
-                    <h2 class="ma-0">
-                        筛选器
-                        <span v-if="filterModel == undefined">& 排序方式</span>
-                    </h2>
-                    <v-badge location="top right" color="primary" :content="whereCount" v-if="whereCount > 0">
-                        <v-icon icon="$mdiFilterVariant"></v-icon>
-                    </v-badge>
-                    <v-badge location="top right" color="primary" :content="orderCount" v-if="orderCount > 0 && filterModel == undefined">
-                        <v-icon icon="$mdiOrderAlphabeticalAscending"></v-icon>
-                    </v-badge>
-                </div>
-            </v-expansion-panel-title>
-            <v-expansion-panel-text class="MyExpansionPanelText pa-4 pt-0">
-                <v-list class="mb-4">
-                    <RecordWhere
-                        :where="whereNodes"
+    <!-- 筛选器 & 排序方式 -->
+    <VCollapse v-model:open="filterModel">
+        <template v-slot:title>
+            <div class="d-flex align-center ga-2">
+                <h2 class="ma-0 Title">
+                    筛选器
+                    <span v-if="filterModel == undefined">& 排序方式</span>
+                </h2>
+                <v-badge location="top right" color="primary" :content="whereCount" v-if="whereCount > 0">
+                    <v-icon icon="$mdiFilterVariant"></v-icon>
+                </v-badge>
+                <v-badge location="top right" color="primary" :content="orderCount" v-if="orderCount > 0 && filterModel == undefined">
+                    <v-icon icon="$mdiOrderAlphabeticalAscending"></v-icon>
+                </v-badge>
+            </div>
+        </template>
+
+        <v-list class="mb-4">
+            <RecordWhere
+                :where="whereNodes"
+                :title="columnTitle"
+                :type="columnType"
+                root
+            ></RecordWhere>
+        </v-list>
+        <v-textarea
+            v-model="whereString"
+            label="WHERE 子句"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            class="mb-4 Textarea"
+            auto-grow
+            disabled
+        ></v-textarea>
+        <div class="d-flex align-center justify-space-between mb-4">
+            <v-btn prepend-icon="$mdiRefresh" color="error" @click="resetWhere()">重置筛选</v-btn>
+            <div class="d-flex align-center ga-2">
+                <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhereNode()">逻辑运算</v-btn>
+                <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhereLeaf()">比较运算</v-btn>
+            </div>
+        </div>
+        <div class="d-flex align-center ga-2 mb-4">
+            <h2 class="ma-0">排序方式</h2>
+            <v-badge location="top right" color="primary" :content="orderCount" v-if="orderCount > 0">
+                <v-icon icon="$mdiOrderAlphabeticalAscending"></v-icon>
+            </v-badge>
+        </div>
+        <v-list class="mb-4" v-if="orderNodes.length">
+            <draggable v-model="orderNodes" animation="200" item-key="name">
+                <template v-slot:item="{ element, index }">
+                    <RecordOrder 
+                        :order="element" 
                         :title="columnTitle"
                         :type="columnType"
-                        root
-                    ></RecordWhere>
-                </v-list>
-                <v-textarea
-                    v-model="whereString"
-                    label="WHERE 子句"
-                    variant="outlined"
-                    density="comfortable"
-                    hide-details
-                    class="mb-4 Textarea"
-                    auto-grow
-                    disabled
-                ></v-textarea>
-                <div class="d-flex align-center justify-space-between mb-4">
-                    <v-btn prepend-icon="$mdiRefresh" color="error" @click="resetWhere()">重置筛选</v-btn>
-                    <div class="d-flex align-center ga-2">
-                        <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhereNode()">逻辑运算</v-btn>
-                        <v-btn prepend-icon="$mdiPlus" color="primary" @click="addWhereLeaf()">比较运算</v-btn>
-                    </div>
-                </div>
-                <div class="d-flex align-center ga-2 mb-4">
-                    <h2 class="ma-0">排序方式</h2>
-                    <v-badge location="top right" color="primary" :content="orderCount" v-if="orderCount > 0">
-                        <v-icon icon="$mdiOrderAlphabeticalAscending"></v-icon>
-                    </v-badge>
-                </div>
-                <v-list class="mb-4" v-if="orderNodes.length">
-                    <draggable v-model="orderNodes" animation="200" item-key="name">
-                        <template v-slot:item="{ element, index }">
-                            <RecordOrder 
-                                :order="element" 
-                                :title="columnTitle"
-                                :type="columnType"
-                                @update="(order) => updateOrder(index, order)"
-                                @remove="removeOrder(index)"
-                            ></RecordOrder>
-                        </template>
-                    </draggable>
-                </v-list>
-                <v-textarea
-                    v-model="orderString"
-                    label="ORDER 子句"
-                    variant="outlined"
-                    density="comfortable"
-                    hide-details
-                    class="mb-4 Textarea"
-                    auto-grow
-                    disabled
-                ></v-textarea>
-                <div class="d-flex align-center justify-space-between">
-                    <v-btn prepend-icon="$mdiRefresh" color="error" @click="resetOrder()">重置排序</v-btn>
-                    <v-btn prepend-icon="$mdiPlus" color="primary" @click="addOrder()">添加排序</v-btn>
-                </div>
-            </v-expansion-panel-text>
-        </v-expansion-panel>
-    </v-expansion-panels>
+                        @update="(order) => updateOrder(index, order)"
+                        @remove="removeOrder(index)"
+                    ></RecordOrder>
+                </template>
+            </draggable>
+        </v-list>
+        <v-textarea
+            v-model="orderString"
+            label="ORDER 子句"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            class="mb-4 Textarea"
+            auto-grow
+            disabled
+        ></v-textarea>
+        <div class="d-flex align-center justify-space-between">
+            <v-btn prepend-icon="$mdiRefresh" color="error" @click="resetOrder()">重置排序</v-btn>
+            <v-btn prepend-icon="$mdiPlus" color="primary" @click="addOrder()">添加排序</v-btn>
+        </div>
+    </VCollapse>
     <v-divider></v-divider>
+
+    <!-- 创建图表 -->
+    <VCollapse v-model:open="chartModel">
+        <template v-slot:title>
+            <div class="d-flex align-center ga-2">
+                <h2 class="ma-0 Title">可视化</h2>
+            </div>
+        </template>
+        <Chart 
+            :properties="crop.crop.properties!"
+            @getData="getFullData"
+        ></Chart>
+    </VCollapse>
+    <v-divider></v-divider>
+
+    <!-- 查询结果 -->
     <div class="d-flex align-center justify-space-between pa-4">
         <h2 class="ma-0">查询结果</h2>
         <div class="d-flex align-center ga-2">
@@ -436,6 +455,7 @@ async function getFullData(callback = (_: Array<Record<string, string>>) => {}) 
             </tr>
         </template>
     </v-data-table-server>
+
     <ImageOverlay 
         v-model:model="imageModel" 
         :src="imageUrl" 
@@ -463,7 +483,7 @@ async function getFullData(callback = (_: Array<Record<string, string>>) => {}) 
 </template>
 
 <style lang="css" scoped>
-.MyExpansionPanelTitle h2 {
+.Title {
     font-size: 24px;
     height: 36px;
     line-height: 36px;
@@ -471,14 +491,5 @@ async function getFullData(callback = (_: Array<Record<string, string>>) => {}) 
 
 .Textarea {
     font-family: 'Cascadia Mono', 'Consolas'
-}
-</style>
-
-<style lang="css">
-.MyExpansionPanelTitle > .v-expansion-panel-title__overlay {
-    opacity: 0!important;
-}
-.MyExpansionPanelText > .v-expansion-panel-text__wrapper {
-    padding: 0;
 }
 </style>
