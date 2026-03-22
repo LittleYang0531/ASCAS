@@ -7,8 +7,8 @@ import type { User } from '../../../models/user';
 import { sleep } from '../../../utils/sleep';
 import { newFetch } from '../../../utils/fetch';
 import { API_BASE_URL } from '../../../config';
-import CropPropertyOverview from '../../../components/Crop/PropertyOverview.vue';
-import CropPropertyDialog from '../../../components/Crop/PropertyDialog.vue';
+import PropertyOverview from '../../../components/Property/Overview.vue';
+import PropertyDialog from '../../../components/Dialog/PropertyDialog.vue';
 import UserMultipleSelect from '../../../components/User/MultipleSelect.vue';
 import draggable from 'vuedraggable';
 
@@ -142,21 +142,21 @@ onBeforeMount(() => {
     <v-list class="mb-4" v-if="properties.length">
         <draggable v-model="properties" animation="200" item-key="name">
             <template v-slot:item="{ element, index }">
-                <CropPropertyOverview 
+                <PropertyOverview 
                     :props="element"
                     :hasEdit="true"
                     :hasRemove="true"
                     :hasDetails="false"
                     @edit="edit(index)"
                     @remove="delete2(index)"
-                ></CropPropertyOverview>
+                ></PropertyOverview>
             </template>
         </draggable>
     </v-list>
     <div class="d-flex align-center justify-end">
         <v-btn prepend-icon="$mdiPlus" color="primary" @click="create()">添加属性</v-btn>
     </div>
-    <CropPropertyDialog
+    <PropertyDialog
         :title="editingIndex != -1 ? '编辑作物属性' : '添加作物属性'"
         :btnTitle="editingIndex != -1 ? '保存修改' : '添加属性'"
         :btnIcon="editingIndex != -1 ? '$mdiCheck' : '$mdiPlus'"
@@ -165,7 +165,7 @@ onBeforeMount(() => {
         @submit="add"
         :disabled="false"
         :disableType="editingIndex != -1"
-    ></CropPropertyDialog>
+    ></PropertyDialog>
     <h2 class="ma-0 mt-4 mb-4">成员权限</h2>
     <UserMultipleSelect
         v-model:users="editors"

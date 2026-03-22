@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Crop, RecordProperty } from '../../../models/crop';
-import CropPropertyOverview from '../../../components/Crop/PropertyOverview.vue';
-import CropPropertyDialog from '../../../components/Crop/PropertyDialog.vue';
+import PropertyOverview from '../../../components/Property/Overview.vue';
+import PropertyDialog from '../../../components/Dialog/PropertyDialog.vue';
 import { ref } from 'vue';
 import type { Ref } from 'vue';
 
@@ -18,7 +18,7 @@ function showPropertyDetails(prop: RecordProperty) {
 
 <template>
     <v-list style="width: 100%">
-        <CropPropertyOverview
+        <PropertyOverview
             v-for="prop in item.item.properties"
             :hasEdit="false"
             :hasRemove="false"
@@ -26,9 +26,9 @@ function showPropertyDetails(prop: RecordProperty) {
             @details="showPropertyDetails(prop)"
             :props="prop"
             @click="showPropertyDetails(prop)"
-        ></CropPropertyOverview>
+        ></PropertyOverview>
     </v-list>
-    <CropPropertyDialog
+    <PropertyDialog
         title="查看作物属性"
         btnTitle="关闭窗口"
         btnIcon="$mdiClose"
@@ -37,5 +37,5 @@ function showPropertyDetails(prop: RecordProperty) {
         @submit="showDialog = false"
         :disabled="true"
         :disableType="true"
-    ></CropPropertyDialog>
+    ></PropertyDialog>
 </template>

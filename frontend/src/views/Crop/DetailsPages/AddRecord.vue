@@ -2,7 +2,7 @@
 import type { Ref } from 'vue';
 import type { Crop } from '../../../models/crop';
 import { onBeforeMount, ref } from 'vue';
-import PropertyControl from '../../../components/Crop/PropertyControl.vue';
+import PropertyControl from '../../../components/Property/Control.vue';
 import { showMsg } from '../../../utils/message';
 import { MessageType } from '../../../models/message';
 import { newFetch } from '../../../utils/fetch';

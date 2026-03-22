@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { ref } from 'vue';
 import type { RecordProperty } from '../../models/crop';
-import PropertyControl from './PropertyControl.vue';
+import PropertyControl from '../Property/Control.vue';
 import draggable from 'vuedraggable';
 import VOutlined from '../VOutlined.vue';
 

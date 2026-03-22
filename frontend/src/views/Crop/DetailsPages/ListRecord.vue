@@ -4,16 +4,16 @@ import type { Crop, RecordProperty } from '../../../models/crop';
 import type { OrderNode, WhereNode } from '../../../models/record';
 import { API_BASE_URL } from '../../../config';
 import { newFetch } from '../../../utils/fetch';
-import RecordValue from '../../../components/Record/RecordValue.vue';
-import ImageOverlay from '../../../components/ImageOverlay.vue';
+import RecordValue from '../../../components/Property/Value.vue';
+import ImageOverlay from '../../../components/Overlay/ImageOverlay.vue';
 import draggable from 'vuedraggable';
 import RecordOrder from '../../../components/Record/RecordOrder.vue';
 import RecordWhere from '../../../components/Record/RecordWhere.vue';
 import { showMsg } from '../../../utils/message';
 import { MessageType } from '../../../models/message';
-import EditDialog from '../../../components/Record/EditDialog.vue';
+import RecordEditDialog from '../../../components/Dialog/RecordEditDialog.vue';
 import { sleep } from '../../../utils/sleep';
-import ExportDialog from '../../../components/Record/ExportDialog.vue';
+import RecordExportDialog from '../../../components/Dialog/RecordExportDialog.vue';
 import { userId } from '../../../utils/user';
 
 const crop = defineProps<{
@@ -446,20 +446,20 @@ async function getFullData(callback = (_: Array<Record<string, string>>) => {}) 
         @click:left="showImage(findPreviousImage(imageIndex))"
         @click:right="showImage(findNextImage(imageIndex))"
     ></ImageOverlay>
-    <EditDialog
+    <RecordEditDialog
         v-model:open="editDialog"
         v-model:values="editValues"
         :properties="crop.crop.properties!"
         :cid="crop.crop.cid!"
         @submit="submitEdit()"
         @remove="removeRecord()"
-    ></EditDialog>
-    <ExportDialog
+    ></RecordEditDialog>
+    <RecordExportDialog
         v-model:open="exportDialog"
         :properties="crop.crop.properties!"
         :cid="crop.crop.cid!"
         @getData="getFullData"
-    ></ExportDialog>
+    ></RecordExportDialog>
 </template>
 
 <style lang="css" scoped>

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { RecordProperty } from '../../models/crop';
-import PropertyControl from '../Crop/PropertyControl.vue';
+import PropertyControl from '../Property/Control.vue';
 
 const open = defineModel<boolean>("open", { required: true });
 const values = defineModel<Record<string, string> > ("values", { required: true });

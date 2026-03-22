@@ -5,7 +5,7 @@ import { Html5Qrcode } from 'html5-qrcode';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
 import { ref } from 'vue';
-import QrScanOverlay from '../QrScanOverlay.vue';
+import QrScanOverlay from '../Overlay/QrScanOverlay.vue';
 
 const open = defineModel<boolean>("open", { required: true });
 const model = defineModel<string>("model", { required: true });
