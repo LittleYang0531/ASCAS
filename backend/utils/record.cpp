@@ -160,8 +160,8 @@ public:
             if(str.size())
             {
             std::string ins = "var_" +  v[i].name  + '=';
-             if(v[i].type == RecordPropertyType::STRING){
-                str = sep + str + sep;
+            if(v[i].type != RecordPropertyType::NUMBER){
+                str = sep + quote_encode(str) + sep;
             }
             update.push_back(ins + str);
             }
