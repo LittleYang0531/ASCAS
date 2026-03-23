@@ -133,7 +133,7 @@ std::vector<DBTable> tables = {
             }
         }
     }, {
-        .name = "team",
+        .name = "teams",
         .columns = {
             {
                 .name = "id",
@@ -160,7 +160,7 @@ std::vector<DBTable> tables = {
             }
         }
     }, {
-        .name = "team_member",
+        .name = "team_members",
         .columns = {
             {
                 .name = "tid",

@@ -25,6 +25,11 @@
 #include "api/records/list.cpp"
 #include "api/records/edit.cpp"
 #include "api/records/remove.cpp"
+#include "api/teams/create.cpp"
+#include "api/teams/list.cpp"
+#include "api/teams/details.cpp"
+#include "api/teams/edit.cpp"
+#include "api/teams/remove.cpp"
 #include "api/notFound.cpp"
 
 using Json::ValueType;
@@ -119,6 +124,11 @@ int main(int argc, char** argv) {
     app.addRoute("/crops/%d/records/%d/edit",CropsRecordsEdit);
     app.addRoute("/crops/%d/records/%d/remove",CropsRecordRemove);
     app.addRoute("/crops/%d/remove",CropsRemove);
+    app.addRoute("/teams/create",TeamsCreate);
+    app.addRoute("/teams/%d", TeamsDetails);
+    app.addRoute("/teams/list",TeamsList);
+    app.addRoute("/teams/%d/edit",TeamsEdit);
+    app.addRoute("/teams/%d/remove",TeamsRemove);
     app.addRoute("*", NotFound);
     __default_response["Access-Control-Allow-Credentials"] = "true";
     __default_response["Access-Control-Allow-Headers"] = "*";
