@@ -1,6 +1,5 @@
 #pragma once
 
-#include "enum.h"
 #include "model.cpp"
 #include "user.cpp"
 #include <jsoncpp/json/value.h>

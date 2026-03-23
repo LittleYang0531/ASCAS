@@ -132,5 +132,47 @@ std::vector<DBTable> tables = {
                 .valueIsExpr = true
             }
         }
+    }, {
+        .name = "team",
+        .columns = {
+            {
+                .name = "id",
+                .type = "int",
+                .enableDefaultValue = false,
+                .autoIncrement = true,
+                .primary = true,
+            }, {
+                .name = "title",
+                .type = "text",
+            }, {
+                .name = "description",
+                .type = "text"
+            }, {
+                .name = "owner",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "createdAt",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
+        .name = "team_member",
+        .columns = {
+            {
+                .name = "tid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
     }
 };

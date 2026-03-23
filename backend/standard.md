@@ -171,26 +171,40 @@ curl "http://localhost:8080/users/1" \
     -H "Authorization: SessionToken <session>"
 ```
 
-## POST `/crops/%d/remove`
+## POST `/teams/create`
 
-- 请将 route 文件写在 `api/crops/remove.cpp`
-- 删除记录信息
-- `%d` 参数为 crop id
-- 需要判断用户权限为 `UserPermission::OWNER`，否则返回 `401`
-- POST data 无内容
+- 请将 route 文件写在 `api/teams/create.cpp`
+- 创建团队
+- 团队 owner 为当前用户
+- members 需要包含当前用户
+- 需要返回新创建的 team id
+- POST 格式如下：
 
-## POST `/crops/%d/records/%d/edit`
+```json
+{
+    "title": "Team",
+    "description": "Description of this team",
+    "members": [ 1, 2, 3 ] // 用户 id 数组
+}
+```
 
-- 请将 route 文件写在 `api/records/edit.cpp`
-- 修改记录信息
-- 第一个 `%d` 参数为 crop id，第二个 `%d` 参数为 record id
-- 需要判断用户 uid 是否与该 record 匹配，或者用户权限为 `UserPermission::OWNER`，否则返回 `401`
-- POST 参数同 `records/add`
+## GET `/teams/list`
 
-## POST `/crops/%d/records/%d/remove`
+- 请将 route 文件写在 `api/teams/list.cpp`
+- 获取团队信息
+- 
+- GET 参数：`keyword`: 关键字，`order`: 排序方式，见 `TeamSortOrder`
 
-- 请将 route 文件写在 `api/records/remove.cpp`
-- 删除记录信息
-- 第一个 `%d` 参数为 crop id，第二个 `%d` 参数为 record id
-- 需要判断用户 uid 是否与该 record 匹配，或者用户权限为 `UserPermission::OWNER`，否则返回 `401`
-- POST data 无内容
+## GET `/teams/%d`
+
+- 请将 route 文件写在 `api/teams/details.cpp`
+- 获取团队详细信息
+- `%d` 为 team id
+
+## POST `/teams/%d/edit`
+
+- 请将 route 文件写在 `api/teams/edit.cpp`
+- 修改团队信息
+- `%d` 为 team id
+- 不需要有返回值，只需要返回 HTTP Code 即可
+- POST 格式同 `/teams/create`
