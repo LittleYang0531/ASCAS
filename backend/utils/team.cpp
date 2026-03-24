@@ -15,7 +15,7 @@ class TeamUtils {
     }
 
     // 获取团队信息
-    Team getTeamsInfo(int tid, int uid) {
+    Team getTeamsInfo(int tid) {
         quick_mysqli_connect();
         std::vector<argvar> res = mysqli_query(
             mysql,
