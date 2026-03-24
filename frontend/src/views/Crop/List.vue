@@ -164,7 +164,7 @@ function clear() {
         <div v-if="data.length">
             <CropCard v-for="crop in data" :crop="crop"></CropCard>
         </div>
-        <div v-else class="d-flex justify-center align-center flex-column" style="width: 100%; height: calc(100vh -  145.34px)">
+        <div v-else class="d-flex justify-center align-center flex-column" style="width: 100%; height: calc(100vh -  232px)">
             <v-icon icon="$mdiProgressAlert" color="warning" size="64px"></v-icon>
             <p>没有找到符合条件的作物数据</p>
         </div>
