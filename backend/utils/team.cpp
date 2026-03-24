@@ -70,6 +70,14 @@ class TeamUtils {
             "SELECT max(id) as id FROM teams"
         )[0]["id"]);
         auto members = team.members;
+        if(members.size() == 0)
+        {
+            members.push_back(
+                User({
+                    .uid = team.owner.uid,
+                })
+            );
+        }
         std::vector<std::string> v;
         for(size_t i = 0;i < members.size();++i)
         {
@@ -141,6 +149,12 @@ class TeamUtils {
             team.tid
         );
         auto members = team.members;
+        if(members.size() == 0)
+        {
+            members.push_back(User({
+                .uid = team.owner.uid,
+            }));
+        }
         std::vector<std::string> v;
         for(size_t i = 0;i < members.size();++i)
         {
