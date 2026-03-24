@@ -1,24 +1,25 @@
 <script lang="ts">
 import NProgress from 'nprogress';
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, type Ref } from 'vue';
 import { newFetch } from '../../utils/fetch';
 import { API_BASE_URL } from '../../config';
+import type { Team } from '../../models/team';
+import { locate } from '../../router';
+import TeamCard from '../../components/Team/Card.vue';
 
 async function load(to: any, from: any, next: any) {
     to; from;
 
     NProgress.start();
     NProgress.inc();
-    
+
     var keyword = new URLSearchParams(to.query).get("keyword") || "";
-    var perm = new URLSearchParams(to.query).get("perm") || "";
     var order = new URLSearchParams(to.query).get("order") || "";
-    var crops = await (await newFetch(`${API_BASE_URL}/crops/list?keyword=${keyword}&perm=${perm}&order=${order}`)).json();
+    var teams = await (await newFetch(`${API_BASE_URL}/teams/list?keyword=${keyword}&order=${order}`)).json();
 
     next((e: any) => e.loading({
-        data: crops.items,
+        data: teams.items,
         keyword: keyword,
-        perm: perm,
         order: order
     }));
 }
@@ -29,64 +30,50 @@ export default defineComponent({
 </script>
 
 <script lang="ts" setup>
-import type { Ref } from 'vue';
-import type { Crop } from '../../models/crop';
-import CropCard from '../../components/Crop/Card.vue';
-import { locate } from '../../router';
-
-const perms = {
-    "UserPermission::VIEWER": "VIEWER",
-    "UserPermission::EDITOR": "EDITOR",
-    "UserPermission::OWNER": "OWNER"
-};
-const orders = {
-    "CropSortOrder::TITLE": "标题",
-    "CropSortOrder::CREATEDAT": "创建时间",
-    "CropSortOrder::UPDATEDAT": "最后更新"
-};
-
 const loaded = ref(false);
-const data: Ref<Array<Crop> > = ref([]);
+const data: Ref<Array<Team> > = ref([]);
 const keyword = ref("");
-const perm = ref("");
 const order = ref("");
 const showFilter = ref(false);
 const filterStrings: Ref<Array<string> > = ref([]);
 
-async function loading(val: any) {
+const orders = {
+    "TeamSortOrder::TITLE": "标题",
+    "TeamSortOrder::CREATEDAT": "创建时间",
+    "TeamSortOrder::UPDATEDAT": "最后更新"
+};
+
+function loading(val: any) {
     data.value = val.data;
     keyword.value = val.keyword;
-    perm.value = val.perm;
     order.value = val.order;
 
-    showFilter.value = (perm.value != "" || order.value != "" || keyword.value != "");
+    showFilter.value = (order.value != "" || keyword.value != "");
     var filters = [];
     if (keyword.value != "") filters.push("关键词：" + keyword.value);
-    if (perm.value != "") filters.push("权限：" + perms[perm.value as keyof typeof perms]);
     if (order.value != "") filters.push("排序：" + orders[order.value as keyof typeof orders]);
     filterStrings.value = filters;
 
     loaded.value = true;
 }
 
-defineExpose({ loading });
-
 function search() {
-    locate('/crops/list?keyword=' + keyword.value + '&perm=' + perm.value + '&order=' + order.value);
+    locate('/teams/list?keyword=' + keyword.value + '&order=' + order.value);
 }
 
 function clear() {
     keyword.value = "";
-    perm.value = "";
     order.value = "";
     search();
     return;
 }
+
+defineExpose({ loading });
 </script>
 
 <template>
     <div v-if="loaded">
-        <h1 class="mb-4">我的数据</h1>
+        <h1 class="mb-4">我的团队</h1>
         <v-divider></v-divider>
         <div class="d-flex align-center mt-4 ga-2">
             <v-text-field
@@ -97,27 +84,6 @@ function clear() {
                 placeholder="搜索"
                 clearable
             ></v-text-field>
-            <v-select
-                v-model="perm"
-                class="flex-grow-0"
-                variant="outlined"
-                density="compact"
-                label="权限"
-                hide-details
-                :items="[{
-                    title: '全部',
-                    value: ''
-                }, {
-                    title: 'VIEWER',
-                    value: 'UserPermission::VIEWER'
-                }, { 
-                    title: 'EDITOR',
-                    value: 'UserPermission::EDITOR'
-                }, { 
-                    title: 'OWNER',
-                    value: 'UserPermission::OWNER'
-                }]"
-            ></v-select>
             <v-select
                 v-model="order"
                 class="flex-grow-0"
@@ -130,18 +96,15 @@ function clear() {
                     value: ''
                 }, {
                     title: '标题',
-                    value: 'CropSortOrder::TITLE'
+                    value: 'TeamSortOrder::TITLE'
                 }, { 
                     title: '创建时间',
-                    value: 'CropSortOrder::CREATEDAT'
-                }, { 
-                    title: '最后更新',
-                    value: 'CropSortOrder::UPDATEDAT'
+                    value: 'TeamSortOrder::CREATEDAT'
                 }]"
             ></v-select>
             <v-btn color="primary" prepend-icon="$mdiMagnify" @click="search">搜索</v-btn>
             <v-divider vertical></v-divider>
-            <v-btn color="primary" prepend-icon="$mdiPlus" @click="locate('/crops/create')">新建</v-btn>
+            <v-btn color="primary" prepend-icon="$mdiPlus" @click="locate('/teams/create')">新建</v-btn>
         </div>
         <v-divider class="mt-4"></v-divider>
         <div v-if="showFilter">
@@ -162,21 +125,14 @@ function clear() {
             <v-divider></v-divider>
         </div>
         <div v-if="data.length">
-            <CropCard v-for="crop in data" :crop="crop"></CropCard>
+            <TeamCard v-for="team in data" :team="team"></TeamCard>
         </div>
         <div v-else class="d-flex justify-center align-center flex-column" style="width: 100%; height: calc(100vh -  145.34px)">
             <v-icon icon="$mdiProgressAlert" color="warning" size="64px"></v-icon>
-            <p>没有找到符合条件的作物数据</p>
+            <p>没有找到符合条件的团队数据</p>
         </div>
     </div>
     <div v-else class="d-flex justify-center align-center position-absolute" style="width: 100%; height: 100vh; max-width: 960px;">
         <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
     </div>
 </template>
-
-<style lang="css" scoped>
-button {
-    height: 40px;
-    padding: 0 20px;
-}
-</style>

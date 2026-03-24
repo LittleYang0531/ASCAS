@@ -9,7 +9,7 @@ import { MessageType } from '../../models/message';
 import { newFetch } from '../../utils/fetch';
 import { API_BASE_URL } from '../../config';
 import { sleep } from '../../utils/sleep';
-import type { User } from '../../models/user';
+import { mergeUsers, type User } from '../../models/user';
 import UserMultipleSelect from '../../components/User/MultipleSelect.vue';
 import { propertyTypeMap } from '../../utils/property';
 
@@ -99,7 +99,7 @@ async function submit() {
             description: description.value,
             properties: properties.value,
             editors: editors.value.map((e) => e.uid!),
-            viewers: viewers.value.map((e) => e.uid!)
+            viewers: mergeUsers(editors.value, viewers.value).map((e) => e.uid!)
         })
     }, () => { fetching.value = false; })).json();
     var id = res["id"];
