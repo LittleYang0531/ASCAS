@@ -33,13 +33,11 @@ class TeamUtils {
             "select * from team_members where tid = %d",
             tid
         );
-        std::vector<int> uidv;
+        std::vector<User> members;
         for(size_t i = 0;i < mem.size();++i)
         {
-            uidv.push_back(stoi(mem[i]["uid"]));
+            members.push_back(UserUtils.getUserInfo(stoi(mem[i]["uid"])));
         }
-        Json::Value p = packarr(uidv);
-        std::vector<User> members = extarr<User>(p, [](Json::Value obj){ return User({ .uid = obj.asInt() }); });
         Team item = Team({
             .tid = stoi(team["id"]),
             .title = team["title"],
