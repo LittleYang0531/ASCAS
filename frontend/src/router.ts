@@ -4,6 +4,10 @@ import NProgress from 'nprogress';
 import CropList from './views/Crop/List.vue';
 import CropDetails from './views/Crop/Details.vue';
 import CropCreate from './views/Crop/Create.vue';
+import TeamList from './views/Team/List.vue';
+import TeamDetails from './views/Team/Details.vue';
+import TeamCreate from './views/Team/Create.vue';
+import TeamEdit from './views/Team/Edit.vue';
 
 const routes = [
     {
@@ -26,6 +30,22 @@ const routes = [
         path: '/crops/create',
         name: 'CropCreate',
         component: CropCreate
+    }, {
+        path: '/teams/list',
+        name: 'TeamList',
+        component: TeamList
+    }, {
+        path: '/teams/:id',
+        name: 'TeamDetails',
+        component: TeamDetails
+    }, {
+        path: '/teams/create',
+        name: 'TeamCreate',
+        component: TeamCreate
+    }, {
+        path: '/teams/:id/edit',
+        name: 'TeamEdit',
+        component: TeamEdit
     }
 ];
 

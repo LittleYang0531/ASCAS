@@ -34,7 +34,7 @@ async function loading() {
         return;
     }
 
-    userId.value = res.item.id!;
+    userId.value = res.item.uid!;
     userInfo.value = res.item;
     loaded.value = true;
 }
@@ -46,7 +46,10 @@ const titles = {
     "Index": "首页",
     "CropList": "作物表列表",
     "CropDetails": "作物表信息",
-    "CropCreate": "新建作物表"
+    "CropCreate": "新建作物表",
+    "TeamList": "团队列表",
+    "TeamDetails": "团队信息",
+    "TeamCreate": "新建团队",
 };
 watch(() => route.name, () => {
 	var title = "ASCAS | 田间形状采集辅助系统";

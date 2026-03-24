@@ -3,7 +3,7 @@ import { onBeforeMount, ref, type Ref } from 'vue';
 import type { Crop, RecordProperty } from '../../../models/crop';
 import { showMsg } from '../../../utils/message';
 import { MessageType } from '../../../models/message';
-import type { User } from '../../../models/user';
+import { mergeUsers, type User } from '../../../models/user';
 import { sleep } from '../../../utils/sleep';
 import { newFetch } from '../../../utils/fetch';
 import { API_BASE_URL } from '../../../config';
@@ -111,8 +111,8 @@ async function submit() {
 onBeforeMount(() => {
     title.value = item.item.title!;
     description.value = item.item.description!;
-    editors.value = item.item.editors!;
-    viewers.value = item.item.viewers!;
+    editors.value = mergeUsers(item.item.editors!, [ item.item.owner! ]);
+    viewers.value = mergeUsers(item.item.editors!, item.item.viewers!, [ item.item.owner! ]);
     properties.value = item.item.properties!;
 })
 </script>

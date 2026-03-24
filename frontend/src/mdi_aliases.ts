@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Sun Mar 22 22:06:24 CST 2026
+// Generated on Tue Mar 24 16:45:30 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -21,7 +21,6 @@ import { mdiCodeJson } from '@mdi/js';
 import { mdiCog } from '@mdi/js';
 import { mdiContentPaste } from '@mdi/js';
 import { mdiCrown } from '@mdi/js';
-import { mdiCrownCircle } from '@mdi/js';
 import { mdiDatabase } from '@mdi/js';
 import { mdiDrag } from '@mdi/js';
 import { mdiExitToApp } from '@mdi/js';
@@ -81,7 +80,6 @@ export const mdi_aliases = {
     mdiCog,
     mdiContentPaste,
     mdiCrown,
-    mdiCrownCircle,
     mdiDatabase,
     mdiDrag,
     mdiExitToApp,
