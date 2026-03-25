@@ -7,12 +7,12 @@
 class TeamBase {
     public:
 
-    int tid;
-    std::string title;
-    std::string description;
+    int tid = 0;
+    std::string title = "";
+    std::string description = "";
     User owner;
-    time_t createdAt;
-    std::vector<User> members;
+    time_t createdAt = 0;
+    std::vector<User> members = {};
 
     static TeamBase fromJsonObject(Json::Value obj) {
         return TeamBase({

@@ -99,7 +99,7 @@ public:
         std::vector<Json::Value> vec;
         for (int i = 0; i < res.size(); i++) {
             Json::Value tmp;
-            for (auto v : res[i]) {
+            for (auto v : res[i].res) {
                 std::string column = v.first;
                 std::string value = v.second;
                 std::string realColumn = column;

@@ -3,9 +3,9 @@
 auto CropsEdit = [](client_conn conn, http_request request, param argv) {
     if (request.method != "POST") quickSendCode(405);
     int uid = UserUtils.checkLogin(request);
-    if (uid == 0) quickSendCode(401);
+    if (!uid) quickSendCode(401);
     Crop previous_crop = CropUtils.getCropInfo(stoi(argv[0]),uid);
-    if(previous_crop.permission != UserPermission::OWNER) quickSendCode(401);
+    if(previous_crop.permission != UserPermission::OWNER) quickSendCode(403);
     auto posts = json_decode(request.postdata); 
     std::string title = posts["title"].asString();
     std::string description = posts["description"].asString();
@@ -16,7 +16,7 @@ auto CropsEdit = [](client_conn conn, http_request request, param argv) {
     for(int i = 0;i < properties.size();++i)
         for(int j = 0;j < previous_crop.properties.size();++j)
             if(properties[i].name == previous_crop.properties[j].name && properties[i].type != previous_crop.properties[j].type) 
-                quickSendCode(401);   
+                quickSendCode(404);   
     Crop current_crop = Crop({
         .cid = previous_crop.cid,
         .title = title,

@@ -8,7 +8,7 @@ auto RecordsUploadImages = [](client_conn conn, http_request request, param argv
     if (!CropUtils.exists(cid)) quickSendCode(404);
     Crop crop = CropUtils.getCropInfo(cid, uid);
     if (crop.permission != UserPermission::OWNER && crop.permission != UserPermission::EDITOR)
-        quickSendCode(401);
+        quickSendCode(403);
     std::string image = base64_decode(request.postdata);
     if (image.size() > appConfig["images.maxSize"].asInt() * 1024) quickSendCode(413);
     std::string hash = sha1(image);

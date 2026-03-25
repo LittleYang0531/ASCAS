@@ -5,7 +5,7 @@ auto UsersAvatar = [](client_conn conn, http_request request, param argv) {
     if (!uid) quickSendCode(401);
     int req = stoi(argv[0]);
     if (request.method == "POST") {
-        if (uid != req) quickSendCode(401);
+        if (uid != req) quickSendCode(403);
         std::string data = base64_decode(request.postdata);
         std::ofstream fout("./data/avatars/" + std::to_string(req) + ".png", std::ios::binary);
         fout.write(data.c_str(), data.size());

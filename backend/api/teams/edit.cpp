@@ -11,7 +11,7 @@ auto TeamsEdit = [](client_conn conn, http_request request, param argv) {
     auto members = extarr<User>(posts["members"], [](Json::Value obj){ return User({ .uid = obj.asInt() }); });
     User owner = UserUtils.getUserInfo(uid);
     Team oldteam = TeamUtils.getTeamsInfo(tid);
-    if(oldteam.owner.uid != uid) quickSendCode(401);  
+    if(oldteam.owner.uid != uid) quickSendCode(403);  
     Team newteam = Team({
         .tid = tid,
         .title = title,

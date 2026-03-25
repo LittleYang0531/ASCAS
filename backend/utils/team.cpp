@@ -14,10 +14,20 @@ class TeamUtils {
         )[0]["count"]);
     }
 
+    bool inTeam(int uid, int tid) {
+        quick_mysqli_connect();
+        return stoi(mysqli_query(
+            mysql,
+            "SELECT COUNT(*) AS count FROM team_members WHERE tid = %d AND uid = %d",
+            tid,
+            uid
+        )[0]["count"]);
+    }
+
     // 获取团队信息
     Team getTeamsInfo(int tid) {
         quick_mysqli_connect();
-        std::vector<argvar> res = mysqli_query(
+        auto res = mysqli_query(
             mysql,
             "select *from teams where id = %d",
             tid
@@ -27,8 +37,8 @@ class TeamUtils {
             "tid %d not found, please use TeamUtils.exists(%d) to check whether cid %d is exists before calling this method.",
             tid, tid, tid
         );
-        std::map<std::string,std::string> team = res[0];
-        std::vector<argvar> mem = mysqli_query(
+        auto team = res[0];
+        auto mem = mysqli_query(
             mysql,
             "select * from team_members where tid = %d",
             tid
@@ -90,10 +100,8 @@ class TeamUtils {
        return tid;
     }
 
-
-
      // 列举相关团队信息
-    std::vector<Team> listCrops(int uid, std::string keyword, TeamSortOrder order) {
+    std::vector<Team> listTeams(int uid, std::string keyword, TeamSortOrder order) {
         quick_mysqli_connect();
         std::vector<Team> res;
         std::set<int> ids;

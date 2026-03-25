@@ -174,5 +174,72 @@ std::vector<DBTable> tables = {
                 .valueIsExpr = true
             }
         }
+    }, {
+        .name = "user_talks",
+        .columns = {
+            {
+                .name = "uid1",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid2",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
+        .name = "team_talks",
+        .columns = {
+            {
+                .name = "tid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
+        .name = "messages",
+        .columns = {
+            {
+                .name = "talkId",
+                .type = "text"
+            }, {
+                .name = "mid",
+                .type = "int",
+                .enableDefaultValue = false,
+                .autoIncrement = true,
+                .primary = true,
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "message",
+                .type = "text"
+            }, {
+                .name = "createdAt",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
+        .name = "unread_marks",
+        .columns = {
+            {
+                .name = "mid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
     }
 };

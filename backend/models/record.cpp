@@ -34,12 +34,12 @@ const std::string SQLOperators[] = {
 class WhereNodeBase {
     public:
 
-    bool isLeaf; // 是否为叶子节点
-    std::string column; // 列名
-    SQLOperator op; // 操作符
-    std::string value; // 比较值
-    bool isAnd; // 是否使用 AND 连接
-    std::vector<WhereNodeBase> params; // 连接参数
+    bool isLeaf = false; // 是否为叶子节点
+    std::string column = ""; // 列名
+    SQLOperator op = SQLOperator::EQUAL; // 操作符
+    std::string value = ""; // 比较值
+    bool isAnd = false; // 是否使用 AND 连接
+    std::vector<WhereNodeBase> params = {}; // 连接参数
 
     static WhereNodeBase fromJsonObject(Json::Value obj) {
         bool isLeaf = obj["isLeaf"].asBool();
@@ -75,8 +75,8 @@ initModel(WhereNode);
 class OrderNodeBase {
     public:
 
-    std::string column; // 列名
-    bool isASC; // 是否为正序
+    std::string column = ""; // 列名
+    bool isASC = false; // 是否为正序
 
     static OrderNodeBase fromJsonObject(Json::Value obj) {
         return OrderNodeBase({

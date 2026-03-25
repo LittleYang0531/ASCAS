@@ -9,6 +9,31 @@
 
 const std::set<int> retryedErrno = { 2013 };
 
+class HintMap {
+    public:
+
+    bool enableHint = false;
+    std::map<std::string, std::string> res;
+
+    std::string& operator [] (std::string key) {
+        if (enableHint && res.find(key) == res.end()) {
+            std::string keyString = "";
+            for (auto v : res) {
+                if (keyString != "") keyString += ", ";
+                keyString += v.first;
+            }
+            writeLog(
+                LOG_LEVEL_WARNING, 
+                "Unknown key \"%s\" in mysql query result, existed keys: (%s)",
+                key.c_str(),
+                keyString.c_str()
+            );
+        }
+
+        return res[key];
+    }
+};
+
 /**
  * @brief 连接数据库
  * @param host 数据库地址
@@ -36,9 +61,9 @@ MYSQL mysqli_connect(std::string host, std::string user, std::string passwd, std
  * @param sql SQL 语句
  * @return 查询结果
  */
-std::vector<std::map<std::string, std::string> > mysqli_query(MYSQL &conn, std::string sql) {
+std::vector<HintMap> mysqli_query(MYSQL &conn, std::string sql) {
     writeLog(LOG_LEVEL_DEBUG, "Querying SQL sentence: %s", sql.c_str());
-    std::vector<std::map<std::string, std::string> > res; 
+    std::vector<HintMap> res; 
     bool res1 = mysql_query(&conn, sql.c_str());
     if (res1) {
         if (retryedErrno.count(mysql_errno(&conn))) return mysqli_query(conn, sql);
@@ -49,8 +74,9 @@ std::vector<std::map<std::string, std::string> > mysqli_query(MYSQL &conn, std::
 	std::vector<std::string> field; MYSQL_FIELD *fd; MYSQL_ROW row;
     while((fd = mysql_fetch_field(res2))) field.push_back(fd->name);
 	while ((row = mysql_fetch_row(res2))) {
-        std::map<std::string, std::string> tmp;
+        HintMap tmp;
 		for (int i = 0; i < field.size(); i++) tmp[field[i]] = row[i] == NULL ? "" : row[i];
+        tmp.enableHint = true;
 		res.push_back(tmp);
 	} mysql_free_result(res2);
 	return res;
@@ -62,7 +88,7 @@ std::vector<std::map<std::string, std::string> > mysqli_query(MYSQL &conn, std::
  * @param format SQL 格式
  * @return 查询结果
  */
-std::vector<std::map<std::string, std::string> > mysqli_query(MYSQL &conn, const char* format, ...) {
+std::vector<HintMap> mysqli_query(MYSQL &conn, const char* format, ...) {
     // 格式化文本
     const int size = 2 * 1024 * 1024;
     va_list args;

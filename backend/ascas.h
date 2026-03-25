@@ -22,6 +22,7 @@
 #include "models/crop.cpp"
 #include "models/record.cpp"
 #include "models/team.cpp"
+#include "models/message.cpp"
 
 Json::Value appConfig;
 MYSQL mysql;
@@ -47,3 +48,4 @@ void quick_mysqli_close() {
 #include "utils/crop.cpp"
 #include "utils/record.cpp"
 #include "utils/team.cpp"
+#include "utils/message.cpp"
