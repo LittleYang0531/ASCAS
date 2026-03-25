@@ -16,6 +16,7 @@
 #include "include/utils.h"
 #include "include/smtp.h"
 #include "include/png.h"
+#include "include/socket.h"
 
 #include "models/user.cpp"
 #include "models/crop.cpp"

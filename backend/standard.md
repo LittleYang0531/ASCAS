@@ -120,6 +120,80 @@ Func funcname(...) {
 - 对于部分涉及到 `json` 格式的数据（例如 `crops.properties`），请使用 `json_encode` 将其 encode 后存入数据库中。
 - 对于任意 `text` 格式的数据，一定要注意使用 `quote_encode` 防止引号出错。
 
+## Socket 操作
+
+### 服务端
+
+- 创建服务器：`Server server = Server(std::string sockPath)`
+- 接收客户端连接：`Connection conn = server.accept()`
+
+### 客户端
+
+- 创建客户端：`Client client = Client(std::string sockPath)`
+- 连接服务器：`Connection conn = client.connect()`
+
+### 连接符 `Connection`
+
+- 发送数据：`conn.send(std::string msg)`，返回值 `true/false` 表示是否发送成功
+- 接收数据：`conn.recv()`，返回值 `std::string`，如果为 `errorKey` 表示接受失败，其中 `errorKey` 为 `const std::string` 类型。
+
+例：
+
+```cpp
+// 服务端
+
+Connection conn = Server("./server.sock").accept();
+if (!conn.send("Hello Client!")) return;
+std::string data = conn.recv();
+if (data == errorKey) return;
+std::cout << "From client: " << data << std::endl;
+
+// 客户端
+
+Connection conn = Client("./server.sock").connect();
+std::string data = conn.recv();
+if (data == errorKey) return;
+std::cout << "From server: " << data << std::endl;
+if (!conn.send("Hello Server!")) return;
+```
+
+## WebSocket 路由创建
+
+WebSocket 路由与普通路由的区别：WebSocket 路由会新建一个进程然后运行路由程序，普通路由直接在原来进程上运行路由程序
+
+基本格式：
+
+```cpp
+auto WSRoute = [](client_conn conn, http_request request, param argv) {
+    // 处理逻辑
+}
+```
+
+- 使用 `ws_send(std::string)` 向客户端发送数据
+- 使用 `ws_recv()` 从客户端获得数据，返回值 `std::string`，如果为 `ws_recv_error` 表示接受失败，其中 `ws_recv_error` 为 `const std::string` 类型。
+- 使用 `ws_exitRequest(conn)` 关闭 WebSocket 连接，并使用 `exit(0)` 结束 WebSocket 进程
+
+例：
+
+```cpp
+// in /api/ws/route.cpp
+auto WSRoute = [](client_conn conn, http_request request, param argv) {
+    std::string data = ws_recv();
+    if (data == ws_recv_error) {
+        ws_exitRequest(conn);
+        exit(0);
+    }
+    ws_send("Hello World!");
+    ws_exitRequest(conn);
+    exit(0);
+}
+
+// in main.cpp
+app.ws_addRoute("/", WSRoute);
+```
+
+访问 `ws://localhost:8080/` 即可看到结果。
+
 ## 函数速查
 
 ### HTTP 服务器相关
@@ -170,41 +244,3 @@ Func funcname(...) {
 curl "http://localhost:8080/users/1" \
     -H "Authorization: SessionToken <session>"
 ```
-
-## POST `/teams/create`
-
-- 请将 route 文件写在 `api/teams/create.cpp`
-- 创建团队
-- 团队 owner 为当前用户
-- members 需要包含当前用户
-- 需要返回新创建的 team id
-- POST 格式如下：
-
-```json
-{
-    "title": "Team",
-    "description": "Description of this team",
-    "members": [ 1, 2, 3 ] // 用户 id 数组
-}
-```
-
-## GET `/teams/list`
-
-- 请将 route 文件写在 `api/teams/list.cpp`
-- 获取团队信息
-- 
-- GET 参数：`keyword`: 关键字，`order`: 排序方式，见 `TeamSortOrder`
-
-## GET `/teams/%d`
-
-- 请将 route 文件写在 `api/teams/details.cpp`
-- 获取团队详细信息
-- `%d` 为 team id
-
-## POST `/teams/%d/edit`
-
-- 请将 route 文件写在 `api/teams/edit.cpp`
-- 修改团队信息
-- `%d` 为 team id
-- 不需要有返回值，只需要返回 HTTP Code 即可
-- POST 格式同 `/teams/create`
