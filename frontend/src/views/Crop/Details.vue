@@ -41,6 +41,28 @@ function loading(data: any) {
     loaded.value = true;
 }
 
+const titles = {
+    "properties": "属性列表",
+    "simple": "数据查询",
+    "add": "添加数据",
+    "editors": "协作编辑",
+    "viewers": "协作查看",
+    "edit": "作物表编辑"
+};
+type Page = keyof typeof titles;
+
+window.onpopstate = function() {
+    var page = new URLSearchParams(window.location.search).get("page");
+    console.log("popstate", page);
+    if (page && titles[page as Page]) tab.value = page;
+    else tab.value = "login";
+    document.title = item.value.title + " - " + titles[tab.value as Page] + " - ASCAS | 田间形状采集辅助系统";
+}
+function updatePage(newval: string) {
+    history.pushState(null, '', `${import.meta.env.BASE_URL}crops/${item.value.cid}?page=${newval}`);
+    document.title = item.value.title + " - " + titles[newval as Page] + " - ASCAS | 田间形状采集辅助系统";
+};
+
 defineExpose({ loading });
 </script>
 
@@ -57,7 +79,7 @@ defineExpose({ loading });
         <p class="mt-0 text-medium-emphasis">{{ item.description }}</p>
         <v-divider></v-divider>
 
-        <v-tabs v-model="tab" color="primary">
+        <v-tabs v-model="tab" color="primary" @update:model-value="updatePage">
             <v-tab value="properties">属性列表</v-tab>
             <v-tab value="simple">数据查询</v-tab>
             <v-tab value="add" v-if="item.permission != 'UserPermission::VIEWER'">添加数据</v-tab>
