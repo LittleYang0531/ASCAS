@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Tue Mar 24 16:45:30 CST 2026
+// Generated on Thu Mar 26 22:51:19 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -51,6 +51,7 @@ import { mdiProgressAlert } from '@mdi/js';
 import { mdiQrcode } from '@mdi/js';
 import { mdiQrcodeScan } from '@mdi/js';
 import { mdiRefresh } from '@mdi/js';
+import { mdiSend } from '@mdi/js';
 import { mdiSortAlphabeticalAscending } from '@mdi/js';
 import { mdiSortAlphabeticalDescending } from '@mdi/js';
 import { mdiTrashCan } from '@mdi/js';
@@ -110,6 +111,7 @@ export const mdi_aliases = {
     mdiQrcode,
     mdiQrcodeScan,
     mdiRefresh,
+    mdiSend,
     mdiSortAlphabeticalAscending,
     mdiSortAlphabeticalDescending,
     mdiTrashCan,

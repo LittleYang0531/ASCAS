@@ -32,8 +32,7 @@
 #include "api/teams/remove.cpp"
 #include "api/messages/list.cpp"
 #include "api/messages/send.cpp"
-#include "api/messages/users.cpp"
-#include "api/messages/teams.cpp"
+#include "api/messages/details.cpp"
 #include "api/notFound.cpp"
 
 using Json::ValueType;
@@ -135,9 +134,9 @@ int main(int argc, char** argv) {
     app.addRoute("/teams/%d/remove",TeamsRemove);
     app.addRoute("/messages/list", MessagesList);
     app.addRoute("/messages/send", MessagesSend);
-    app.addRoute("/messages/users/%d", MessagesUsers);
-    app.addRoute("/messages/teams/%d", MessagesTeams);
+    app.addRoute("/messages/%s", MessagesDetails);
     app.addRoute("*", NotFound);
+
     __default_response["Access-Control-Allow-Credentials"] = "true";
     __default_response["Access-Control-Allow-Headers"] = "*";
     __default_response["Access-Control-Allow-Methods"] = "*";

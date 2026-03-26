@@ -1,0 +1,50 @@
+.markdown-text p, .markdown-text h1, .markdown-text h2, .markdown-text h3, .markdown-text h4, .markdown-text h5, .markdown-text h6 {
+    margin: 0;
+}
+
+.markdown-text blockquote {
+    color: #666;
+    border-left: 4px solid #666;
+    padding-left: 20px;
+    margin-left: 0;
+    font-size: 14px;
+    font-style: italic;
+}
+
+.markdown-text ul, .markdown-text ol {
+    padding-left: 2em;
+}
+
+.markdown-text table {
+    display: block;
+    width: 100%;
+    overflow: auto;
+    word-break: normal;
+    word-break: keep-all;
+    margin-top: 0;
+    margin-bottom: 16px;
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+.markdown-text table thead tr {
+    border-top: 1px solid #ccc;
+}
+
+.markdown-text table th, .markdown-text table td {
+    padding: 6px 13px;
+    border: 1px solid #ddd;
+}
+
+.markdown-text table th {
+    font-weight: bold;
+}
+
+.markdown-text *:not(table, code ul, p, h1, h2, h3, h4, h5, h6) {
+    margin-top: revert!important;
+    margin-bottom: revert!important;
+}
+
+.markdown-text .katex .katex-html {
+    display: none;
+}

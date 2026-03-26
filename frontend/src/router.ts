@@ -8,6 +8,7 @@ import TeamList from './views/Team/List.vue';
 import TeamDetails from './views/Team/Details.vue';
 import TeamCreate from './views/Team/Create.vue';
 import TeamEdit from './views/Team/Edit.vue';
+import MessageList from './views/Message/List.vue';
 
 const routes = [
     {
@@ -46,6 +47,10 @@ const routes = [
         path: '/teams/:id/edit',
         name: 'TeamEdit',
         component: TeamEdit
+    }, {
+        path: '/messages/list',
+        name: 'MessageList',
+        component: MessageList
     }
 ];
 

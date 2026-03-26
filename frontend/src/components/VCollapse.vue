@@ -7,7 +7,7 @@ const slots = defineSlots<{
 </script>
 
 <template>
-    <v-expansion-panels static bg-color="transparent" v-model="model">
+    <v-expansion-panels static bg-color="transparent" v-model="model" elevation="0">
         <v-expansion-panel value="1">
             <v-expansion-panel-title class="pa-4 MyExpansionPanelTitle">
                 <slot name="title"></slot>

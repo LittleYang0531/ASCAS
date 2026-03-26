@@ -37,6 +37,7 @@ class TalkBase {
     
     std::string title = "";
     std::string talkId = "";
+    std::string avatar = "";
     int unread = 0;
     Message latest;
 
@@ -44,6 +45,7 @@ class TalkBase {
         return TalkBase({
             .title = obj["title"].asString(),
             .talkId = obj["talkId"].asString(),
+            .avatar = obj["avatar"].asString(),
             .unread = obj["unread"].asInt(),
             .latest = obj["latest"].as<Message>()
         });
@@ -53,6 +55,7 @@ class TalkBase {
         Json::Value val;
         val["title"] = title;
         val["talkId"] = talkId;
+        val["avatar"] = avatar;
         val["unread"] = unread;
         val["latest"] = latest;
         return val;

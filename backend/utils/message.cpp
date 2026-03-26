@@ -18,7 +18,8 @@ class MessageUtils {
             "SELECT mid, uid, message, createdAt, A.name AS title FROM messages "
             "INNER JOIN users AS A ON A.id = uid "
             "WHERE talkId = \"%s\" AND mid <= %d "
-            "ORDER BY mid DESC",
+            "ORDER BY mid DESC "
+            "LIMIT 10",
             talkId.c_str(),
             maxmid
         );
@@ -36,24 +37,31 @@ class MessageUtils {
         return messages;
     }
 
-    int sendMessage(std::string talkId, int uid, std::string message) {
+    Message sendMessage(std::string talkId, int uid, std::string message) {
         quick_mysqli_connect();
         
+        time_t curr = time(NULL);
         mysqli_execute(
             mysql,
             "INSERT INTO messages (talkId, uid, message, createdAt) VALUES (\"%s\", %d, \"%s\", %lld)",
             talkId.c_str(),
             uid,
             quote_encode(message).c_str(),
-            time(NULL)
+            curr
         );
 
-        return stoi(mysqli_query(
+        int mid = stoi(mysqli_query(
             mysql,
             "SELECT MAX(mid) AS id FROM messages WHERE talkId = \"%s\" AND uid = %d",
             talkId.c_str(),
             uid
         )[0]["id"]);
+        return Message({
+            .mid = mid,
+            .user = User({ .uid = uid }),
+            .message = message,
+            .createdAt = curr
+        });
     }
 
     public:
@@ -134,6 +142,7 @@ class MessageUtils {
                 talks.push_back(Talk({
                     .title = userTitles[uid1 != uid ? uid1 : uid2],
                     .talkId = res[i]["talkId"],
+                    .avatar = "/users/" + std::to_string(uid1 != uid ? uid1 : uid2) + "/avatar",
                     .unread = unreadCounts[res[i]["talkId"]],
                     .latest = Message({
                         .mid = stoi(res[i]["mid"]),
@@ -151,6 +160,7 @@ class MessageUtils {
                 talks.push_back(Talk({
                     .title = teamTitles[tid],
                     .talkId = res[i]["talkId"],
+                    .avatar = "/users/generateAvatar?s=" + res[i]["talkId"],
                     .unread = unreadCounts[res[i]["talkId"]],
                     .latest = Message({
                         .mid = stoi(res[i]["mid"]),
@@ -175,7 +185,7 @@ class MessageUtils {
         )[0]["count"]);
     }
 
-    void sendUserMessage(int fromuid, int touid, std::string message) {
+    Message sendUserMessage(int fromuid, int touid, std::string message) {
         quick_mysqli_connect();
         int count = stoi(mysqli_query(
             mysql,
@@ -193,30 +203,42 @@ class MessageUtils {
         }
 
         std::string talkId = getUsersTalkId(fromuid, touid);
-        int mid = sendMessage(talkId, fromuid, message);
+        Message msg = sendMessage(talkId, fromuid, message);
 
         mysqli_execute(
             mysql,
             "INSERT INTO unread_marks VALUES (%d, %d)",
-            mid,
+            msg.mid,
             touid
         );
+        return msg;
     }
 
-    void sendTeamMessage(int uid, int tid, std::string message) {
+    Message sendTeamMessage(int uid, int tid, std::string message) {
         std::string talkId = getTeamTalkId(tid);
-        int mid = sendMessage(talkId, uid, message);
+        Message msg = sendMessage(talkId, uid, message);
 
         mysqli_execute(
             mysql,
             "INSERT INTO unread_marks SELECT %d, uid FROM team_members WHERE uid != %d",
-            mid,
+            msg.mid,
             uid
         );
+        return msg;
     }
 
-    std::vector<Message> getUsersMessages(int uid1, int uid2, int maxmid = 2147483647) {
-        std::string talkId = getUsersTalkId(uid1, uid2);
+    std::vector<Message> getUsersMessages(int fromuid, int touid, int maxmid = 2147483647) {
+        quick_mysqli_connect();
+        std::string talkId = getUsersTalkId(fromuid, touid);
+        mysqli_execute(
+            mysql,
+            "DELETE A FROM unread_marks AS A "
+            "INNER JOIN messages AS B ON B.mid = A.mid "
+            "WHERE B.talkId = \"%s\" AND A.uid = %d",
+            talkId.c_str(),
+            fromuid
+        );
+
         return getMessages(talkId, maxmid);
     }
 

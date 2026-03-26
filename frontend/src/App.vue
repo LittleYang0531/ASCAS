@@ -12,7 +12,7 @@ import type { User } from './models/user';
 import { useRoute } from 'vue-router';
 import AppBarHint from './components/AppBarHint.vue';
 import { type as versionType } from './version'
-import { userId } from './utils/user';
+import { userId, userInfo as globalUserInfo } from './utils/user';
 
 const theme = useTheme();
 const route = useRoute();
@@ -35,6 +35,7 @@ async function loading() {
     }
 
     userId.value = res.item.uid!;
+    globalUserInfo.value = res.item;
     userInfo.value = res.item;
     loaded.value = true;
 }
@@ -50,6 +51,7 @@ const titles = {
     "TeamList": "团队列表",
     "TeamDetails": "团队信息",
     "TeamCreate": "新建团队",
+    "MessageList": "消息列表"
 };
 watch(() => route.name, () => {
 	var title = "ASCAS | 田间形状采集辅助系统";
@@ -143,5 +145,13 @@ a:hover {
 }
 .MyExpansionPanelText > .v-expansion-panel-text__wrapper {
     padding: 0;
+}
+
+.full-height {
+    height: 100vh;
+}
+
+.full-width {
+    width: 100%;
 }
 </style>
