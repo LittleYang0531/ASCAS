@@ -7,7 +7,7 @@ import UserCard from './User/Card.vue';
 import { showMsg } from '../utils/message';
 import { MessageType } from '../models/message';
 import { sleep } from '../utils/sleep';
-import { onMounted, onUnmounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import { WS_BASE_URL } from '../config';
 
 const theme = useTheme();
