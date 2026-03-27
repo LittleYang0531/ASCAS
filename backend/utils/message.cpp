@@ -19,7 +19,7 @@ class MessageUtils {
             "INNER JOIN users AS A ON A.id = uid "
             "WHERE talkId = \"%s\" AND mid <= %d "
             "ORDER BY mid DESC "
-            "LIMIT 10",
+            "LIMIT 20",
             talkId.c_str(),
             maxmid
         );

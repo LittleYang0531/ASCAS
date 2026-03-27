@@ -17,7 +17,7 @@ const emits = defineEmits<{
         :subtitle="talk.talk.latest?.message"
         :title="talk.talk.title"
         @click="talk.talk.talkId != talk.currTalk && emits('click')"
-        class="pa-4"
+        class="pa-4 MessageOverview"
         :active="talk.talk.talkId == talk.currTalk"
     >
         <template v-slot:append v-if="talk.talk.unread! > 0">
@@ -29,3 +29,9 @@ const emits = defineEmits<{
         </template>
     </v-list-item>
 </template>
+
+<style lang="css">
+.MessageOverview > .v-list-item__append {
+    width: 28px;
+}
+</style>

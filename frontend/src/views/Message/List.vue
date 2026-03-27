@@ -1,11 +1,12 @@
 <script lang="ts">
 import NProgress from 'nprogress';
-import { defineComponent, ref, type Ref } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref, type Ref } from 'vue';
 import { newFetch } from '../../utils/fetch';
 import { API_BASE_URL } from '../../config';
 import type { Message, Talk } from '../../models/message';
 import MessageOverview from '../../components/Message/Overview.vue';
 import MessageText from '../../components/Message/Text.vue';
+import type { InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
 
 async function load(to: any, from: any, next: any) {
     to; from;
@@ -31,12 +32,11 @@ const lists: Ref<Talk[]> = ref([]);
 const currTalk = ref("");
 const talkTitle = ref("");
 const messages: Ref<Message[]> = ref([]);
-const firstLoading = ref(false);
 const empty = ref(false);
 const fetching = ref(false);
-const isLoading = ref(false);
-const textarea = ref<HTMLTextAreaElement>();
 const messageArea = ref<HTMLDivElement>();
+const textarea = ref<HTMLTextAreaElement>();
+const height = ref(0);
 
 function loading(data: any) {
     lists.value = data.lists;
@@ -46,40 +46,25 @@ function loading(data: any) {
 
 async function open(talk: Talk) {
     messages.value = [];
-    firstLoading.value = true;
     currTalk.value = talk.talkId!;
     talkTitle.value = talk.title!;
     talk.unread = 0;
     empty.value = false;
-
-    await loadMessages();
-    firstLoading.value = false;
-    setTimeout(() => {
-        messageArea.value?.scrollTo({ top: messageArea.value.scrollHeight });
-    }, 10);
 }
 
-function onscroll() {
-    console.log(messageArea.value?.scrollTop);
-    if (messageArea.value!.scrollTop <= 0) loadMessages();
-}
-
-async function loadMessages() {
-    if (empty.value) return;
-    if (isLoading.value) return;
-    var lastHeight = messageArea.value?.scrollHeight;
-
-    isLoading.value = true;
+async function loadMessages({ done }: { done: (status: InfiniteScrollStatus) => void }) {
+    if (empty.value) { done("ok"); done("empty") };
     var url = `${API_BASE_URL}/messages/${currTalk.value}`;
     if (messages.value.length != 0) url += "?max=" + (messages.value[messages.value.length - 1]?.mid! - 1);
-    var res = await (await newFetch(url, {}, () => { isLoading.value = false; })).json();
+    var res = await (await newFetch(url)).json();
     for (var i = 0; i < res.items.length; i++) messages.value.push(res.items[i]);
-    if (res.items.length < 10) empty.value = true;
-    isLoading.value = false;
-
-    setTimeout(() => {
-        messageArea.value?.scrollTo({ top: messageArea.value.scrollHeight - lastHeight! });
-    }, 10);
+    if (res.items.length < 20) {
+        empty.value = true;
+        done("ok");
+        done("empty");
+        return;
+    }
+    done("ok");
 }
 
 function onkeydown(e: KeyboardEvent) {
@@ -103,11 +88,22 @@ async function sendMessage() {
     fetching.value = false;
     lists.value.find(t => t.talkId == currTalk.value)!.latest = res.item;
     setTimeout(() => {
-        messageArea.value?.scrollTo({ top: messageArea.value.scrollHeight, behavior: "smooth" });
-    }, 10);
+        console.log(messageArea.value);
+        messageArea.value?.parentElement?.scrollTo({ top: messageArea.value.parentElement.scrollHeight, behavior: "smooth" });
+    }, 100);
 }
 
 defineExpose({ loading });
+
+onMounted(() => {
+    height.value = window.innerHeight;
+    window.onresize = () => {
+        height.value = window.innerHeight;
+    };
+});
+onUnmounted(() => {
+    window.onresize = () => {};
+});
 </script>
 
 <template>
@@ -138,19 +134,22 @@ defineExpose({ loading });
                     </div>
                     <v-divider></v-divider>
                     <div class="full-height d-flex flex-column">
-                        <div class="flex-grow-1 full-width Messages" ref="messageArea" @scroll="onscroll">
-                            <div class="d-flex flex-column-reverse" v-if="!firstLoading">
-                                <MessageText
-                                    v-for="(item, index) in messages"
-                                    :message="item"
-                                    :showTime="index == messages.length - 1 || item.createdAt! - messages[index + 1]?.createdAt! > 300"
-                                    :showTitle="!currTalk.startsWith('users')"
-                                    class="MessageContent"
-                                ></MessageText>
-                            </div>
-                            <div v-else class="d-flex justify-center align-center position-absolute full-width Messages">
-                                <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
-                            </div>
+                        <div class="flex-grow-1 full-width Messages">
+                            <v-infinite-scroll
+                                :height="height - 236.67"
+                                side="start" 
+                                @load="loadMessages"
+                                empty-text="没有更多消息啦"
+                            >
+                                <div ref="messageArea">
+                                    <MessageText
+                                        v-for="(item, index) in messages.slice().reverse()"
+                                        :message="item"
+                                        :showTime="index == 0 || item.createdAt! - messages[messages.length - index]?.createdAt! > 300"
+                                        :showTitle="!currTalk.startsWith('users')"
+                                    ></MessageText>
+                                </div>
+                            </v-infinite-scroll>
                         </div>
                         <v-divider></v-divider>
                         <div class="Textarea full-width d-flex flex-column align-center justify-center pa-3 ga-2">
@@ -209,6 +208,8 @@ defineExpose({ loading });
     border: none;
     outline: none;
     resize: none;
+    background-color: rgb(var(--v-theme-surface));
+    transition: background-color 0.28s;
 }
 </style>
 
