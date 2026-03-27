@@ -35,7 +35,7 @@ const props = defineProps<{
 
 <template>
     <div class="full-width">
-        <div class="full-width d-flex align-center justify-center" v-if="props.showTime">
+        <div class="full-width d-flex align-center justify-center text-body-medium text-medium-emphasis" v-if="props.showTime">
             <span>{{ formatTime(props.message.createdAt!) }}</span>
         </div>
         <div v-if="props.message.user?.uid != userId" class="full-width d-flex align-begin pa-4 ga-3">
@@ -44,18 +44,18 @@ const props = defineProps<{
                     :image="`${API_BASE_URL}/users/${props.message.user?.uid}/avatar`"
                 ></v-avatar>
             </div>
-            <div>
+            <div class="d-flex flex-column align-start" style="width: calc(100% - 48px)">
                 <span v-if="props.showTitle">{{ props.message.user?.name }}</span>
-                <div class="OthersMessage d-flex align-center pa-2 bg-secondary">
+                <div class="OthersMessage d-flex align-center pa-2 bg-secondary pl-3 pr-3">
                     <Markdown :text="props.message.message!"></Markdown>
                 </div>
             </div>
         </div>
         <div v-else class="full-width d-flex align-begin justify-end pa-4 ga-3">
-            <div>
+            <div class="d-flex flex-column align-end" style="width: calc(100% - 48px)">
                 <span v-if="props.showTitle">{{ props.message.user?.name }}</span>
-                <div class="MyMessage d-flex align-center pa-2 bg-primary">
-                    <Markdown :text="props.message.message!"></Markdown>
+                <div class="MyMessage d-flex align-center pa-2 bg-primary pl-3 pr-3">
+                    <Markdown :text="props.message.message!" style="max-width: 100%"></Markdown>
                 </div>
             </div>
             <div>
@@ -73,6 +73,9 @@ const props = defineProps<{
     border-top-right-radius: 10px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    word-break: break-word;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .MyMessage {
@@ -80,5 +83,8 @@ const props = defineProps<{
     border-top-right-radius: 0px;
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+    word-break: break-word;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 </style>

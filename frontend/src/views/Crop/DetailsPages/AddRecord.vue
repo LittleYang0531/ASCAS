@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Ref } from 'vue';
 import type { Crop } from '../../../models/crop';
-import { onBeforeMount, ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import PropertyControl from '../../../components/Property/Control.vue';
 import { showMsg } from '../../../utils/message';
 import { MessageType } from '../../../models/message';
@@ -55,7 +55,7 @@ async function addRecordAndContinue() {
     });
 }
 
-onBeforeMount(() => {
+onMounted(() => {
     for (var i = 0; i < item.item.properties!.length; i++) {
         var prop = item.item.properties![i]!;
         values.value[prop.name!] = prop.def!;

@@ -58,9 +58,11 @@ defineExpose({ loading });
         <div class="d-flex align-center justify-space-between pa-4">
             <h2 class="ma-0">团队成员</h2>
             <div class="d-flex align-center ga-2">
-                <v-btn prepend-icon="$mdiPencil" color="primary" @click="showEdit()">编辑团队</v-btn>
+                <v-btn prepend-icon="$mdiMessage" color="primary" @click="locate(`/messages/list?id=team-${item.tid}`)">进入群聊</v-btn>
+                <v-btn prepend-icon="$mdiPencil" color="primary" @click="showEdit()" v-if="userId == item.owner!.uid">编辑团队</v-btn>
             </div>
         </div>
+        <v-divider></v-divider>
         <v-list style="width: 100%">
             <UserCard v-for="user in mergeUsers(item.members!, [ item.owner! ])" :user="user" :active-click="true"></UserCard>
         </v-list>

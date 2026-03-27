@@ -7,12 +7,15 @@ import UserCard from './User/Card.vue';
 import { showMsg } from '../utils/message';
 import { MessageType } from '../models/message';
 import { sleep } from '../utils/sleep';
+import { onMounted, onUnmounted, ref } from 'vue';
+import { WS_BASE_URL } from '../config';
 
 const theme = useTheme();
 const route = useRoute();
 const props = defineProps<{
     user: User
 }>();
+const unread = ref(0);
 
 function active(prefix: string) {
     return route.path.startsWith(prefix);
@@ -39,6 +42,15 @@ async function logout() {
     await sleep(1000);
     location.href = location.href;
 }
+
+var ws: WebSocket;
+onMounted(() => {
+    ws = new WebSocket(`${WS_BASE_URL}/messages/unread`);
+    ws.onmessage = (event) => {
+        var data = JSON.parse(event.data);
+        unread.value += Number(data);
+    }
+})
 </script>
 
 <template>
@@ -76,7 +88,14 @@ async function logout() {
                 title="我的消息"
                 :active="active('/messages')"
                 @click="locate('/messages/list')"
-            ></v-list-item>
+            >
+                <template v-slot:prepend>
+                    <v-badge v-if="unread > 0" :content="unread" color="error" location="top right">
+                        <v-icon icon="$mdiMessage"></v-icon>
+                    </v-badge>
+                    <v-icon v-else icon="$mdiMessage"></v-icon>
+                </template>
+            </v-list-item>
             <v-list-item
                 prepend-icon="$mdiAccountGroup"
                 title="我的团队"

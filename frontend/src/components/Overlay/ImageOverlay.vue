@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onBeforeUnmount, ref } from 'vue';
+import { onUnmounted, ref } from 'vue';
 
 const model = defineModel<boolean>("model", { required: true });
 const src = defineProps<{
@@ -197,7 +197,7 @@ function close(e: Event) {
     model.value = false;
 }
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
     window.onwheel = () => {};
     window.onresize = () => {};
 });

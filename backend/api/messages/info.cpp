@@ -1,22 +1,20 @@
 #include "../../ascas.h"
 
-auto MessagesDetails = [](client_conn conn, http_request request, param argv) {
+auto MessagesInfo = [](client_conn conn, http_request request, param argv) {
     int uid = UserUtils.checkLogin(request);
     if (!uid) quickSendCode(401);
-    auto get = getParam(request);
-    int maxmid = get.find("max") != get.end() ? stoi(get["max"]) : 2147483647;
 
     std::string talkId = argv[0];
     auto tmp = explode("-", talkId);
     if (tmp[0] == "users") {
         int uid1 = stoi(tmp[1]), uid2 = stoi(tmp[2]);
         if (uid != uid1 && uid != uid2) quickSendCode(403);
-        auto messages = MessageUtils.getUsersMessages(uid, (uid != uid1 ? uid1 : uid2), maxmid);
-        quickSendItems(200, packarr(messages));
+        auto item = MessageUtils.getUsersTalkInfo(uid, uid != uid1 ? uid1 : uid2);
+        quickSendItem(200, item);
     } else if (tmp[0] == "team") {
         int tid = stoi(tmp[1]);
         if (!TeamUtils.inTeam(uid, tid)) quickSendCode(403);
-        auto messages = MessageUtils.getTeamMessages(tid, uid, maxmid);
-        quickSendItems(200, packarr(messages));
+        auto item = MessageUtils.getTeamTalkInfo(tid);
+        quickSendItem(200, item);
     } else quickSendCode(404);
 };

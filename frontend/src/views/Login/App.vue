@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import NProgress from 'nprogress';
-import { onBeforeMount, onBeforeUnmount, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { API_BASE_URL, login_background_urls } from '../../config';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
@@ -93,7 +93,7 @@ window.onpopstate = function() {
     document.title = titles[currpage.value as Page] + " - ASCAS | 田间形状采集辅助系统";
 }
 
-onBeforeMount(() => {
+onMounted(() => {
     var theme2 = localStorage.getItem("theme");
     if (theme2 == 'light' && theme.name.value != 'light') theme.toggle();
     else if (theme2 == 'dark' && theme.name.value != 'dark') theme.toggle();
@@ -105,7 +105,7 @@ onBeforeMount(() => {
     theme.themes.value.light!.colors.primary = "#4CAF50";
     theme.themes.value.dark!.colors.primary = "#4CAF50";
 });
-onBeforeUnmount(() => {
+onUnmounted(() => {
     NProgress.done();
     window.onpopstate = null;
 });

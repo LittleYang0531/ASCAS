@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import NProgress from 'nprogress';
-import { onBeforeUnmount, ref } from 'vue';
+import { onUnmounted, ref } from 'vue';
 import { showMsg } from '../../../utils/message';
 import { MessageType } from '../../../models/message';
 import { API_BASE_URL } from '../../../config';
@@ -60,7 +60,7 @@ onkeyup = function(e) {
     if (e.key == "Enter") register();
 }
 
-onBeforeUnmount(() => {
+onUnmounted(() => {
     onkeyup = null;
 })
 </script>

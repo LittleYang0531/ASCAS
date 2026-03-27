@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, onBeforeUnmount, ref, watch } from 'vue';
+import { onMounted, onUnmounted, ref, watch } from 'vue';
 
 const model = defineModel<boolean>("model", { required: true });
 const emits = defineEmits<{
@@ -81,7 +81,7 @@ watch(model, (newVal) => {
     else release();
 });
 
-onBeforeMount(() => {
+onMounted(() => {
     window.onresize = onresize;
     if (window.innerWidth > window.innerHeight) { // 横屏
         cameraClass.value = "CameraButton-right flex-column";
@@ -89,7 +89,7 @@ onBeforeMount(() => {
         cameraClass.value = "CameraButton-bottom";
     }
 })
-onBeforeUnmount(() => {
+onUnmounted(() => {
     window.onresize = () => {};
 })
 </script>

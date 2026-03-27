@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount } from 'vue';
+import { onMounted } from 'vue';
 import { versionString } from '../version';
 import { showMsg } from '../utils/message';
 import { MessageType } from '../models/message';
@@ -10,7 +10,7 @@ function closeAppBar() {
     localStorage.setItem("showAppBar", "false");
 }
 
-onBeforeMount(() => {
+onMounted(() => {
     var version = localStorage.getItem("appVersion");
     if (version == null) version = "";
     if (version != versionString) {

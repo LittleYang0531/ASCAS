@@ -2,7 +2,7 @@
 import NProgress from 'nprogress';
 import { defineComponent, onMounted, onUnmounted, ref, type Ref } from 'vue';
 import { newFetch } from '../../utils/fetch';
-import { API_BASE_URL } from '../../config';
+import { API_BASE_URL, WS_BASE_URL } from '../../config';
 import type { Message, Talk } from '../../models/message';
 import MessageOverview from '../../components/Message/Overview.vue';
 import MessageText from '../../components/Message/Text.vue';
@@ -15,9 +15,16 @@ async function load(to: any, from: any, next: any) {
     NProgress.inc();
 
     var lists = await (await newFetch(`${API_BASE_URL}/messages/list`)).json();
+    var id = to.query.id;
+    var target = id ? lists.items.find((item: Talk) => item.talkId == id) : undefined;
+    if (!target && id) {
+        target = (await (await newFetch(`${API_BASE_URL}/messages/${id}/info`)).json()).item;
+        lists.items.unshift(target);
+    }
 
     next((e: any) => e.loading({
         lists: lists.items,
+        id: id
     }));
 }
 export default defineComponent({
@@ -34,22 +41,46 @@ const talkTitle = ref("");
 const messages: Ref<Message[]> = ref([]);
 const empty = ref(false);
 const fetching = ref(false);
+const infiniteScroll = ref();
 const messageArea = ref<HTMLDivElement>();
 const textarea = ref<HTMLTextAreaElement>();
 const height = ref(0);
 
 function loading(data: any) {
     lists.value = data.lists;
+    if (data.id) {
+        var talk = lists.value.find(t => t.talkId == data.id)!;
+        open(talk);
+    }
 
     loaded.value = true;
 }
 
+var ws2: WebSocket;
 async function open(talk: Talk) {
+    if (ws2) {
+        ws2.send("bye");
+        ws2.close();
+    }
+
     messages.value = [];
     currTalk.value = talk.talkId!;
     talkTitle.value = talk.title!;
     talk.unread = 0;
     empty.value = false;
+    infiniteScroll.value?.reset();
+
+    ws2 = new WebSocket(`${WS_BASE_URL}/messages/${currTalk.value}/websocket`);
+    ws2.onmessage = (event) => {
+        var isBottom = messageArea.value?.parentElement?.scrollHeight! - messageArea.value?.parentElement?.scrollTop! - messageArea.value?.parentElement?.clientHeight! < 10;
+        var message = JSON.parse(event.data) as Message;
+        messages.value.unshift(message);
+        if (isBottom) {
+            setTimeout(() => {
+                messageArea.value?.parentElement?.scrollTo({ top: messageArea.value.parentElement.scrollHeight, behavior: "smooth" });
+            }, 100);
+        }
+    }
 }
 
 async function loadMessages({ done }: { done: (status: InfiniteScrollStatus) => void }) {
@@ -86,7 +117,9 @@ async function sendMessage() {
     textarea.value!.value = "";
     messages.value.unshift(res.item);
     fetching.value = false;
-    lists.value.find(t => t.talkId == currTalk.value)!.latest = res.item;
+    var talk = lists.value.find(t => t.talkId == currTalk.value)!;
+    talk.latest = res.item;
+    lists.value = [ talk, ...lists.value.filter(t => t.talkId != talk.talkId) ];
     setTimeout(() => {
         console.log(messageArea.value);
         messageArea.value?.parentElement?.scrollTo({ top: messageArea.value.parentElement.scrollHeight, behavior: "smooth" });
@@ -95,14 +128,33 @@ async function sendMessage() {
 
 defineExpose({ loading });
 
+var ws: WebSocket;
 onMounted(() => {
     height.value = window.innerHeight;
     window.onresize = () => {
         height.value = window.innerHeight;
     };
+
+    ws = new WebSocket(`${WS_BASE_URL}/messages/list/websocket`);
+    ws.onmessage = (event) => {
+        var [ talkId, msg ] = event.data.split("\r\n");
+        var talk = lists.value.find(t => t.talkId == talkId)!;
+        var message = JSON.parse(msg) as Message;
+        if (talk) {
+            if (talk.talkId != currTalk.value) talk.unread! += 1;
+            talk.latest = message;
+            lists.value = [ talk, ...lists.value.filter(t => t.talkId != talk.talkId) ];
+        }
+    }
 });
 onUnmounted(() => {
     window.onresize = () => {};
+    ws.send("bye");
+    ws.close();
+    if (ws2) {
+        ws2.send("bye");
+        ws2.close();
+    }
 });
 </script>
 
@@ -140,6 +192,8 @@ onUnmounted(() => {
                                 side="start" 
                                 @load="loadMessages"
                                 empty-text="没有更多消息啦"
+                                ref="infiniteScroll"
+                                style="overflow-x: hidden;"
                             >
                                 <div ref="messageArea">
                                     <MessageText
@@ -196,6 +250,7 @@ onUnmounted(() => {
 .Messages {
     height: calc(100vh - 236.67px);
     max-height: calc(100vh - 236.67px);
+    max-width: calc(min(100vw, 1280px) - 306.67px);
     overflow-y: auto;
 }
 

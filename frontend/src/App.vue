@@ -3,7 +3,7 @@ import { useTheme } from 'vuetify';
 import Message from './components/Message.vue';
 import NavigationDrawer from './components/NavigationDrawer.vue';
 import { showMsg } from './utils/message';
-import { onBeforeMount, ref, watch, type Ref } from 'vue';
+import { onMounted, ref, watch, type Ref } from 'vue';
 import { newFetch } from './utils/fetch';
 import { MessageType } from './models/message';
 import NProgress from 'nprogress';
@@ -58,7 +58,7 @@ watch(() => route.name, () => {
 	document.title = route.name ? titles[route.name as keyof typeof titles] + ' - ' + title : title;
 });
 
-onBeforeMount(() => {
+onMounted(() => {
     var theme2 = localStorage.getItem("theme");
     if (theme2 == 'light' && theme.name.value != 'light') theme.toggle();
     else if (theme2 == 'dark' && theme.name.value != 'dark') theme.toggle();

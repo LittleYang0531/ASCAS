@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, watchEffect, type Ref } from 'vue';
+import { onMounted, ref, watchEffect, type Ref } from 'vue';
 import type { Crop, RecordProperty } from '../../../models/crop';
 import type { OrderNode, WhereNode } from '../../../models/record';
 import { API_BASE_URL } from '../../../config';
@@ -268,7 +268,7 @@ async function load() {
     localStorage.setItem("queryCache", JSON.stringify(query));
     loading.value = false;
 }
-onBeforeMount(async () => {
+onMounted(async () => {
     var query = JSON.parse(localStorage.getItem("queryCache") ?? "{}");
     whereNodes.value = query[crop.crop.cid!]?.where ?? { isLeaf: false, isAnd: true, params: [] };
     orderNodes.value = query[crop.crop.cid!]?.order ?? [{ column: "id", isASC: true }];

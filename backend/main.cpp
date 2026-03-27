@@ -1,3 +1,4 @@
+#include "include/proc.h"
 #if __cplusplus < 202002L
 #error "Please using C++20 or later to compile ASCAS backend!"
 #endif
@@ -33,7 +34,13 @@
 #include "api/messages/list.cpp"
 #include "api/messages/send.cpp"
 #include "api/messages/details.cpp"
+#include "api/messages/info.cpp"
 #include "api/notFound.cpp"
+
+#include "ws/broadcast.cpp"
+#include "ws/messages/unread.cpp"
+#include "ws/messages/list.cpp"
+#include "ws/messages/details.cpp"
 
 using Json::ValueType;
 initEnum(ValueType, nullValue, objectValue);
@@ -46,6 +53,7 @@ int main(int argc, char** argv) {
     mkdir("data", 0777);
     mkdir("data/avatars", 0777);
     mkdir("data/images", 0777);
+    mkdir("/tmp/ascas", 0777);
 
     std::string proc_name = argv[0];
     std::vector<std::string> hotreloads = { "config.json" };
@@ -97,6 +105,11 @@ int main(int argc, char** argv) {
     mysqli_check_table(mysql, tables);
     quick_mysqli_close();
 
+    pid_t pid;
+    proc_create(&pid, generateBroadcastServer("/tmp/ascas/msgUnread.sock"), NULL);
+    proc_create(&pid, generateBroadcastServer("/tmp/ascas/msgList.sock"), NULL);
+    proc_create(&pid, generateBroadcastServer("/tmp/ascas/msgDetails.sock"), NULL);
+
     app.setopt(HTTP_ENABLE_SSL, appConfig["server.enableSSL"].asBool());
     app.setopt(HTTP_LISTEN_HOST, appConfig["server.listenHost"].asCString());
     app.setopt(HTTP_LISTEN_PORT, appConfig["server.listenPort"].asInt());
@@ -135,7 +148,12 @@ int main(int argc, char** argv) {
     app.addRoute("/messages/list", MessagesList);
     app.addRoute("/messages/send", MessagesSend);
     app.addRoute("/messages/%s", MessagesDetails);
+    app.addRoute("/messages/%s/info", MessagesInfo);
     app.addRoute("*", NotFound);
+
+    app.ws_addRoute("/messages/unread", WSMessagesUnread);
+    app.ws_addRoute("/messages/list/websocket", WSMessagesList);
+    app.ws_addRoute("/messages/%s/websocket", WSMessagesDetails);
 
     __default_response["Access-Control-Allow-Credentials"] = "true";
     __default_response["Access-Control-Allow-Headers"] = "*";

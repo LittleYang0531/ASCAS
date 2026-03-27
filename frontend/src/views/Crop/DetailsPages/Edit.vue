@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onBeforeMount, ref, type Ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 import type { Crop, RecordProperty } from '../../../models/crop';
 import { showMsg } from '../../../utils/message';
 import { MessageType } from '../../../models/message';
@@ -108,7 +108,7 @@ async function submit() {
     window.location.href = `/crops/${item.item.cid}`;
 }
 
-onBeforeMount(() => {
+onMounted(() => {
     title.value = item.item.title!;
     description.value = item.item.description!;
     editors.value = mergeUsers(item.item.editors!, [ item.item.owner! ]);

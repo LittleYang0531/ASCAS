@@ -214,7 +214,7 @@ ssize_t ws_send(client_conn __fd, std::string __buf, int opcode = 1) {
     if (!https) s = send(__fd.conn, dat, pt, 0);
     else s = SSL_write(__fd.ssl, dat, pt);
     if (s == -1) {
-        writeLog(LOG_LEVEL_WARNING, "Failed to send data frame! Error: %d", errno);
+        if (errno) writeLog(LOG_LEVEL_WARNING, "Failed to send data frame! Error: %d", errno);
         ws_exitRequest(__fd, true);
         exit(0);
     } else if (s != pt) writeLog(LOG_LEVEL_WARNING, "The data wasn't send completely! Send %d/%d bytes.", s, pt);
@@ -265,7 +265,7 @@ std::string recv(client_conn __fd, int siz = -1) {
             if (ch == -65535) {
                 if (times <= lim) times++;
                 else {
-                    writeLog(LOG_LEVEL_WARNING, "Failed to recieve data! Error: %d", errno);
+                    if (errno) writeLog(LOG_LEVEL_WARNING, "Failed to recieve data! Error: %d", errno);
                     return "";
                 }
             }
@@ -277,7 +277,7 @@ std::string recv(client_conn __fd, int siz = -1) {
         while (__buf.size() != siz) {
             int ch = recvchar(__fd);
             if (ch == -65535) {
-                writeLog(LOG_LEVEL_WARNING, "Failed to recieve data! Error: %d", errno);
+                if (errno) writeLog(LOG_LEVEL_WARNING, "Failed to recieve data! Error: %d", errno);
                 return "";
             }
             __buf.push_back(char(ch));
@@ -306,7 +306,7 @@ std::string ws_recv(client_conn conn) {
 
     /** 解析头数据 */
     if (s < 2) {
-        writeLog(LOG_LEVEL_WARNING, "Invalid WebSocket Data Frame!");
+        // writeLog(LOG_LEVEL_WARNING, "Invalid WebSocket Data Frame!");
         return ws_recv_error;
     }
     std::vector<int> frame0 = to2(__buf[0]);
@@ -639,7 +639,7 @@ http_request getRequest(client_conn& conn) {
     /** 获取请求头 */
     std::string s = recv(conn);
     if (s == "") {
-        writeLog(LOG_LEVEL_WARNING, "Empty Request Header!");
+        // writeLog(LOG_LEVEL_WARNING, "Empty Request Header!");
         exitRequest(conn);
     }
     // writeLog(LOG_LEVEL_DEBUG, "Recieved Request Header from client!");
@@ -1488,7 +1488,7 @@ void thread_pool::work_thread() {
 
 					std::stringstream buffer;
 		            buffer << "Secure WebSocket Accept: " << sec_key;
-		            writeLog(LOG_LEVEL_INFO, buffer.str().c_str());
+		            // writeLog(LOG_LEVEL_INFO, buffer.str().c_str());
 		            putRequest(conn2, 101, ret);
 		            
 		            /** 参数提取 */

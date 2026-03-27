@@ -1,5 +1,44 @@
-.markdown-text p, .markdown-text h1, .markdown-text h2, .markdown-text h3, .markdown-text h4, .markdown-text h5, .markdown-text h6 {
-    margin: 0;
+.markdown-text p:first-child {
+    margin-top: 0;
+}
+.markdown-text h1:first-child {
+    margin-top: 0;
+}
+.markdown-text h2:first-child {
+    margin-top: 0;
+}
+.markdown-text h3:first-child {
+    margin-top: 0;
+}
+.markdown-text h4:first-child {
+    margin-top: 0;
+}
+.markdown-text h5:first-child {
+    margin-top: 0;
+}
+.markdown-text h6:first-child {
+    margin-top: 0;
+}
+.markdown-text p:last-child {
+    margin-bottom: 0;
+}
+.markdown-text h1:last-child {
+    margin-bottom: 0;
+}
+.markdown-text h2:last-child {
+    margin-bottom: 0;
+}
+.markdown-text h3:last-child {
+    margin-bottom: 0;
+}
+.markdown-text h4:last-child {  
+    margin-bottom: 0;
+}
+.markdown-text h5:last-child {
+    margin-bottom: 0;
+}
+.markdown-text h6:last-child {
+    margin-bottom: 0;
 }
 
 .markdown-text blockquote {
@@ -38,6 +77,11 @@
 
 .markdown-text table th {
     font-weight: bold;
+}
+
+.markdown-text code {
+    max-width: 100%;
+    overflow-x: auto;
 }
 
 .markdown-text *:not(table, code ul, p, h1, h2, h3, h4, h5, h6) {
