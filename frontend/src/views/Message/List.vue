@@ -50,14 +50,14 @@ function loading(data: any) {
     lists.value = data.lists;
     if (data.id) {
         var talk = lists.value.find(t => t.talkId == data.id)!;
-        open(talk);
+        open(talk, false);
     }
 
     loaded.value = true;
 }
 
 var ws2: WebSocket;
-async function open(talk: Talk) {
+async function open(talk: Talk, push = true) {
     if (ws2) {
         ws2.send("bye");
         ws2.close();
@@ -69,6 +69,10 @@ async function open(talk: Talk) {
     talk.unread = 0;
     empty.value = false;
     infiniteScroll.value?.reset();
+    if (push) {
+        console.log("push", talk.talkId);
+        history.pushState(null, '', `${import.meta.env.BASE_URL}messages/list?id=${talk.talkId}`);
+    }
 
     ws2 = new WebSocket(`${WS_BASE_URL}/messages/${currTalk.value}/websocket`);
     ws2.onmessage = (event) => {
@@ -127,6 +131,19 @@ async function sendMessage() {
 }
 
 defineExpose({ loading });
+
+window.onpopstate = function() {
+    var id = new URLSearchParams(window.location.search).get("id");
+    console.log("pop", id);
+    if (!id) {
+        currTalk.value = "";
+        talkTitle.value = "";
+        messages.value = [];
+    } else {
+        var talk = lists.value.find(t => t.talkId == id)!;
+        if (talk) open(talk, false);
+    }
+}
 
 var ws: WebSocket;
 onMounted(() => {

@@ -51,6 +51,7 @@ const titles = {
     "TeamList": "团队列表",
     "TeamDetails": "团队信息",
     "TeamCreate": "新建团队",
+    "TeamEdit": "编辑团队",
     "MessageList": "消息列表"
 };
 watch(() => route.name, () => {
