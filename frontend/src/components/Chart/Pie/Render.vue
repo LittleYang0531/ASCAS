@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import "echarts";
+import { use } from 'echarts/core';
+import { PieChart } from 'echarts/charts';
+import { TooltipComponent, LegendComponent } from 'echarts/components';
+import { CanvasRenderer } from 'echarts/renderers';
+use([TooltipComponent, LegendComponent, PieChart, CanvasRenderer]);
+
 import VChart from "vue-echarts";
 import type { RecordProperty } from "../../../models/crop";
 

@@ -1,6 +1,6 @@
 export var type = "dev";
 export var channel = "main";
-export var version = "e48734918d97c49f077078fba72a3f833c08fd34";
-export var commit = "e48734918d97c49f077078fba72a3f833c08fd34";
+export var version = "3ec3e1d8f258e5d79d513f3e85e272c2c131d8e1";
+export var commit = "3ec3e1d8f258e5d79d513f3e85e272c2c131d8e1";
 export var channelString = (type == "dev" ? channel : "release");
 export var versionString = (type == "dev" ? channel + "@" + version : version);

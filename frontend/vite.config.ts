@@ -1,12 +1,14 @@
 import { createLogger, defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import run from 'vite-plugin-run'
+import { visualizer } from 'rollup-plugin-visualizer'
 import { exec } from 'child_process';
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     vue(),
+    visualizer({ open: true }),
     run([
       {
         name: "update_mdi",
@@ -28,7 +30,8 @@ export default defineConfig({
       input: {
         index: 'index.html',
         login: 'login.html',
-      }
-    }
+      },
+    },
+    chunkSizeWarningLimit: 1024
   }
 })

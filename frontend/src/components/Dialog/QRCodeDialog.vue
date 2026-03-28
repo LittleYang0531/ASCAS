@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import { useDisplay } from 'vuetify';
 import VOutlined from '../VOutlined.vue';
-import { Html5Qrcode } from 'html5-qrcode';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import QrScanOverlay from '../Overlay/QrScanOverlay.vue';
 
 const open = defineModel<boolean>("open", { required: true });
@@ -38,13 +37,13 @@ async function screenScan() {
     video.play();
 }
 
+var Html5Qrcode: any;
 function imageScan(file: File) {
     const html5QrCode = new Html5Qrcode("qrcode-reader");
-    html5QrCode.scanFile(file, true).then((result) => {
-        console.log(result);
+    html5QrCode.scanFile(file, true).then((result: any) => {
         model.value = result;
         open.value = false;
-    }).catch((err) => {
+    }).catch((err: any) => {
         showMsg(MessageType.Error, `二维码识别失败：${err}`);
     });
 }
@@ -87,6 +86,10 @@ function pasteEvent(e: ClipboardEvent) {
     }
     imageScan(item);
 }
+
+onMounted(async () => {
+    Html5Qrcode = (await import('html5-qrcode')).Html5Qrcode;
+})
 </script>
 
 <template>

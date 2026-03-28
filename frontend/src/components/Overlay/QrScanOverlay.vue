@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { Html5Qrcode } from 'html5-qrcode';
 import { onMounted, onUnmounted, ref, watch } from 'vue';
 
 const model = defineModel<boolean>("model", { required: true });
@@ -30,7 +29,8 @@ function onresize() {
 
 const facingMode = ref<VideoFacingModeEnum>('environment');
 var intervalE: number;
-function scanQrcode() {
+var Html5Qrcode: any;
+async function scanQrcode() {
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     canvas.width = areaSize.value / scale.value;
@@ -46,11 +46,11 @@ function scanQrcode() {
         if (blob) {
             const file = new File([blob], `photo.jpg`, { type: 'image/jpeg' });
             const html5QrCode = new Html5Qrcode("qrcode-camera-reader");
-            html5QrCode.scanFile(file, true).then((result) => {
+            html5QrCode.scanFile(file, true).then((result: any) => {
                 release();
                 model.value = false;
                 emits('result', result);
-            }).catch((_) => {
+            }).catch((_: any) => {
 
             });
         }
@@ -101,13 +101,14 @@ watch(model, (newVal) => {
     else release();
 });
 
-onMounted(() => {
+onMounted(async () => {
     window.onresize = onresize;
     if (window.innerWidth > window.innerHeight) { // 横屏
         cameraClass.value = "CameraButton-right flex-column";
     } else { // 竖屏
         cameraClass.value = "CameraButton-bottom";
     }
+    Html5Qrcode = (await import('html5-qrcode')).Html5Qrcode;
 })
 onUnmounted(() => {
     window.onresize = () => {};
