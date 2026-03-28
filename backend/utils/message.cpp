@@ -120,9 +120,9 @@ class MessageUtils {
             "FROM (SELECT MAX(mid) AS mid FROM messages GROUP BY talkId) A "
             "INNER JOIN messages AS B ON B.mid = A.mid "
             "INNER JOIN users AS C ON C.id = B.uid "
-            "WHERE B.talkId IN (%s) "
+            "WHERE %s "
             "ORDER BY A.mid DESC",
-            join(", ", talkIds).c_str()
+            talkIds.size() ? ("B.talkId IN (" + join(", ", talkIds) + ")").c_str() : "TRUE"
         );
         auto unread = mysqli_query(
             mysql,

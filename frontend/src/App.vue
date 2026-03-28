@@ -101,6 +101,7 @@ onMounted(() => {
     max-width: 960px;
     width: 100%;
     margin: auto;
+    transition: none;
 }
 </style>
 

@@ -168,13 +168,19 @@ onUnmounted(() => {
                         <p class="ma-0 mb-2 text-body-medium text-medium-emphasis">最近消息</p>
                     </div>
                     <v-divider></v-divider>
-                    <div class="TalkLists">
+                    <div class="TalkLists" v-if="lists.length">
                         <MessageOverview
                             v-for="item in lists"
                             :talk="item"
                             :currTalk="currTalk"
                             @click="open(item)"
                         ></MessageOverview>
+                    </div>
+                    <div class="TalkLists" v-else>
+                        <div class="d-flex flex-column align-center justify-center" style="height: calc(100vh - 36.67px)">
+                            <v-icon icon="$mdiProgressAlert" color="warning" size="36px"></v-icon>
+                            <p class="ma-0 mt-1 ml-1">没有消息记录</p>
+                        </div>
                     </div>
                 </v-list>
             </div>
