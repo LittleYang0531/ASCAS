@@ -189,7 +189,7 @@ class MessageUtils {
                 talks.push_back(Talk({
                     .title = teamTitles[tid],
                     .talkId = res[i]["talkId"],
-                    .avatar = "/users/generateAvatar?s=" + res[i]["talkId"],
+                    .avatar = "/teams/" + std::to_string(tid) + "/avatar",
                     .unread = unreadCounts[res[i]["talkId"]],
                     .latest = Message({
                         .mid = stoi(res[i]["mid"]),
@@ -224,7 +224,7 @@ class MessageUtils {
         return Talk({
             .title = team.title,
             .talkId = talkId,
-            .avatar = "/users/generateAvatar?s=" + talkId,
+            .avatar = "/teams/" + std::to_string(tid) + "/avatar",
             .unread = -1,
             .latest = Message({})
         });

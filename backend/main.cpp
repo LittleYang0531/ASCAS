@@ -31,6 +31,7 @@
 #include "api/teams/details.cpp"
 #include "api/teams/edit.cpp"
 #include "api/teams/remove.cpp"
+#include "api/teams/avatar.cpp"
 #include "api/messages/list.cpp"
 #include "api/messages/send.cpp"
 #include "api/messages/details.cpp"
@@ -53,6 +54,7 @@ int main(int argc, char** argv) {
     mkdir("data", 0777);
     mkdir("data/avatars", 0777);
     mkdir("data/images", 0777);
+    mkdir("data/team-avatars", 0777);
     mkdir("/tmp/ascas", 0777);
 
     std::string proc_name = argv[0];
@@ -145,6 +147,7 @@ int main(int argc, char** argv) {
     app.addRoute("/teams/list",TeamsList);
     app.addRoute("/teams/%d/edit",TeamsEdit);
     app.addRoute("/teams/%d/remove",TeamsRemove);
+    app.addRoute("/teams/%s/avatar", TeamsAvatar);
     app.addRoute("/messages/list", MessagesList);
     app.addRoute("/messages/send", MessagesSend);
     app.addRoute("/messages/%s", MessagesDetails);
