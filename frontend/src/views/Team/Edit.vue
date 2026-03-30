@@ -1,6 +1,7 @@
 <script lang="ts">
 import NProgress from 'nprogress';
 import { defineComponent } from 'vue';
+import { read } from 'xlsx';
 
 async function load(to: any, from: any, next: any) {
     to; from;
@@ -36,6 +37,7 @@ const description = ref("");
 const members: Ref<User[]> = ref([]);
 const tid = ref(0);
 const fetching = ref(false);
+const t = ref(0);
 
 function loading(data: any) {
     title.value = data.team.title;
@@ -66,10 +68,43 @@ async function submit() {
     await sleep(1000);
     window.location.href = `/teams/${tid.value}`;
 }
+
+function onclick() {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "image/*";
+    input.onchange = function() {
+        if (input.files && input.files.length > 0) {
+            const file = input.files[0]!;
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                var data = e.target?.result;
+                var base64 = window.btoa(data as string);
+                await newFetch(`${API_BASE_URL}/teams/${tid.value}/avatar`, {
+                    method: "POST",
+                    body: base64
+                });
+                showMsg(MessageType.Success, "上传成功");
+                t.value = Date.now();
+            }
+            reader.readAsBinaryString(file);
+        }
+    };
+    input.click();
+}
 </script>
 
 <template>
-    <h1>新建团队</h1>
+    <h1>修改团队</h1>
+    <div class="d-flex align-center justify-center full-width mb-6">
+        <v-avatar size="192" class="Avatar cursor-pointer" @click="onclick">
+            <v-img :src="`${API_BASE_URL}/teams/${tid}/avatar?t=${t}`"></v-img>
+            <div class="v-overlay position-absolute full-width AvatarHovering d-flex align-center justify-center flex-column">
+                <v-icon size="48" color="white" icon="$mdiCamera"></v-icon>
+                <span class="mt-2" style="color: white">修改头像</span>
+            </div>
+        </v-avatar>
+    </div>
     <v-text-field
         v-model="title"
         variant="outlined"
@@ -104,3 +139,16 @@ async function submit() {
         >修改</v-btn>
     </div>
 </template>
+
+<style lang="css" scoped>
+.AvatarHovering {
+    opacity: 0;
+    transition: opacity 0.28s, background-color 0.28s;
+    height: 192px;
+    background-color: rgba(0, 0, 0, 0);
+}
+.Avatar:hover .AvatarHovering {
+    opacity: 1;
+    background-color: rgba(0, 0, 0, var(--v-overlay-opacity));
+}
+</style>

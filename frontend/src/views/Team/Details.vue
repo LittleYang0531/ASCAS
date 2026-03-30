@@ -46,14 +46,19 @@ defineExpose({ loading });
 
 <template>
     <div v-if="loaded">
-        <div class="d-flex align-center ga-2">
-            <h1>{{ item.title }}</h1>
-            <v-icon :icon="icons[Number(userId == item.owner!.uid)]"></v-icon>
-            <v-chip size="x-small" variant="outlined" class="text-medium-emphasis">
-                {{ userId == item.owner!.uid ? "OWNER" : "MEMBER" }}
-            </v-chip>
+        <div class="d-flex align-center ga-4 mt-4 mb-4">
+            <v-avatar :image="`${API_BASE_URL}/teams/${item.tid}/avatar`" size="64" rounded="0"></v-avatar>
+            <div>
+                <div class="d-flex align-center ga-2">
+                    <h1 class="ma-0">{{ item.title }}</h1>
+                    <v-icon :icon="icons[Number(userId == item.owner!.uid)]"></v-icon>
+                    <v-chip size="x-small" variant="outlined" class="text-medium-emphasis">
+                        {{ userId == item.owner!.uid ? "OWNER" : "MEMBER" }}
+                    </v-chip>
+                </div>
+                <p class="mt-0 text-medium-emphasis mb-2">{{ item.description }}</p>
+            </div>
         </div>
-        <p class="mt-0 text-medium-emphasis">{{ item.description }}</p>
         <v-divider></v-divider>
         <div class="d-flex align-center justify-space-between pa-4">
             <h2 class="ma-0">团队成员</h2>

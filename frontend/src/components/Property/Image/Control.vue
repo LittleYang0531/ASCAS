@@ -133,7 +133,7 @@ async function solveImage(file: File) {
         }
         if (data.blob.size > imageMaxSize * 1024) {
             r = mid;
-        } else {
+        } else { 
             l = mid;
         }
     }
