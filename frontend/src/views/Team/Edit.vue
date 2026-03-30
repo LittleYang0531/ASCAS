@@ -1,7 +1,6 @@
 <script lang="ts">
 import NProgress from 'nprogress';
 import { defineComponent } from 'vue';
-import { read } from 'xlsx';
 
 async function load(to: any, from: any, next: any) {
     to; from;
