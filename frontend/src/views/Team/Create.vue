@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, type Ref } from 'vue';
-import UserMultipleSelect from '../../components/User/MultipleSelect.vue';
 import { mergeUsers, type User } from '../../models/user';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
@@ -11,7 +10,6 @@ import { userId } from '../../utils/user';
 
 const title = ref("");
 const description = ref("");
-const members: Ref<User[]> = ref([]);
 const fetching = ref(false);
 
 async function submit() {
@@ -20,13 +18,12 @@ async function submit() {
         return;
     }
     fetching.value = true;
-    var members2 = mergeUsers(members.value, [{ uid: userId.value }]);
     var res = await (await newFetch(`${API_BASE_URL}/teams/create`, {
         method: "POST",
         body: JSON.stringify({
             title: title.value,
             description: description.value,
-            members: members2.map(m => m.uid)
+            members: [ userId.value ]
         })
     }, () => { fetching.value = false; })).json();
     var id = res["id"];
@@ -58,11 +55,6 @@ async function submit() {
         class="mt-4"
         auto-grow
     ></v-textarea>
-    <UserMultipleSelect
-        v-model:users="members"
-        label="团队成员"
-        class="mt-4"
-    ></UserMultipleSelect>
     <div class="mt-4 d-flex align-center justify-end">
         <v-btn
             prepend-icon="$mdiCheck"

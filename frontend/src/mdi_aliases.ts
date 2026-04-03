@@ -1,9 +1,10 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Thu Mar 26 22:51:19 CST 2026
+// Generated on Fri Apr 3 22:12:28 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
 import { mdiAccountGroup } from '@mdi/js';
+import { mdiAccountPlus } from '@mdi/js';
 import { mdiAlphabetical } from '@mdi/js';
 import { mdiArrowLeftBold } from '@mdi/js';
 import { mdiArrowRightBold } from '@mdi/js';
@@ -64,6 +65,7 @@ export const mdi_aliases = {
     mdiAccount,
     mdiAccountCog,
     mdiAccountGroup,
+    mdiAccountPlus,
     mdiAlphabetical,
     mdiArrowLeftBold,
     mdiArrowRightBold,

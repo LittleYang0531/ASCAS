@@ -6,17 +6,24 @@ import { API_BASE_URL } from '../../config';
 import { newFetch } from '../../utils/fetch';
 import VOutlined from '../VOutlined.vue';
 import UserCard from './Card.vue';
+import InviteDialog from '../Dialog/InviteDialog.vue';
 
 const users = defineModel<Array<User> >("users", { required: true });
 const props = defineProps<{
     label: string,
-    class?: string
+    class?: string,
+    enableSelect?: boolean,
+    enableInvite?: boolean,
+    inviteUrl?: string,
+    searchAll?: boolean
 }>();
 const choose: Ref<number | undefined> = ref(undefined);
 const search = ref("");
 const items: Ref<Array<any> > = ref([]);
 const searchResults: Ref<Array<User> > = ref([]);
 const loading = ref(false);
+
+const open = ref(false);
 
 function add() {
     if (choose.value == undefined) return;
@@ -35,7 +42,7 @@ watch(search, async (val) => {
     if (val == "") {}
     else {
         loading.value = true;
-        searchResults.value = (await (await newFetch(`${API_BASE_URL}/users/search?keyword=${val}`)).json()).items;
+        searchResults.value = (await (await newFetch(`${API_BASE_URL}/users/search?keyword=${val}${props.searchAll ? '&searchAll' : ''}`)).json()).items;
         items.value = [];
         for (var i = 0; i < searchResults.value.length; i++)
             items.value.push({
@@ -69,7 +76,7 @@ watch(search, async (val) => {
                     </div>
                 </v-list-item>
             </v-list>
-            <div class="d-flex align-center mt-3 ga-2">
+            <div class="d-flex align-center mt-3 ga-2" v-if="props.enableSelect">
                 <v-autocomplete
                     v-model="choose"
                     v-model:search="search"
@@ -84,6 +91,18 @@ watch(search, async (val) => {
                     hide-no-data
                     @update:model-value="add()"
                 ></v-autocomplete>
+            </div>
+            <div class="d-flex align-center mt-3 ga-2" v-if="props.enableInvite">
+                <v-btn
+                    class="full-width"
+                    prepend-icon="$mdiAccountPlus"
+                    color="primary"
+                    @click="open = true"
+                >邀请用户</v-btn>
+                <InviteDialog
+                    v-model:open="open"
+                    :inviteUrl="props.inviteUrl!"
+                ></InviteDialog>
             </div>
         </div>
     </VOutlined>

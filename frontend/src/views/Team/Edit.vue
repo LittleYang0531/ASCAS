@@ -128,6 +128,8 @@ function onclick() {
         v-model:users="members"
         label="团队成员"
         class="mt-4"
+        enableInvite
+        :inviteUrl="`${API_BASE_URL}/teams/${tid}/invite`"
     ></UserMultipleSelect>
     <div class="mt-4 d-flex align-center justify-end">
         <v-btn

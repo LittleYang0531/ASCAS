@@ -172,10 +172,16 @@ onMounted(() => {
         v-model:users="editors"
         label="EDITORS（协作编辑）"
         class="mb-6"
+        enableSelect
+        enableInvite
+        :inviteUrl="`${API_BASE_URL}/crops/${item.item.cid}/inviteEditors`"
     ></UserMultipleSelect>
     <UserMultipleSelect
         v-model:users="viewers"
         label="VIEWERS（协作查看）"
+        enableSelect
+        enableInvite
+        :inviteUrl="`${API_BASE_URL}/crops/${item.item.cid}/inviteViewers`"
     ></UserMultipleSelect>
     <div class="mt-4 d-flex align-center justify-end">
         <v-btn

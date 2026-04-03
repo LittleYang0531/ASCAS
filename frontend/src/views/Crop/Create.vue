@@ -174,10 +174,12 @@ async function submit() {
                     v-model:users="editors"
                     label="EDITORS（协作编辑）"
                     class="mb-6"
+                    enableSelect
                 ></UserMultipleSelect>
                 <UserMultipleSelect
                     v-model:users="viewers"
                     label="VIEWERS（协作查看）"
+                    enableSelect
                 ></UserMultipleSelect>
             </v-timeline-item>
         </v-timeline>
