@@ -1,6 +1,5 @@
 <script setup lang="ts">
-import { ref, type Ref } from 'vue';
-import { mergeUsers, type User } from '../../models/user';
+import { ref } from 'vue';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
 import { newFetch } from '../../utils/fetch';

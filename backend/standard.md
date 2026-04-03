@@ -195,6 +195,29 @@ app.ws_addRoute("/", WSRoute);
 
 访问 `ws://localhost:8080/` 即可看到结果。
 
+## 系统消息通道
+
+发送消息流程：
+
+- 将消息插入到 `messages` 数据库中
+- 插入未读标记到 `unread_marks` 数据库中
+- 通过 WebSocket 推送未读消息条数，未读消息简介，未读消息详细信息。
+
+系统通道 talkId：
+
+- 各类邀请信息：`system-invites`
+
+系统通道 avatar：
+
+- 使用 mdi 图标集生成，网址：<https://pictogrammers.com/library/mdi/>
+- 自定义参数：
+    - 前景色：#FFFFFF
+    - 背景色：#4CAF50
+    - 大小：256px
+    - 间隔：2dp
+    - 旋转：0°
+    - 角弧度：12dp
+
 ## 函数速查
 
 ### HTTP 服务器相关

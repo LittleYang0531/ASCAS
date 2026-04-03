@@ -1,4 +1,3 @@
-#include "include/proc.h"
 #if __cplusplus < 202002L
 #error "Please using C++20 or later to compile ASCAS backend!"
 #endif
@@ -32,10 +31,12 @@
 #include "api/teams/edit.cpp"
 #include "api/teams/remove.cpp"
 #include "api/teams/avatar.cpp"
+#include "api/teams/invite.cpp"
 #include "api/messages/list.cpp"
 #include "api/messages/send.cpp"
 #include "api/messages/details.cpp"
 #include "api/messages/info.cpp"
+#include "api/system/avatar.cpp"
 #include "api/notFound.cpp"
 
 #include "ws/broadcast.cpp"
@@ -148,10 +149,12 @@ int main(int argc, char** argv) {
     app.addRoute("/teams/%d/edit",TeamsEdit);
     app.addRoute("/teams/%d/remove",TeamsRemove);
     app.addRoute("/teams/%s/avatar", TeamsAvatar);
+    app.addRoute("/teams/%d/invite", TeamsInvite);
     app.addRoute("/messages/list", MessagesList);
     app.addRoute("/messages/send", MessagesSend);
     app.addRoute("/messages/%s", MessagesDetails);
     app.addRoute("/messages/%s/info", MessagesInfo);
+    app.addRoute("/system/avatar/%s", SystemAvatar);
     app.addRoute("*", NotFound);
 
     app.ws_addRoute("/messages/unread", WSMessagesUnread);

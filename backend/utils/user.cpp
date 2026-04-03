@@ -293,6 +293,40 @@ class UserUtils {
         return true;
     }
 
+    // 团队内用户搜索
+    std::vector<User> searchInTeams(int uid, std::string keyword) {
+        quick_mysqli_connect();
+
+        auto res = mysqli_query(
+            mysql,
+            "SELECT C.* FROM team_members A "
+            "INNER JOIN (SELECT id, owner FROM teams) AS B ON B.id = A.tid "
+            "INNER JOIN users AS C ON C.id = A.uid "
+            "WHERE owner = %d AND (name LIKE \"%%%s%%\" OR email LIKE \"%%%s%%\") "
+            "UNION "
+            "SELECT * FROM users "
+            "WHERE id = %d AND (name LIKE \"%%%s%%\" OR email LIKE \"%%%s%%\")",
+            uid,
+            quote_encode(keyword).c_str(),
+            quote_encode(keyword).c_str(), 
+            uid,
+            quote_encode(keyword).c_str(),
+            quote_encode(keyword).c_str()
+        );
+
+        std::vector<User> results;
+        for (int i = 0; i < res.size(); i++) {
+            results.push_back(User({
+                .uid = stoi(res[i]["id"]),
+                .name = res[i]["name"],
+                .email = res[i]["email"],
+                .isAdmin = stoi(res[i]["isAdmin"]) ? true : false
+            }));
+        }
+
+        return results;
+    }
+    
     // 用户搜索
     std::vector<User> search(std::string keyword) {
         quick_mysqli_connect();

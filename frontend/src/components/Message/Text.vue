@@ -30,6 +30,7 @@ const props = defineProps<{
     message: Message;
     showTime: boolean;
     showTitle: boolean;
+    overrideAvatar?: string;
 }>();
 </script>
 
@@ -41,7 +42,7 @@ const props = defineProps<{
         <div v-if="props.message.user?.uid != userId" class="full-width d-flex align-begin pa-4 ga-3">
             <div>
                 <v-avatar
-                    :image="`${API_BASE_URL}/users/${props.message.user?.uid}/avatar`"
+                    :image="props.overrideAvatar || `${API_BASE_URL}/users/${props.message.user?.uid}/avatar`"
                 ></v-avatar>
             </div>
             <div class="d-flex flex-column align-start" style="width: calc(100% - 48px)">
@@ -60,7 +61,7 @@ const props = defineProps<{
             </div>
             <div>
                 <v-avatar
-                    :image="`${API_BASE_URL}/users/${props.message.user?.uid}/avatar`"
+                    :image="props.overrideAvatar || `${API_BASE_URL}/users/${props.message.user?.uid}/avatar`"
                 ></v-avatar>
             </div>
         </div>

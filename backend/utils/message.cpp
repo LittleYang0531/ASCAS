@@ -18,7 +18,7 @@ class MessageUtils {
         auto res = mysqli_query(
             mysql,
             "SELECT mid, uid, message, createdAt, A.name AS title FROM messages "
-            "INNER JOIN users AS A ON A.id = uid "
+            "LEFT JOIN users AS A ON A.id = uid "
             "WHERE talkId = \"%s\" AND mid <= %d "
             "ORDER BY mid DESC "
             "LIMIT 20",
@@ -26,16 +26,27 @@ class MessageUtils {
             maxmid
         );
         std::vector<Message> messages;
-        for (int i = 0; i < res.size(); i++)
-            messages.push_back(Message({
-                .mid = stoi(res[i]["mid"]),
-                .user = User({
-                    .uid = stoi(res[i]["uid"]),
-                    .name = res[i]["title"]
-                }),
-                .message = res[i]["message"],
-                .createdAt = stoll(res[i]["createdAt"])
-            }));
+        for (int i = 0; i < res.size(); i++) {
+            if (talkId.starts_with("system-")) {
+                messages.push_back(Message({
+                    .mid = stoi(res[i]["mid"]),
+                    .user = User({}),
+                    .message = res[i]["message"],
+                    .createdAt = stoll(res[i]["createdAt"])
+                }));
+            }
+            else {
+                messages.push_back(Message({
+                    .mid = stoi(res[i]["mid"]),
+                    .user = User({
+                        .uid = stoi(res[i]["uid"]),
+                        .name = res[i]["title"]
+                    }),
+                    .message = res[i]["message"],
+                    .createdAt = stoll(res[i]["createdAt"])
+                }));
+            }
+        }
         return messages;
     }
 
@@ -114,12 +125,14 @@ class MessageUtils {
             talkIds.push_back("\"" + getUsersTalkId(stoi(userTalks[i]["uid1"]), stoi(userTalks[i]["uid2"])) + "\"");
         for (int i = 0; i < teams.size(); i++)
             talkIds.push_back("\"" + getTeamTalkId(stoi(teams[i]["tid"])) + "\"");
+        for (auto v : system_channels) 
+            talkIds.push_back("\"" + v.first + "\"");
         auto res = mysqli_query(
             mysql,
             "SELECT B.talkId, A.mid, B.uid, B.message, B.createdAt, C.name AS title "
             "FROM (SELECT MAX(mid) AS mid FROM messages GROUP BY talkId) A "
             "INNER JOIN messages AS B ON B.mid = A.mid "
-            "INNER JOIN users AS C ON C.id = B.uid "
+            "LEFT JOIN users AS C ON C.id = B.uid "
             "WHERE %s "
             "ORDER BY A.mid DESC",
             talkIds.size() ? ("B.talkId IN (" + join(", ", talkIds) + ")").c_str() : "TRUE"
@@ -128,9 +141,10 @@ class MessageUtils {
             mysql,
             "SELECT B.talkId, COUNT(A.mid) AS count FROM unread_marks AS A "
             "INNER JOIN messages AS B ON B.mid = A.mid "
-            "WHERE A.uid = %d "
+            "WHERE A.uid = %d AND %s "
             "GROUP BY B.talkId",
-            uid
+            uid,
+            talkIds.size() ? ("B.talkId IN (" + join(", ", talkIds) + ")").c_str() : "TRUE"
         );
 
         auto userTitle = mysqli_query(
@@ -197,6 +211,20 @@ class MessageUtils {
                             .uid = stoi(res[i]["uid"]),
                             .name = res[i]["title"]
                         }),
+                        .message = res[i]["message"],
+                        .createdAt = stoll(res[i]["createdAt"])
+                    })
+                }));
+            } else if (res[i]["talkId"].starts_with("system")) {
+                std::string name = res[i]["talkId"].substr(std::string("system-").size());
+                talks.push_back(Talk({
+                    .title = system_channels[res[i]["talkId"]],
+                    .talkId = res[i]["talkId"],
+                    .avatar = "/system/avatar/" + name,
+                    .unread = unreadCounts[res[i]["talkId"]],
+                    .latest = Message({
+                        .mid = stoi(res[i]["mid"]),
+                        .user = User({}),
                         .message = res[i]["message"],
                         .createdAt = stoll(res[i]["createdAt"])
                     })
@@ -336,6 +364,11 @@ class MessageUtils {
 
     std::vector<Message> getTeamMessages(int tid, int uid, int maxmid = 2147483647) {
         std::string talkId = getTeamTalkId(tid);
+        clearUnreadMark(talkId, uid);
+        return getMessages(talkId, maxmid);
+    }
+
+    std::vector<Message> getSystemMessages(std::string talkId, int uid, int maxmid = 2147483647) {
         clearUnreadMark(talkId, uid);
         return getMessages(talkId, maxmid);
     }

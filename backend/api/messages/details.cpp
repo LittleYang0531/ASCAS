@@ -18,5 +18,9 @@ auto MessagesDetails = [](client_conn conn, http_request request, param argv) {
         if (!TeamUtils.inTeam(uid, tid)) quickSendCode(403);
         auto messages = MessageUtils.getTeamMessages(tid, uid, maxmid);
         quickSendItems(200, packarr(messages));
+    } else if (tmp[0] == "system") {
+        if (system_channels.find(talkId) == system_channels.end()) quickSendCode(404);
+        auto messages = MessageUtils.getSystemMessages(talkId, uid, maxmid);
+        quickSendItems(200, packarr(messages));
     } else quickSendCode(404);
 };

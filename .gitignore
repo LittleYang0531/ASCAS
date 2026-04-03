@@ -10,8 +10,10 @@ backend/signup.html
 backend/ascas-backend*
 backend/make
 backend/recompile.json
-backend/data
+backend/data/*
+!backend/data/system-avatars
 backend/main
+backend/invite_*.md
 
 frontend/src/views/template.vue
 frontend/stats.html

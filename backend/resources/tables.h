@@ -175,6 +175,29 @@ std::vector<DBTable> tables = {
             }
         }
     }, {
+        .name = "team_invites",
+        .columns = {
+            {
+                .name = "tid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "code",
+                .type = "text",
+            }, {
+                .name = "expiredAt",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
         .name = "user_talks",
         .columns = {
             {

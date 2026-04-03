@@ -20,6 +20,8 @@
     "users.verifyExpireTime": 1,
     "users.resetExpireTime": 1,
 
+    "teams.inviteExpireTime": 24,
+
     "smtp.host": "smtp.example.com",
     "smtp.port": 465,
     "smtp.ssl": true,

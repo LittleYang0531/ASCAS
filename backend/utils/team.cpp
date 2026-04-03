@@ -2,6 +2,18 @@
 #include "../ascas.h"
 
 class TeamUtils {
+    private:
+    const std::string sessionStrings = 
+        "0123456789"
+        "abcdefghijklmnopqrstuvwxyz"
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    std::string generateSession(int len = 64) {
+        srand(clock3());
+        std::string session = "";
+        for (int i = 0; i < len; i++) session += sessionStrings[rand() % sessionStrings.size()];
+        return session;
+    }
+
     public:
     
     // 检查团队是否存在
@@ -105,24 +117,24 @@ class TeamUtils {
         quick_mysqli_connect();
         std::vector<Team> res;
         std::set<int> ids;
-            auto query = mysqli_query(
-                mysql,
-                "SELECT id, title, description, owner, createdAt FROM teams,team_members WHERE teams.id = team_members.tid AND uid = %d AND (title LIKE \"%%%s%%\" OR description LIKE \"%%%s%%\")",
-                uid,
-                quote_encode(keyword).c_str(),
-                quote_encode(keyword).c_str()
-            );
-            for (int i = 0; i < query.size(); i++) {
-                if (ids.count(stoi(query[i]["id"]))) continue;
-                ids.insert(stoi(query[i]["id"]));
-                res.push_back(Team({
-                    .tid = stoi(query[i]["id"]),
-                    .title = query[i]["title"],
-                    .description = query[i]["description"],
-                    .owner = UserUtils.getUserInfo(stoi(query[i]["owner"])),
-                    .createdAt = stoll(query[i]["createdAt"]),
-                }));
-            }
+        auto query = mysqli_query(
+            mysql,
+            "SELECT id, title, description, owner, createdAt FROM teams,team_members WHERE teams.id = team_members.tid AND uid = %d AND (title LIKE \"%%%s%%\" OR description LIKE \"%%%s%%\")",
+            uid,
+            quote_encode(keyword).c_str(),
+            quote_encode(keyword).c_str()
+        );
+        for (int i = 0; i < query.size(); i++) {
+            if (ids.count(stoi(query[i]["id"]))) continue;
+            ids.insert(stoi(query[i]["id"]));
+            res.push_back(Team({
+                .tid = stoi(query[i]["id"]),
+                .title = query[i]["title"],
+                .description = query[i]["description"],
+                .owner = UserUtils.getUserInfo(stoi(query[i]["owner"])),
+                .createdAt = stoll(query[i]["createdAt"]),
+            }));
+        }
 
         std::sort(res.begin(), res.end(), [&](Team a, Team b){
             switch (order) {
@@ -190,4 +202,110 @@ class TeamUtils {
         );
     }
 
+    // 邀请团队成员
+    void invite(int tid, std::vector<int> uids, std::string origin) {
+        quick_mysqli_connect();
+
+        std::vector<std::string> uids2 = {};
+        for (int i = 0; i < uids.size(); i++) uids2.push_back(std::to_string(uids[i]));
+        auto uids3 = mysqli_query(
+            mysql,
+            "SELECT id AS uid FROM users WHERE id IN (%s) "
+            "EXCEPT "
+            "SELECT uid FROM team_members WHERE tid = %d AND uid IN (%s)",
+            join(", ", uids2).c_str(),
+            tid,
+            join(", ", uids2).c_str()
+        );
+        if (uids3.size() == 0) return;
+        time_t createTime = time(NULL);
+        time_t expireTime = createTime + appConfig["teams.inviteExpireTime"].asInt64() * 60 * 60;
+
+        auto team = getTeamsInfo(tid);
+        std::vector<std::string> codes;
+        std::vector<std::string> team_invites;
+        std::vector<std::string> msgs;
+        std::vector<std::string> messages;
+        std::vector<std::string> unread_marks;
+        for (int i = 0; i < uids3.size(); i++) {
+            std::string msg = invite_team_md;
+            std::string code = generateSession();
+            msg = str_replace("{{ users }}", team.owner.name, msg);
+            msg = str_replace("{{ team }}", team.title, msg);
+            msg = str_replace("{{ url }}", origin + "/invite?type=team&code=" + code, msg);
+
+            msgs.push_back(msg);
+            team_invites.push_back("(" + 
+                std::to_string(tid) + ", " + 
+                uids3[i]["uid"] + ", "
+                "\"" + code + "\", " + 
+                std::to_string(expireTime) + 
+            ")");
+            messages.push_back("("
+                "\"system-invites\", " +
+                uids3[i]["uid"] + ", "
+                "\"" + quote_encode(msg) + "\", " +
+                std::to_string(createTime) + 
+            ")");
+        }
+
+        mysqli_execute(
+            mysql,
+            "INSERT INTO team_invites (tid, uid, code, expiredAt) VALUES %s",
+            join(", ", team_invites).c_str()
+        );
+        mysqli_execute(
+            mysql,
+            "INSERT INTO messages (talkId, uid, message, createdAt) VALUES %s",
+            join(", ", messages).c_str()
+        );
+        int id = stoi(mysqli_query(
+            mysql,
+            "SELECT MAX(mid) AS id FROM messages WHERE talkId = \"%s\" AND uid = %d",
+            "system-invites",
+            stoi(uids3[0]["uid"])
+        )[0]["id"]);
+        for (int i = 0; i < uids3.size(); i++) {
+            unread_marks.push_back("(" +
+                std::to_string(id + i) + ", " +
+                uids3[0]["uid"] +
+            ")");
+        }
+        mysqli_execute(
+            mysql,
+            "INSERT INTO unread_marks (mid, uid) VALUES %s",
+            join(", ", unread_marks).c_str()
+        );
+
+        for (int i = 0; i < uids3.size(); i++) {
+            int touid = stoi(uids3[i]["uid"]);
+            Message msg = Message({
+                .mid = id + i,
+                .user = {},
+                .message = msgs[i],
+                .createdAt = createTime
+            });
+
+            Connection conn = Client("/tmp/ascas/msgUnread.sock").connect();
+            conn.send("send");
+            conn.send(std::to_string(touid));
+            conn.send("1");
+            int cnt = stoi(conn.recv());
+            conn.close();
+
+            conn = Client("/tmp/ascas/msgList.sock").connect();
+            conn.send("send");
+            conn.send(std::to_string(touid));
+            conn.send("system-invites\r\n" + json_encode(Json::Value(msg)));
+            cnt = stoi(conn.recv());
+            conn.close();
+
+            conn = Client("/tmp/ascas/msgDetails.sock").connect();
+            conn.send("send");
+            conn.send(std::to_string(touid));
+            conn.send("system-invites\r\n" + json_encode(Json::Value(msg)));
+            cnt = stoi(conn.recv());
+            conn.close();
+        }
+    }
 }TeamUtils;

@@ -18,7 +18,7 @@ async function invite() {
     await newFetch(url.inviteUrl, {
         method: "POST",
         body: JSON.stringify(users.value.map((e) => e.uid))
-    });
+    }, () => loading.value = false);
     showMsg(MessageType.Success, "邀请成功");
     users.value = [];
     loading.value = false;

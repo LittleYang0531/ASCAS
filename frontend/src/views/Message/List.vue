@@ -224,12 +224,13 @@ onUnmounted(() => {
                                         :message="item"
                                         :showTime="index == 0 || item.createdAt! - messages[messages.length - index]?.createdAt! > 300"
                                         :showTitle="!currTalk.startsWith('users')"
+                                        :overrideAvatar="currTalk.startsWith('system-') ? `${API_BASE_URL}/system/avatar/${currTalk.substr(7)}` : undefined"
                                     ></MessageText>
                                 </div>
                             </v-infinite-scroll>
                         </div>
                         <v-divider></v-divider>
-                        <div class="Textarea full-width d-flex flex-column align-center justify-center pa-3 ga-2">
+                        <div class="Textarea full-width d-flex flex-column align-center justify-center pa-3 ga-2" v-if="!currTalk.startsWith('system-')">
                             <textarea 
                                 :placeholder="'输入消息...\n支持 Markdown 及 Latex 格式\n按 Enter 键换行，按 Shift+Enter 键发送'" 
                                 class="flex-grow-1" 
@@ -243,6 +244,11 @@ onUnmounted(() => {
                                     @click="sendMessage()" 
                                     :disabled="fetching"
                                 >发送</v-btn>
+                            </div>
+                        </div>
+                        <div class="Textarea full-width d-flex flex-column align-center justify-center pa-3 ga-2" v-else>
+                            <div class="d-flex align-center justify-center full-width">
+                                <p class="ma-0 mt-1 mb-1 text-body-medium text-medium-emphasis">系统消息，无法回复</p>
                             </div>
                         </div>
                     </div>
