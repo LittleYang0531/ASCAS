@@ -1,54 +1,43 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import Index from './views/Index.vue';
 import NProgress from 'nprogress';
-import CropList from './views/Crop/List.vue';
-import CropDetails from './views/Crop/Details.vue';
-import CropCreate from './views/Crop/Create.vue';
-import TeamList from './views/Team/List.vue';
-import TeamDetails from './views/Team/Details.vue';
-import TeamCreate from './views/Team/Create.vue';
-import TeamEdit from './views/Team/Edit.vue';
-import Invite from './views/Invite.vue';
-import UserDetails from './views/User/Details.vue';
-import UserEdit from './views/User/Edit.vue';
 
 const routes = [
     {
         path: '/',
         name: 'Home',
-        component: Index
+        component: () => import('./views/Index.vue')
     }, {
         path: '/index',
         name: 'Index',
-        component: Index
+        component: () => import('./views/Index.vue')
     }, {
         path: '/crops/list',
         name: 'CropList',
-        component: CropList
+        component: () => import('./views/Crop/List.vue')
     }, {
         path: '/crops/:id',
         name: 'CropDetails',
-        component: CropDetails
+        component: () => import('./views/Crop/Details.vue')
     }, {
         path: '/crops/create',
         name: 'CropCreate',
-        component: CropCreate
+        component: () => import('./views/Crop/Create.vue')
     }, {
         path: '/teams/list',
         name: 'TeamList',
-        component: TeamList
+        component: () => import('./views/Team/List.vue')
     }, {
         path: '/teams/:id',
         name: 'TeamDetails',
-        component: TeamDetails
+        component: () => import('./views/Team/Details.vue')
     }, {
         path: '/teams/create',
         name: 'TeamCreate',
-        component: TeamCreate
+        component: () => import('./views/Team/Create.vue')
     }, {
         path: '/teams/:id/edit',
         name: 'TeamEdit',
-        component: TeamEdit
+        component: () => import('./views/Team/Edit.vue')
     }, {
         path: '/messages/list',
         name: 'MessageList',
@@ -56,15 +45,15 @@ const routes = [
     }, {
         path: '/invite',
         name: 'Invite',
-        component: Invite
+        component: () => import('./views/Invite.vue')
     }, {
         path: '/users/:id',
         name: 'UserDetails',
-        component: UserDetails
+        component: () => import('./views/User/Details.vue')
     }, {
         path: '/users/edit',
         name: 'UserEdit',
-        component: UserEdit
+        component: () => import('./views/User/Edit.vue')
     }
 ];
 
