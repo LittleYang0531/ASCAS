@@ -106,7 +106,7 @@ onMounted(() => {
             ></v-list-item>
             <v-list-item
                 prepend-icon="$mdiAccount"
-                title="我的空间"
+                title="个人空间"
                 :active="active('/users/' + props.user.uid)"
                 @click="locate('/users/' + props.user.uid)"
             ></v-list-item>
@@ -114,12 +114,12 @@ onMounted(() => {
 
         <v-divider></v-divider>
         <v-list dense nav density="compact">
-            <v-list-item
+            <!-- <v-list-item
                 prepend-icon="$mdiCog"
                 title="应用设置"
                 :active="active('/settings')"
                 @click="locate('/settings')"
-            ></v-list-item>
+            ></v-list-item> -->
             <v-list-item
                 prepend-icon="$mdiLogout"
                 title="退出登录"

@@ -32,6 +32,9 @@ std::vector<DBTable> tables = {
                 .type = "boolean",
                 .defaultValue = "false",
                 .valueIsExpr = true
+            }, {
+                .name = "description",
+                .type = "longtext"
             }
         },
     }, {

@@ -10,6 +10,7 @@ import TeamCreate from './views/Team/Create.vue';
 import TeamEdit from './views/Team/Edit.vue';
 import Invite from './views/Invite.vue';
 import UserDetails from './views/User/Details.vue';
+import UserEdit from './views/User/Edit.vue';
 
 const routes = [
     {
@@ -60,6 +61,10 @@ const routes = [
         path: '/users/:id',
         name: 'UserDetails',
         component: UserDetails
+    }, {
+        path: '/users/edit',
+        name: 'UserEdit',
+        component: UserEdit
     }
 ];
 

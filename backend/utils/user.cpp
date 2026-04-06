@@ -109,24 +109,39 @@ class UserUtils {
         });
     }
 
+    // 获取用户自我简介
+    std::string getDescription(int uid) {
+        quick_mysqli_connect();
+
+        auto res = mysqli_query(
+            mysql,
+            "SELECT description FROM users WHERE id = %d",
+            uid
+        );
+
+        return res[0]["description"];
+    }
+
     // 检查用户名是否被占用
-    int checkName(std::string name) {
+    int checkName(std::string name, int uid = 0) {
         quick_mysqli_connect();
         auto res = mysqli_query(
             mysql,
-            "SELECT id FROM users WHERE name = \"%s\"",
-            quote_encode(name).c_str()
+            "SELECT id FROM users WHERE name = \"%s\" AND id != %d",
+            quote_encode(name).c_str(),
+            uid
         );
         return res.size() == 0 ? 0 : stoi(res[0]["id"]);
     }
 
     // 检查用户邮箱是否被占用
-    int checkEmail(std::string email) {
+    int checkEmail(std::string email, int uid = 0) {
         quick_mysqli_connect();
         auto res = mysqli_query(
             mysql,
-            "SELECT id FROM users WHERE email = \"%s\"",
-            quote_encode(email).c_str()
+            "SELECT id FROM users WHERE email = \"%s\" AND id != %d",
+            quote_encode(email).c_str(),
+            uid
         );
         return res.size() == 0 ? 0 : stoi(res[0]["id"]);
     }
@@ -198,6 +213,20 @@ class UserUtils {
 
         image img = generateAvatar(std::to_string(uid));
         writeImage("./data/avatars/" + std::to_string(uid) + ".png", img);
+    }
+
+    // 修改用户信息
+    void edit(User info, std::string description) {
+        quick_mysqli_connect();
+
+        mysqli_execute(
+            mysql,
+            "UPDATE users SET name = \"%s\", email = \"%s\", description = \"%s\" WHERE id = %d",
+            quote_encode(info.name).c_str(),
+            quote_encode(info.email).c_str(),
+            quote_encode(description).c_str(),
+            info.uid
+        );
     }
 
     // 邮箱验证
