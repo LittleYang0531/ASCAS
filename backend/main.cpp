@@ -20,6 +20,7 @@
 #include "api/crops/edit.cpp"
 #include "api/crops/remove.cpp"
 #include "api/crops/invite.cpp"
+#include "api/crops/inviteAccept.cpp"
 #include "api/records/add.cpp"
 #include "api/records/uploadImages.cpp"
 #include "api/records/images.cpp"
@@ -33,6 +34,7 @@
 #include "api/teams/remove.cpp"
 #include "api/teams/avatar.cpp"
 #include "api/teams/invite.cpp"
+#include "api/teams/inviteAccept.cpp"
 #include "api/messages/list.cpp"
 #include "api/messages/send.cpp"
 #include "api/messages/details.cpp"
@@ -145,6 +147,7 @@ int main(int argc, char** argv) {
     app.addRoute("/crops/%d/records/%d/remove",CropsRecordRemove);
     app.addRoute("/crops/%d/remove",CropsRemove);
     app.addRoute("/crops/%d/invite", CropsInvite);
+    app.addRoute("/crops/%d/invite/accept", CropsInviteAccept);
     app.addRoute("/teams/create",TeamsCreate);
     app.addRoute("/teams/%d", TeamsDetails);
     app.addRoute("/teams/list",TeamsList);
@@ -152,6 +155,7 @@ int main(int argc, char** argv) {
     app.addRoute("/teams/%d/remove",TeamsRemove);
     app.addRoute("/teams/%s/avatar", TeamsAvatar);
     app.addRoute("/teams/%d/invite", TeamsInvite);
+    app.addRoute("/teams/%d/invite/accept", TeamsInviteAccept);
     app.addRoute("/messages/list", MessagesList);
     app.addRoute("/messages/send", MessagesSend);
     app.addRoute("/messages/%s", MessagesDetails);

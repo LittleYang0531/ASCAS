@@ -364,7 +364,7 @@ class CropUtils {
             msg = str_replace("{{ users }}", crop.owner.name, msg);
             msg = str_replace("{{ perm }}", editor ? "编辑" : "查看", msg);
             msg = str_replace("{{ crop }}", crop.title, msg);
-            msg = str_replace("{{ url }}", origin + "/invite?type=crop&code=" + code, msg);
+            msg = str_replace("{{ url }}", origin + "/invite?type=crop&cid=" + std::to_string(cid) + "&code=" + code, msg);
 
             msgs.push_back(msg);
             crop_invites.push_back("(" + 
@@ -440,5 +440,59 @@ class CropUtils {
             cnt = stoi(conn.recv());
             conn.close();
         }
+    }
+
+    bool checkInvite(int cid, int uid, std::string code) {
+        quick_mysqli_connect();
+        return stoi(mysqli_query(
+            mysql,
+            "SELECT COUNT(*) AS count FROM crop_invites WHERE cid = %d AND uid = %d AND code = \"%s\" AND expiredAt >= %lld",
+            cid,
+            uid,
+            code.c_str(),
+            time(NULL)
+        )[0]["count"]);
+    }
+
+    void acceptInvite(int cid, int uid, std::string code) {
+        quick_mysqli_connect();
+
+        auto invite = mysqli_query(
+            mysql,
+            "SELECT * FROM crop_invites WHERE cid = %d AND uid = %d AND code = \"%s\" AND expiredAt >= %lld",
+            cid,
+            uid,
+            code.c_str(),
+            time(NULL)
+        )[0];
+        auto crop = mysqli_query(
+            mysql,
+            "SELECT viewers, editors FROM crops WHERE id = %d",
+            cid
+        )[0];
+
+        bool isEditor = stoi(invite["isEditor"]);
+        Json::Value viewers = json_decode(crop["viewers"]);
+        Json::Value editors = json_decode(crop["editors"]);
+        bool exists = false;
+        for (int i = 0; i < viewers.size(); i++) exists |= viewers[i].asInt() == uid;
+        if (!exists) viewers.append(uid);
+        exists = false;
+        for (int i = 0; i < editors.size(); i++) exists |= editors[i].asInt() == uid;
+        if (!exists && isEditor) editors.append(uid);
+        mysqli_execute(
+            mysql,
+            "UPDATE crops SET viewers = \"%s\", editors = \"%s\" WHERE id = %d",
+            json_encode(viewers).c_str(),
+            json_encode(editors).c_str(),
+            cid
+        );
+        mysqli_execute(
+            mysql,
+            "DELETE FROM crop_invites WHERE cid = %d AND uid = %d AND code = \"%s\"",
+            cid,
+            uid,
+            code.c_str()
+        );
     }
 }CropUtils;

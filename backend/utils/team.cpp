@@ -232,7 +232,7 @@ class TeamUtils {
             std::string code = generateSession();
             msg = str_replace("{{ users }}", team.owner.name, msg);
             msg = str_replace("{{ team }}", team.title, msg);
-            msg = str_replace("{{ url }}", origin + "/invite?type=team&code=" + code, msg);
+            msg = str_replace("{{ url }}", origin + "/invite?type=team&tid=" + std::to_string(tid) + "&code=" + code, msg);
 
             msgs.push_back(msg);
             team_invites.push_back("(" + 
@@ -307,5 +307,36 @@ class TeamUtils {
             cnt = stoi(conn.recv());
             conn.close();
         }
+    }
+    
+    bool checkInvite(int tid, int uid, std::string code) {
+        quick_mysqli_connect();
+        return stoi(mysqli_query(
+            mysql,
+            "SELECT COUNT(*) AS count FROM team_invites WHERE tid = %d AND uid = %d AND code = \"%s\" AND expiredAt >= %lld",
+            tid,
+            uid,
+            code.c_str(),
+            time(NULL)
+        )[0]["count"]);
+    }
+
+    void acceptInvite(int tid, int uid, std::string code) {
+        quick_mysqli_connect();
+
+        mysqli_execute(
+            mysql,
+            "INSERT INTO team_members (tid, uid) VALUES (%d, %d)",
+            tid,
+            uid
+        );
+
+        mysqli_execute(
+            mysql,
+            "DELETE FROM team_invites WHERE tid = %d AND uid = %d AND code = \"%s\"",
+            tid,
+            uid,
+            code.c_str()
+        );
     }
 }TeamUtils;
