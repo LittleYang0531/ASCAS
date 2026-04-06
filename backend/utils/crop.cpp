@@ -215,6 +215,7 @@ class CropUtils {
 
         return res;
     }
+
     //编辑作物属性
     void edit(Crop previous_crop,Crop current_crop) {
         quick_mysqli_connect();
@@ -313,6 +314,7 @@ class CropUtils {
         );
 
     }
+
     void remove(Crop crop)
     {
         //delete from crops where name
@@ -329,5 +331,114 @@ class CropUtils {
             "delete from crops where name = %s",
             (sep + cropname + sep).c_str()
         );
+    }
+
+    void invite(int cid, int uid, std::vector<int> uids, bool editor, std::string origin) {
+        quick_mysqli_connect();
+
+        Json::Value users = json_decode(mysqli_query(
+            mysql,
+            "SELECT %s FROM crops WHERE id = %d",
+            editor ? "editors" : "viewers",
+            cid
+        )[0][editor ? "editors" : "viewers"]);
+        std::vector<int> uids2 = {};
+        for (int i = 0; i < uids.size(); i++) {
+            bool exists = false;
+            for (int j = 0; j < users.size(); j++) exists |= uids[i] == users[j].asInt();
+            if (!exists) uids2.push_back(uids[i]);
+        }
+        if (uids2.size() == 0) return;
+        time_t createTime = time(NULL);
+        time_t expireTime = createTime + appConfig["teams.inviteExpireTime"].asInt64() * 60 * 60;
+
+        auto crop = getCropInfo(cid, uid);
+        std::vector<std::string> codes;
+        std::vector<std::string> crop_invites;
+        std::vector<std::string> msgs;
+        std::vector<std::string> messages;
+        std::vector<std::string> unread_marks;
+        for (int i = 0; i < uids2.size(); i++) {
+            std::string msg = invite_crop_md;
+            std::string code = generateSession();
+            msg = str_replace("{{ users }}", crop.owner.name, msg);
+            msg = str_replace("{{ perm }}", editor ? "编辑" : "查看", msg);
+            msg = str_replace("{{ crop }}", crop.title, msg);
+            msg = str_replace("{{ url }}", origin + "/invite?type=crop&code=" + code, msg);
+
+            msgs.push_back(msg);
+            crop_invites.push_back("(" + 
+                std::to_string(cid) + ", " + 
+                std::to_string(uids2[i]) + ", "
+                "\"" + code + "\", " + 
+                std::string(editor ? "TRUE" : "FALSE") + ", " +
+                std::to_string(expireTime) + 
+            ")");
+            messages.push_back("("
+                "\"system-invites\", " +
+                std::to_string(uids2[i]) + ", "
+                "\"" + quote_encode(msg) + "\", " +
+                std::to_string(createTime) + 
+            ")");
+        }
+
+        mysqli_execute(
+            mysql,
+            "INSERT INTO crop_invites (cid, uid, code, isEditor, expiredAt) VALUES %s",
+            join(", ", crop_invites).c_str()
+        );
+        mysqli_execute(
+            mysql,
+            "INSERT INTO messages (talkId, uid, message, createdAt) VALUES %s",
+            join(", ", messages).c_str()
+        );
+        int id = stoi(mysqli_query(
+            mysql,
+            "SELECT MAX(mid) AS id FROM messages WHERE talkId = \"%s\" AND uid = %d",
+            "system-invites",
+            uids2[0]
+        )[0]["id"]);
+        for (int i = 0; i < uids2.size(); i++) {
+            unread_marks.push_back("(" +
+                std::to_string(id + i) + ", " +
+                std::to_string(uids2[i]) +
+            ")");
+        }
+        mysqli_execute(
+            mysql,
+            "INSERT INTO unread_marks (mid, uid) VALUES %s",
+            join(", ", unread_marks).c_str()
+        );
+
+        for (int i = 0; i < uids2.size(); i++) {
+            int touid = uids2[i];
+            Message msg = Message({
+                .mid = id + i,
+                .user = {},
+                .message = msgs[i],
+                .createdAt = createTime
+            });
+
+            Connection conn = Client("/tmp/ascas/msgUnread.sock").connect();
+            conn.send("send");
+            conn.send(std::to_string(touid));
+            conn.send("1");
+            int cnt = stoi(conn.recv());
+            conn.close();
+
+            conn = Client("/tmp/ascas/msgList.sock").connect();
+            conn.send("send");
+            conn.send(std::to_string(touid));
+            conn.send("system-invites\r\n" + json_encode(Json::Value(msg)));
+            cnt = stoi(conn.recv());
+            conn.close();
+
+            conn = Client("/tmp/ascas/msgDetails.sock").connect();
+            conn.send("send");
+            conn.send(std::to_string(touid));
+            conn.send("system-invites\r\n" + json_encode(Json::Value(msg)));
+            cnt = stoi(conn.recv());
+            conn.close();
+        }
     }
 }CropUtils;

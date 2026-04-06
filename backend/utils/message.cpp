@@ -13,17 +13,18 @@ class MessageUtils {
         return "team-" + std::to_string(tid);
     }
 
-    std::vector<Message> getMessages(std::string talkId, int maxmid = 2147483647) {
+    std::vector<Message> getMessages(std::string talkId, int maxmid = 2147483647, int uid = -1) {
         quick_mysqli_connect();
         auto res = mysqli_query(
             mysql,
             "SELECT mid, uid, message, createdAt, A.name AS title FROM messages "
             "LEFT JOIN users AS A ON A.id = uid "
-            "WHERE talkId = \"%s\" AND mid <= %d "
+            "WHERE talkId = \"%s\" AND mid <= %d AND %s "
             "ORDER BY mid DESC "
             "LIMIT 20",
             talkId.c_str(),
-            maxmid
+            maxmid,
+            (talkId.starts_with("system-") ? "uid = " + std::to_string(uid) : "TRUE").c_str()
         );
         std::vector<Message> messages;
         for (int i = 0; i < res.size(); i++) {
@@ -120,31 +121,39 @@ class MessageUtils {
             "WHERE A.uid = %d",
             uid
         );
-        std::vector<std::string> talkIds;
+        std::vector<std::string> talkIds, talkIds2;
         for (int i = 0; i < userTalks.size(); i++) 
             talkIds.push_back("\"" + getUsersTalkId(stoi(userTalks[i]["uid1"]), stoi(userTalks[i]["uid2"])) + "\"");
         for (int i = 0; i < teams.size(); i++)
             talkIds.push_back("\"" + getTeamTalkId(stoi(teams[i]["tid"])) + "\"");
         for (auto v : system_channels) 
-            talkIds.push_back("\"" + v.first + "\"");
+            talkIds2.push_back("\"" + v.first + "\"");
         auto res = mysqli_query(
             mysql,
             "SELECT B.talkId, A.mid, B.uid, B.message, B.createdAt, C.name AS title "
-            "FROM (SELECT MAX(mid) AS mid FROM messages GROUP BY talkId) A "
+            "FROM ("
+                "SELECT MAX(mid) AS mid FROM messages "
+                "WHERE LEFT(talkId, 7) != 'system-' OR uid = %d "
+                "GROUP BY talkId"
+            ") A "
             "INNER JOIN messages AS B ON B.mid = A.mid "
             "LEFT JOIN users AS C ON C.id = B.uid "
-            "WHERE %s "
+            "WHERE %s OR %s AND B.uid = %d "
             "ORDER BY A.mid DESC",
-            talkIds.size() ? ("B.talkId IN (" + join(", ", talkIds) + ")").c_str() : "TRUE"
+            uid,
+            talkIds.size() ? ("B.talkId IN (" + join(", ", talkIds) + ")").c_str() : "FALSE",
+            talkIds2.size() ? ("B.talkId IN (" + join(", ", talkIds2) + ")").c_str() : "FALSE",
+            uid
         );
         auto unread = mysqli_query(
             mysql,
             "SELECT B.talkId, COUNT(A.mid) AS count FROM unread_marks AS A "
             "INNER JOIN messages AS B ON B.mid = A.mid "
-            "WHERE A.uid = %d AND %s "
+            "WHERE A.uid = %d AND %s OR %s"
             "GROUP BY B.talkId",
             uid,
-            talkIds.size() ? ("B.talkId IN (" + join(", ", talkIds) + ")").c_str() : "TRUE"
+            talkIds.size() ? ("B.talkId IN (" + join(", ", talkIds) + ")").c_str() : "FALSE",
+            talkIds2.size() ? ("B.talkId IN (" + join(", ", talkIds2) + ")").c_str() : "FALSE"
         );
 
         auto userTitle = mysqli_query(
@@ -370,6 +379,6 @@ class MessageUtils {
 
     std::vector<Message> getSystemMessages(std::string talkId, int uid, int maxmid = 2147483647) {
         clearUnreadMark(talkId, uid);
-        return getMessages(talkId, maxmid);
+        return getMessages(talkId, maxmid, uid);
     }
 }MessageUtils;

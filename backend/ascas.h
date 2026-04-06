@@ -6,6 +6,7 @@
 #include "resources/reset_html.h"
 #include "resources/signup_html.h"
 #include "resources/invite_team_md.h"
+#include "resources/invite_crop_md.h"
 #include "resources/system_channels.h"
 #include "resources/tables.h"
 

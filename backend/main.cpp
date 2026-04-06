@@ -19,6 +19,7 @@
 #include "api/crops/create.cpp"
 #include "api/crops/edit.cpp"
 #include "api/crops/remove.cpp"
+#include "api/crops/invite.cpp"
 #include "api/records/add.cpp"
 #include "api/records/uploadImages.cpp"
 #include "api/records/images.cpp"
@@ -143,6 +144,7 @@ int main(int argc, char** argv) {
     app.addRoute("/crops/%d/records/%d/edit",CropsRecordsEdit);
     app.addRoute("/crops/%d/records/%d/remove",CropsRecordRemove);
     app.addRoute("/crops/%d/remove",CropsRemove);
+    app.addRoute("/crops/%d/invite", CropsInvite);
     app.addRoute("/teams/create",TeamsCreate);
     app.addRoute("/teams/%d", TeamsDetails);
     app.addRoute("/teams/list",TeamsList);

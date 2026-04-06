@@ -133,6 +133,34 @@ std::vector<DBTable> tables = {
             }
         }
     }, {
+        .name = "crop_invites",
+        .columns = {
+            {
+                .name = "cid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "code",
+                .type = "text",
+            }, {
+                .name = "isEditor",
+                .type = "boolean",
+                .defaultValue = "FALSE",
+                .valueIsExpr = true
+            }, {
+                .name = "expiredAt",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
         .name = "teams",
         .columns = {
             {

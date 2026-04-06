@@ -268,7 +268,7 @@ class TeamUtils {
         for (int i = 0; i < uids3.size(); i++) {
             unread_marks.push_back("(" +
                 std::to_string(id + i) + ", " +
-                uids3[0]["uid"] +
+                uids3[i]["uid"] +
             ")");
         }
         mysqli_execute(
