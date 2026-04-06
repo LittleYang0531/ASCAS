@@ -9,6 +9,7 @@ import { MessageType } from '../models/message';
 import { sleep } from '../utils/sleep';
 import { onMounted, ref } from 'vue';
 import { WS_BASE_URL } from '../config';
+import LogoutDialog from './Dialog/LogoutDialog.vue';
 
 const theme = useTheme();
 const route = useRoute();
@@ -16,6 +17,7 @@ const props = defineProps<{
     user: User
 }>();
 const unread = ref(0);
+const logoutDialog = ref(false);
 
 function active(prefix: string) {
     return route.path.startsWith(prefix);
@@ -121,7 +123,7 @@ onMounted(() => {
             <v-list-item
                 prepend-icon="$mdiLogout"
                 title="退出登录"
-                @click="logout()"
+                @click="logoutDialog = true;"
             ></v-list-item>
         </v-list>
 
@@ -134,5 +136,6 @@ onMounted(() => {
                 ></v-list-item>
             </v-list>
         </template>
+        <LogoutDialog v-model:open="logoutDialog" @exit="logout"></LogoutDialog>
     </v-navigation-drawer>
 </template>
