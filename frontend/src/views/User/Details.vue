@@ -6,6 +6,8 @@ import { API_BASE_URL } from '../../config';
 import type { User } from '../../models/user';
 
 async function load(to: any, from: any, next: any) {
+    from;
+
     NProgress.start();
     NProgress.inc();
 
