@@ -1,6 +1,6 @@
 <script lang="ts">
 import NProgress from 'nprogress';
-import { defineComponent, ref } from 'vue';
+import { defineComponent } from 'vue';
 import { newFetch } from '../utils/fetch';
 import { API_BASE_URL } from '../config';
 import { showMsg } from '../utils/message';
