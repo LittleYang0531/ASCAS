@@ -9,6 +9,7 @@ import TeamDetails from './views/Team/Details.vue';
 import TeamCreate from './views/Team/Create.vue';
 import TeamEdit from './views/Team/Edit.vue';
 import Invite from './views/Invite.vue';
+import UserDetails from './views/User/Details.vue';
 
 const routes = [
     {
@@ -53,8 +54,12 @@ const routes = [
         component: () => import('./views/Message/List.vue')
     }, {
         path: '/invite',
-        name: "Invite",
+        name: 'Invite',
         component: Invite
+    }, {
+        path: '/users/:id',
+        name: 'UserDetails',
+        component: UserDetails
     }
 ];
 

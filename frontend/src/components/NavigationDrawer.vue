@@ -105,8 +105,8 @@ onMounted(() => {
                 @click="locate('/teams/list')"
             ></v-list-item>
             <v-list-item
-                prepend-icon="$mdiAccountCog"
-                title="个人设置"
+                prepend-icon="$mdiAccount"
+                title="我的空间"
                 :active="active('/users/' + props.user.uid)"
                 @click="locate('/users/' + props.user.uid)"
             ></v-list-item>

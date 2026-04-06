@@ -54,6 +54,7 @@ const titles = {
     "TeamEdit": "编辑团队",
     "MessageList": "消息列表",
     "Invite": "邀请链接",
+    "UserDetails": "个人空间",
 };
 watch(() => route.name, () => {
 	var title = "ASCAS | 田间形状采集辅助系统";

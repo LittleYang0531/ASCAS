@@ -14,6 +14,7 @@
 #include "api/users/search.cpp"
 #include "api/users/avatar.cpp"
 #include "api/users/generateAvatar.cpp"
+#include "api/users/details.cpp"
 #include "api/crops/list.cpp"
 #include "api/crops/details.cpp"
 #include "api/crops/create.cpp"
@@ -133,6 +134,7 @@ int main(int argc, char** argv) {
     app.addRoute("/users/verify", UsersVerify);
     app.addRoute("/users/reset", UsersReset);
     app.addRoute("/users/search", UsersSearch);
+    app.addRoute("/users/%d", UsersDetails);
     app.addRoute("/users/generateAvatar", UsersGenerateAvatar);
     app.addRoute("/users/%d/avatar", UsersAvatar);
     app.addRoute("/crops/list", CropsList);
