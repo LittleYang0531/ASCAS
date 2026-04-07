@@ -27,6 +27,7 @@
 #include "models/team.cpp"
 #include "models/message.cpp"
 #include "models/blog.cpp"
+#include "models/comment.cpp"
 
 Json::Value appConfig;
 MYSQL mysql;
@@ -54,3 +55,4 @@ void quick_mysqli_close() {
 #include "utils/team.cpp"
 #include "utils/message.cpp"
 #include "utils/blog.cpp"
+#include "utils/comment.cpp"

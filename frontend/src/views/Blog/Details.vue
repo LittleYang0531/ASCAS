@@ -67,6 +67,11 @@ function loading(data: any) {
 }
 
 async function submitLike() {
+    if (userId.value == item.value.author?.uid) {
+        showMsg(MessageType.Error, '不能给自己点赞');
+        return;
+    }
+
     await newFetch(`${API_BASE_URL}/blogs/${item.value.bid}/like`, { method: 'POST' });
     if (dislike.value) dislike.value = false, item.value.dislikes!--;
     if (like.value) {
@@ -81,6 +86,11 @@ async function submitLike() {
 }
 
 async function submitDislike() {
+    if (userId.value == item.value.author?.uid) {
+        showMsg(MessageType.Error, '不能给自己点踩');
+        return;
+    }
+
     await newFetch(`${API_BASE_URL}/blogs/${item.value.bid}/dislike`, { method: 'POST' });
     if (like.value) like.value = false, item.value.likes!--;
     if (dislike.value) {
@@ -95,6 +105,11 @@ async function submitDislike() {
 }
 
 async function submitStar() {
+    if (userId.value == item.value.author?.uid) {
+        showMsg(MessageType.Error, '不能给自己收藏');
+        return;
+    }
+
     await newFetch(`${API_BASE_URL}/blogs/${item.value.bid}/star`, { method: 'POST' });
     if (star.value) {
         star.value = false;
@@ -130,34 +145,28 @@ defineExpose({ loading });
         </div>
         <v-divider></v-divider>
         <div class="d-flex align-center justify-center pa-5">
-            <div class="d-flex align-center">
+            <div :class="`d-flex align-center hover ${like ? 'selected' : ''}`" @click="submitLike">
                 <v-icon
-                    :color="like ? 'primary' : ''"
                     icon="$mdiThumbUp"
                     size="32"
                     class="clickable"
-                    @click="submitLike"
                 ></v-icon>
                 <span class="text-medium-emphasis ml-2">{{ item.likes }}</span>
             </div>
             <v-divider vertical class="ml-10"></v-divider>
-            <div class="d-flex align-center ml-10">
+            <div :class="`d-flex align-center ml-10 hover ${dislike ? 'selected' : ''}`" @click="submitDislike">
                 <v-icon
-                    :color="dislike ? 'primary' : ''"
                     icon="$mdiThumbDown"
                     size="32"
                     class="clickable"
-                    @click="submitDislike"
                 ></v-icon>
             </div>
             <v-divider vertical class="ml-10"></v-divider>
-            <div class="d-flex align-center ml-10">
+            <div :class="`d-flex align-center ml-10 hover ${star ? 'selected' : ''}`" @click="submitStar">
                 <v-icon
-                    :color="star ? 'primary' : ''"
                     icon="$mdiStar"
                     size="32"
                     class="clickable"
-                    @click="submitStar"
                 ></v-icon>
                 <span class="text-medium-emphasis ml-2">{{ item.stars }}</span>
             </div>
@@ -187,6 +196,19 @@ defineExpose({ loading });
 </template>
 
 <style lang="css" scoped>
+.hover {
+    transition: color 0.28s;
+    cursor: pointer;
+}
+
+.hover:hover {
+    color: rgb(var(--v-theme-primary));
+}
+
+.selected {
+    color: rgb(var(--v-theme-primary));
+}
+
 .MarkdownContainer {
     word-break: break-word;
     max-width: 100%;
