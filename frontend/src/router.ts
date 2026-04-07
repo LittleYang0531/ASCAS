@@ -54,6 +54,22 @@ const routes = [
         path: '/users/edit',
         name: 'UserEdit',
         component: () => import('./views/User/Edit.vue')
+    }, {
+        path: '/blogs/list',
+        name: 'BlogList',
+        component: () => import('./views/Blog/List.vue')
+    }, {
+        path: '/blogs/create',
+        name: 'BlogCreate',
+        component: () => import('./views/Blog/Create.vue')
+    }, {
+        path: '/blogs/:id',
+        name: 'BlogDetails',
+        component: () => import('./views/Blog/Details.vue')
+    }, {
+        path: '/blogs/:id/edit',
+        name: 'BlogEdit',
+        component: () => import('./views/Blog/Edit.vue')
     }
 ];
 

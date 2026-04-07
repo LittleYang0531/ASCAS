@@ -56,6 +56,10 @@ const titles = {
     "Invite": "邀请链接",
     "UserDetails": "个人空间",
     "UserEdit": "编辑个人信息",
+    "BlogList": "博客列表",
+    "BlogCreate": "新建博客",
+    "BlogDetails": "博客详情",
+    "BlogEdit": "编辑博客",
 };
 watch(() => route.name, () => {
 	var title = "ASCAS | 田间形状采集辅助系统";

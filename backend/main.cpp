@@ -42,6 +42,14 @@
 #include "api/messages/details.cpp"
 #include "api/messages/info.cpp"
 #include "api/system/avatar.cpp"
+#include "api/blogs/list.cpp"
+#include "api/blogs/details.cpp"
+#include "api/blogs/create.cpp"
+#include "api/blogs/edit.cpp"
+#include "api/blogs/remove.cpp"
+#include "api/blogs/like.cpp"
+#include "api/blogs/dislike.cpp"
+#include "api/blogs/star.cpp"
 #include "api/notFound.cpp"
 
 #include "ws/broadcast.cpp"
@@ -165,6 +173,14 @@ int main(int argc, char** argv) {
     app.addRoute("/messages/%s", MessagesDetails);
     app.addRoute("/messages/%s/info", MessagesInfo);
     app.addRoute("/system/avatar/%s", SystemAvatar);
+    app.addRoute("/blogs/list", BlogsList);
+    app.addRoute("/blogs/%d", BlogsDetails);
+    app.addRoute("/blogs/create", BlogsCreate);
+    app.addRoute("/blogs/%d/edit", BlogsEdit);
+    app.addRoute("/blogs/%d/remove", BlogsRemove);
+    app.addRoute("/blogs/%d/like", BlogsLike);
+    app.addRoute("/blogs/%d/dislike", BlogsDislike);
+    app.addRoute("/blogs/%d/star", BlogsStar);
     app.addRoute("*", NotFound);
 
     app.ws_addRoute("/messages/unread", WSMessagesUnread);

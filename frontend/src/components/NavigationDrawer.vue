@@ -80,6 +80,12 @@ onMounted(() => {
                 :active="active('/crops')"
                 @click="locate('/crops/list')"
             ></v-list-item>
+            <v-list-item
+                prepend-icon="$mdiBook"
+                title="我的博客"
+                :active="active('/blogs')"
+                @click="locate('/blogs/list')"
+            ></v-list-item>
         </v-list>
 
         <v-divider></v-divider>

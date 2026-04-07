@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Mon Apr 6 22:34:12 CST 2026
+// Generated on Tue Apr 7 23:49:25 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountGroup } from '@mdi/js';
@@ -7,6 +7,7 @@ import { mdiAccountPlus } from '@mdi/js';
 import { mdiAlphabetical } from '@mdi/js';
 import { mdiArrowLeftBold } from '@mdi/js';
 import { mdiArrowRightBold } from '@mdi/js';
+import { mdiBook } from '@mdi/js';
 import { mdiCamera } from '@mdi/js';
 import { mdiCameraFlip } from '@mdi/js';
 import { mdiChartBoxOutline } from '@mdi/js';
@@ -19,6 +20,7 @@ import { mdiCloseCircle } from '@mdi/js';
 import { mdiCloudUpload } from '@mdi/js';
 import { mdiCodeJson } from '@mdi/js';
 import { mdiCog } from '@mdi/js';
+import { mdiComment } from '@mdi/js';
 import { mdiContentPaste } from '@mdi/js';
 import { mdiCrown } from '@mdi/js';
 import { mdiDatabase } from '@mdi/js';
@@ -54,6 +56,9 @@ import { mdiRefresh } from '@mdi/js';
 import { mdiSend } from '@mdi/js';
 import { mdiSortAlphabeticalAscending } from '@mdi/js';
 import { mdiSortAlphabeticalDescending } from '@mdi/js';
+import { mdiStar } from '@mdi/js';
+import { mdiThumbDown } from '@mdi/js';
+import { mdiThumbUp } from '@mdi/js';
 import { mdiTrashCan } from '@mdi/js';
 import { mdiVectorArrangeAbove } from '@mdi/js';
 import { mdiVectorArrangeBelow } from '@mdi/js';
@@ -67,6 +72,7 @@ export const mdi_aliases = {
     mdiAlphabetical,
     mdiArrowLeftBold,
     mdiArrowRightBold,
+    mdiBook,
     mdiCamera,
     mdiCameraFlip,
     mdiChartBoxOutline,
@@ -79,6 +85,7 @@ export const mdi_aliases = {
     mdiCloudUpload,
     mdiCodeJson,
     mdiCog,
+    mdiComment,
     mdiContentPaste,
     mdiCrown,
     mdiDatabase,
@@ -114,6 +121,9 @@ export const mdi_aliases = {
     mdiSend,
     mdiSortAlphabeticalAscending,
     mdiSortAlphabeticalDescending,
+    mdiStar,
+    mdiThumbDown,
+    mdiThumbUp,
     mdiTrashCan,
     mdiVectorArrangeAbove,
     mdiVectorArrangeBelow,

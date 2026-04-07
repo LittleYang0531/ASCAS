@@ -295,5 +295,131 @@ std::vector<DBTable> tables = {
                 .valueIsExpr = true
             }
         }
+    }, {
+        .name = "blogs",
+        .columns = {
+            {
+                .name = "id",
+                .type = "int",
+                .enableDefaultValue = false,
+                .autoIncrement = true,
+                .primary = true,
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "title",
+                .type = "text"
+            }, {
+                .name = "content",
+                .type = "longtext"
+            }, {
+                .name = "createdAt",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
+        .name = "blog_comments",
+        .columns = {
+            {
+                .name = "id",
+                .type = "int",
+                .enableDefaultValue = false,
+                .autoIncrement = true,
+                .primary = true,
+            }, {
+                .name = "bid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "comment",
+                .type = "longtext"
+            }
+        }
+    }, {
+        .name = "blog_likes",
+        .columns = {
+            {
+                .name = "bid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
+        .name = "blog_dislikes",
+        .columns = {
+            {
+                .name = "bid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
+        .name = "blog_stars",
+        .columns = {
+            {
+                .name = "bid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
+        .name = "blog_comment_likes",
+        .columns = {
+            {
+                .name = "cid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
+    }, {
+        .name = "blog_comment_dislikes",
+        .columns = {
+            {
+                .name = "cid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
     }
 };

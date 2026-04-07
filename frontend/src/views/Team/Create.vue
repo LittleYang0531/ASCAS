@@ -54,7 +54,7 @@ async function submit() {
         class="mt-4"
         auto-grow
     ></v-textarea>
-    <div class="mt-4 d-flex align-center justify-end">
+    <div class="mt-4 d-flex align-center justify-end mb-4">
         <v-btn
             prepend-icon="$mdiCheck"
             color="primary"
