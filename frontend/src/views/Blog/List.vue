@@ -55,6 +55,7 @@ function loading(data: any) {
         }
         filterStrings.value.push(`排序方式：${orderString}`);
     }
+    showFilter.value = filterStrings.value.length > 0;
     loaded.value = true;
 }
 

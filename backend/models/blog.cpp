@@ -5,7 +5,7 @@
 #include <jsoncpp/json/value.h>
 #include <string>
 
-enum BlogSortOrder {
+enum class BlogSortOrder {
     DEFAULT,
     TITLE,
     CREATEDAT,

@@ -9,9 +9,9 @@ class BlogUtils {
 
         std::string order = "";
         switch (sort) {
-            case BlogSortOrder::DEFAULT:
             case BlogSortOrder::TITLE:
                 order = "A.title ASC"; break;
+            case BlogSortOrder::DEFAULT:
             case BlogSortOrder::CREATEDAT:
                 order = "A.createdAt DESC"; break;
             case BlogSortOrder::LIKES:
@@ -21,7 +21,7 @@ class BlogUtils {
             case BlogSortOrder::STARS:
                 order = "D.count DESC"; break;
             default:
-                order = "A.title ASC"; break;
+                order = "A.createdAt DESC"; break;
         }
 
         auto res = mysqli_query(
