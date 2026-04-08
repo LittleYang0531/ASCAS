@@ -13,7 +13,6 @@ import { useRoute } from 'vue-router';
 import AppBarHint from './components/AppBarHint.vue';
 import { type as versionType } from './version'
 import { userId, userInfo as globalUserInfo } from './utils/user';
-import { fa } from 'vuetify/locale';
 
 const theme = useTheme();
 const route = useRoute();

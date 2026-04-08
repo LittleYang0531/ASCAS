@@ -38,8 +38,6 @@ onMounted(() => {
     if (show == null) showAppBar.value = true;
     else showAppBar.value = false;
 });
-
-const base_url = import.meta.env.BASE_URL;
 </script>
 
 <template>
