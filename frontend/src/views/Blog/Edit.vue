@@ -9,6 +9,7 @@ import { sleep } from '../../utils/sleep';
 import { locate } from '../../router';
 import VOutlined from '../../components/VOutlined.vue';
 import Markdown from '../../components/Markdown.vue';
+import MultipleImages from '../../components/Blog/MultipleImages.vue';
 
 async function load(to: any, from: any, next: any) {
     from;
@@ -19,7 +20,7 @@ async function load(to: any, from: any, next: any) {
 
     next((e: any) => e.loading({
         data: blog.item,
-        bid: to.params.id
+        bid: Number(to.params.id)
     }));
 }
 export default defineComponent({
@@ -32,19 +33,21 @@ export default defineComponent({
 const loaded = ref(false);
 const title = ref("");
 const content = ref("");
+const images = ref<string[]>([]);
 const fetching = ref(false);
 const bid = ref(0);
 
 function loading(data: any) {
     title.value = data.data.title;
     content.value = data.data.content;
+    images.value = data.data.images;
     bid.value = data.bid;
     loaded.value = true;
 }
 
 async function submit() {
     if (title.value.trim() == "") {
-        alert("标题不能为空");
+        showMsg(MessageType.Error, "标题不能为空");
         return;
     }
     fetching.value = true;
@@ -52,7 +55,8 @@ async function submit() {
         method: "POST",
         body: JSON.stringify({
             title: title.value,
-            content: content.value
+            content: content.value,
+            images: images.value
         })
     }, () => { fetching.value = false; })).json();
 
@@ -86,7 +90,7 @@ defineExpose({ loading });
                 density="comfortable"
                 hide-details
                 auto-grow
-                rows="20"
+                rows="15"
                 :placeholder="'支持 Markdown 及 Latex 格式'" 
             ></v-textarea>
             <v-divider vertical></v-divider>
@@ -98,6 +102,7 @@ defineExpose({ loading });
                 </VOutlined>
             </div>
         </div>
+        <MultipleImages v-model:model="images" :bid="bid" class="mt-4"></MultipleImages>
         <div class="mt-4 d-flex align-center justify-end mb-4">
             <v-btn
                 prepend-icon="$mdiCheck"

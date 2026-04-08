@@ -10,6 +10,7 @@ import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
 import type { InfiniteScrollStatus } from 'vuetify/lib/components/VInfiniteScroll/VInfiniteScroll.mjs';
 import BlogComment from '../../components/Blog/Comment.vue';
+import ImageLists from '../../components/Blog/ImageLists.vue';
 
 async function load(to: any, from: any, next: any) {
     from;
@@ -194,6 +195,9 @@ defineExpose({ loading });
             <v-divider></v-divider>
             <div class="pa-2 full-width MarkdownContainer">
                 <Markdown :text="item.content!"></Markdown>
+            </div>
+            <div class="mb-2" v-if="item.images?.length">
+                <ImageLists :model="item.images!" :bid="item.bid!"></ImageLists>
             </div>
             <v-divider></v-divider>
             <div class="d-flex align-center justify-center pa-5">

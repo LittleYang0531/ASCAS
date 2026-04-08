@@ -62,7 +62,7 @@ function onwheel(e: WheelEvent) {
     lastWheelTime = currTime;
     var delta = -e.deltaY / 1000.0;
     var newScale = scale.value + scale.value * delta;
-    var standardScale = Math.min(1, window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
+    var standardScale = Math.min(window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
     newScale = Math.max(newScale, standardScale);
     newScale = Math.min(newScale, 8);
     calc(newScale, e.clientX, e.clientY);
@@ -159,9 +159,11 @@ function onresize(e: Event) {
     var deltaHeight = window.innerHeight - lastWindowHeight;
     top.value += deltaHeight / 2;
     left.value += deltaWidth / 2;
-    var lastStandardScale = Math.min(1, lastWindowWidth / naturalWidth.value, lastWindowHeight / naturalHeight.value);
-    var standardScale = Math.min(1, window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
+    var lastStandardScale = Math.min(lastWindowWidth / naturalWidth.value, lastWindowHeight / naturalHeight.value);
+    var standardScale = Math.min(window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
     if (scale.value <= lastStandardScale) scale.value = standardScale;
+    scale.value = Math.max(scale.value, standardScale);
+    scale.value = Math.min(scale.value, 8);
     if (window.innerHeight < scale.value * naturalHeight.value) {
         top.value = Math.min(top.value, 0);
         top.value = Math.max(top.value, window.innerHeight - scale.value * naturalHeight.value);
@@ -185,7 +187,7 @@ function onload() {
     naturalHeight.value = image.naturalHeight;
     lastWindowWidth = window.innerWidth;
     lastWindowHeight = window.innerHeight;
-    var newScale = Math.min(1, window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
+    var newScale = Math.min(window.innerWidth / naturalWidth.value, window.innerHeight / naturalHeight.value);
     newScale = Math.min(newScale, 8);
     calc(newScale, 0, 0);
     window.onwheel = onwheel;

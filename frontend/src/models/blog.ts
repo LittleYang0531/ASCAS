@@ -10,6 +10,7 @@ export interface Blog {
     dislikes?: number;
     stars?: number;
     comments?: number;
+    images?: string[];
 };
 
 export interface Comment {

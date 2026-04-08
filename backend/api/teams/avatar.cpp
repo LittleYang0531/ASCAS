@@ -9,6 +9,7 @@ auto TeamsAvatar = [](client_conn conn, http_request request, param argv) {
         auto team = TeamUtils.getTeamsInfo(tid);
         if (team.owner.uid != uid) quickSendCode(403);
         std::string data = base64_decode(request.postdata);
+        if (data.size() > appConfig["avatars.maxSize"].asInt() * 1024) quickSendCode(413);
         std::ofstream fout("./data/team-avatars/" + std::to_string(tid) + ".png", std::ios::binary);
         fout.write(data.c_str(), data.size());
         quickSendCode(200);

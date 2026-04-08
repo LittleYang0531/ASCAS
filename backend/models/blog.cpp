@@ -27,6 +27,7 @@ class BlogBase {
     int dislikes;
     int stars;
     int comments;
+    std::vector<std::string> images;
 
     static BlogBase fromJsonObject(Json::Value obj) {
         return BlogBase({
@@ -38,7 +39,8 @@ class BlogBase {
             .likes = obj["likes"].asInt(),
             .dislikes = obj["dislikes"].asInt(),
             .stars = obj["stars"].asInt(),
-            .comments = obj["comments"].asInt()
+            .comments = obj["comments"].asInt(),
+            .images = extarr<std::string>(obj["images"])
         });
     }
 
@@ -53,6 +55,7 @@ class BlogBase {
         res["dislikes"] = dislikes;
         res["stars"] = stars;
         res["comments"] = comments;
+        res["images"] = packarr(images);
         return res;
     }
 };

@@ -8,6 +8,7 @@ auto BlogsCreate = [](client_conn conn, http_request request, param argv) {
     int id = BlogUtils.create(uid, Blog({
         .title = posts["title"].asString(),
         .content = posts["content"].asString(),
+        .images = extarr<std::string>(posts["images"])
     }));
     quickSendData(200, id);
 };

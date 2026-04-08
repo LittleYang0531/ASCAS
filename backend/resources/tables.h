@@ -320,6 +320,9 @@ std::vector<DBTable> tables = {
                 .type = "int",
                 .defaultValue = "0",
                 .valueIsExpr = true
+            }, {
+                .name = "images",
+                .type = "text"
             }
         }
     }, {

@@ -55,7 +55,8 @@ class BlogUtils {
             .likes = stoi(res[i]["likes"] == "" ? "0" : res[i]["likes"]),
             .dislikes = stoi(res[i]["dislikes"] == "" ? "0" : res[i]["dislikes"]),
             .stars = stoi(res[i]["stars"] == "" ? "0" : res[i]["stars"]),
-            .comments = stoi(res[i]["comments"] == "" ? "0" : res[i]["comments"])
+            .comments = stoi(res[i]["comments"] == "" ? "0" : res[i]["comments"]),
+            .images = {}
         }));
 
         return ans;
@@ -99,7 +100,8 @@ class BlogUtils {
             .likes = stoi(res["likes"] == "" ? "0" : res["likes"]),
             .dislikes = stoi(res["dislikes"] == "" ? "0" : res["dislikes"]),
             .stars = stoi(res["stars"] == "" ? "0" : res["stars"]),
-            .comments = stoi(res["comments"] == "" ? "0" : res["comments"])
+            .comments = stoi(res["comments"] == "" ? "0" : res["comments"]),
+            .images = extarr<std::string>(json_decode(res["images"]))
         });
     }
 
@@ -138,11 +140,12 @@ class BlogUtils {
 
         mysqli_execute(
             mysql,
-            "INSERT INTO blogs (uid, title, content, createdAt) VALUES (%d, \"%s\", \"%s\", %lld)",
+            "INSERT INTO blogs (uid, title, content, createdAt, images) VALUES (%d, \"%s\", \"%s\", %lld, \"%s\")",
             uid,
             quote_encode(blog.title).c_str(),
             quote_encode(blog.content).c_str(),
-            time(NULL)
+            time(NULL),
+            quote_encode(json_encode(packarr(blog.images))).c_str()
         );
 
         return stoi(mysqli_query(
@@ -157,9 +160,10 @@ class BlogUtils {
 
         mysqli_execute(
             mysql,
-            "UPDATE blogs SET title = \"%s\", content = \"%s\" WHERE id = %d",
+            "UPDATE blogs SET title = \"%s\", content = \"%s\", images = \"%s\" WHERE id = %d",
             quote_encode(blog.title).c_str(),
             quote_encode(blog.content).c_str(),
+            quote_encode(json_encode(packarr(blog.images))).c_str(),
             blog.bid
         );
     }

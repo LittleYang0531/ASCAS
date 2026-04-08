@@ -13,6 +13,7 @@ auto BlogsEdit = [](client_conn conn, http_request request, param argv) {
         .bid = bid,
         .title = posts["title"].asString(),
         .content = posts["content"].asString(),
+        .images = extarr<std::string>(posts["images"])
     }));
     quickSendCode(200);
 };
