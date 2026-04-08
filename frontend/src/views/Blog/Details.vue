@@ -129,7 +129,7 @@ defineExpose({ loading });
     <div v-if="loaded">
         <h1>{{ item.title }}</h1>
         <div class="d-flex align-center ga-2 mb-4">
-            <v-icon icon="$mdiCrown" size="x-small"></v-icon>
+            <v-icon icon="$mdiAccount" size="x-small"></v-icon>
             <router-link 
                 :to="`/users/${item.author?.uid}`" 
                 class="text-body-small text-medium-emphasis"

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ref } from 'vue';
 import { API_BASE_URL } from '../../config';
 import { UserPermission_icons, type Crop } from '../../models/crop';
 import { MessageType } from '../../models/message';
@@ -6,6 +7,9 @@ import { locate } from '../../router';
 import { newFetch } from '../../utils/fetch';
 import { showMsg } from '../../utils/message';
 import { sleep } from '../../utils/sleep';
+import DeleteDialog from '../Dialog/DeleteDialog.vue';
+
+const deleteDialogOpen = ref(false);
 
 const props = defineProps<{
     crop: Crop
@@ -34,7 +38,6 @@ function formatDate(date: number) {
 }
 
 async function remove() {
-    if (!confirm('确定要删除吗？')) return;
     await (await newFetch(`${API_BASE_URL}/crops/${props.crop.cid}/remove`, {
         method: 'POST'
     })).json();
@@ -78,9 +81,10 @@ async function remove() {
             <v-btn
                 color="error"
                 prepend-icon="$mdiTrashCan"
-                @click="remove"
+                @click="deleteDialogOpen = true"
                 v-if="props.crop.permission == 'UserPermission::OWNER'"
             >删除</v-btn>
+            <DeleteDialog v-model:open="deleteDialogOpen" @delete="remove"></DeleteDialog>
         </div>
     </div>
     <v-divider></v-divider>

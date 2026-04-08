@@ -67,7 +67,7 @@ onMounted(() => {
 
         <v-divider></v-divider>
 
-        <v-list dense nav density="compact">
+        <v-list dense nav density="compact" active-color="primary">
             <v-list-item
                 prepend-icon="$mdiHome"
                 title="主页"
@@ -90,7 +90,7 @@ onMounted(() => {
 
         <v-divider></v-divider>
         
-        <v-list dense nav density="compact">
+        <v-list dense nav density="compact" active-color="primary">
             <v-list-item
                 prepend-icon="$mdiMessage"
                 title="我的消息"
@@ -119,7 +119,7 @@ onMounted(() => {
         </v-list>
 
         <v-divider></v-divider>
-        <v-list dense nav density="compact">
+        <v-list dense nav density="compact" active-color="primary">
             <!-- <v-list-item
                 prepend-icon="$mdiCog"
                 title="应用设置"

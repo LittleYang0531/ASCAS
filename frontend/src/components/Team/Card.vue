@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue';
 import { API_BASE_URL } from '../../config';
 import { MessageType } from '../../models/message';
 import type { Team } from '../../models/team';
@@ -7,8 +8,10 @@ import { newFetch } from '../../utils/fetch';
 import { showMsg } from '../../utils/message';
 import { sleep } from '../../utils/sleep';
 import { userId } from '../../utils/user';
+import DeleteDialog from '../Dialog/DeleteDialog.vue';
 
 const icons = [ "$mdiAccount", "$mdiCrown" ];
+const deleteDialogOpen = ref(false);
 
 const team = defineProps<{
     team: Team
@@ -37,7 +40,6 @@ function formatDate(date: number) {
 }
 
 async function remove() {
-    if (!confirm('确定要删除吗？')) return;
     await (await newFetch(`${API_BASE_URL}/teams/${team.team.tid}/remove`, {
         method: 'POST'
     })).json();
@@ -78,9 +80,10 @@ async function remove() {
             <v-btn
                 color="error"
                 prepend-icon="$mdiTrashCan"
-                @click="remove"
+                @click="deleteDialogOpen = true"
                 v-if="userId == team.team.owner!.uid"
             >删除</v-btn>
+            <DeleteDialog v-model:open="deleteDialogOpen" @delete="remove"></DeleteDialog>
         </div>
     </div>
     <v-divider></v-divider>

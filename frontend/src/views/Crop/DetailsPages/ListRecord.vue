@@ -220,7 +220,6 @@ async function submitEdit() {
     await load();
 }
 async function removeRecord() {
-    if (!confirm('确定要删除吗？')) return;
     await (await newFetch(`${API_BASE_URL}/crops/${crop.crop.cid}/records/${editId.value}/remove`, {
         method: 'POST'
     })).json();
@@ -314,10 +313,7 @@ const chartModel: Ref<number | undefined> = ref(undefined);
     <VCollapse v-model:open="filterModel">
         <template v-slot:title>
             <div class="d-flex align-center ga-2">
-                <h2 class="ma-0 Title">
-                    筛选器
-                    <span v-if="filterModel == undefined">& 排序方式</span>
-                </h2>
+                <h2 class="ma-0 Title">筛选</h2>
                 <v-badge location="top right" color="primary" :content="whereCount" v-if="whereCount > 0">
                     <v-icon icon="$mdiFilterVariant"></v-icon>
                 </v-badge>
