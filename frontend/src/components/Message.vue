@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { errorText, isError, type, display } from '../utils/message';
 
-const props = defineProps(['hasAppBar']);
+const props = defineProps(['top']);
 </script>
 
 <template>
-    <div ref="message" :style="`opacity: ${isError ? 1 : 0}; top: ${props.hasAppBar ? 64 : 16}px; display: ${display}`" class="message" id="message">
+    <div ref="message" :style="`opacity: ${isError ? 1 : 0}; top: ${top}px; display: ${display}`" class="message" id="message">
         <v-alert :type="type" style="min-width: 300px;">
             <template v-slot:text>
                 <div v-html="errorText"></div>

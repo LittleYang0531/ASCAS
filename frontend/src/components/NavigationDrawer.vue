@@ -14,8 +14,9 @@ import LogoutDialog from './Dialog/LogoutDialog.vue';
 const theme = useTheme();
 const route = useRoute();
 const props = defineProps<{
-    user: User
+    user: User,
 }>();
+const model = defineModel<boolean>("drawer");
 const unread = ref(0);
 const logoutDialog = ref(false);
 
@@ -58,8 +59,8 @@ onMounted(() => {
 <template>
     <v-navigation-drawer
         expand-on-hover
-        permanent
-        rail
+        temporary
+        v-model="model"
     >
         <v-list>
             <UserCard :user="props.user" :active-click="true"></UserCard>

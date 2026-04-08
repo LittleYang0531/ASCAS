@@ -90,7 +90,7 @@ defineExpose({ loading });
                 density="comfortable"
                 hide-details
                 auto-grow
-                rows="15"
+                rows="12"
                 :placeholder="'支持 Markdown 及 Latex 格式'" 
             ></v-textarea>
             <v-divider vertical></v-divider>

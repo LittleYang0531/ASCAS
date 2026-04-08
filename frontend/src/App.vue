@@ -13,12 +13,14 @@ import { useRoute } from 'vue-router';
 import AppBarHint from './components/AppBarHint.vue';
 import { type as versionType } from './version'
 import { userId, userInfo as globalUserInfo } from './utils/user';
+import { fa } from 'vuetify/locale';
 
 const theme = useTheme();
 const route = useRoute();
 const loaded = ref(false);
 const userInfo: Ref<User> = ref({});
 const showAppBar = ref(versionType == 'dev');
+const pageTitle = ref("ASCAS");
 
 async function loading() {
     NProgress.start();
@@ -64,6 +66,7 @@ const titles = {
 watch(() => route.name, () => {
 	var title = "ASCAS | 田间形状采集辅助系统";
 	document.title = route.name ? titles[route.name as keyof typeof titles] + ' - ' + title : title;
+    pageTitle.value = route.name ? titles[route.name as keyof typeof titles] + ' | ASCAS' : "ASCAS";
 });
 
 onMounted(() => {
@@ -74,13 +77,15 @@ onMounted(() => {
     theme.themes.value.light!.colors.primary = "#4CAF50";
     theme.themes.value.dark!.colors.primary = "#4CAF50";
 })
+
+const drawer = ref(false);
 </script>
 
 <template>
     <transition>
         <v-app v-if="loaded">
-            <AppBarHint v-model:showAppBar="showAppBar"></AppBarHint>
-            <NavigationDrawer :user="userInfo"></NavigationDrawer>
+            <AppBarHint v-model:showAppBar="showAppBar" :title="pageTitle" @c="drawer = !drawer"></AppBarHint>
+            <NavigationDrawer :user="userInfo" v-model:drawer="drawer"></NavigationDrawer>
             <v-main class="Main">
                 <router-view v-slot="{ Component }">
                     <component :is="Component"></component>
@@ -91,7 +96,7 @@ onMounted(() => {
             <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </div>
     </transition>
-    <Message :hasAppBar="showAppBar && loaded"></Message>
+    <Message :top="!loaded ? 16 : 80"></Message>
 </template>
 
 <style lang="css" scoped>
@@ -157,7 +162,7 @@ a:hover {
 }
 
 .full-height {
-    height: 100vh;
+    height: calc(100vh - 64px);
 }
 
 .full-width {

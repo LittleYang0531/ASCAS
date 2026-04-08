@@ -174,7 +174,7 @@ onUnmounted(() => {
             <v-progress-circular indeterminate size="64" color="primary"></v-progress-circular>
         </div>
     </transition>
-    <Message></Message>
+    <Message :top="16"></Message>
 </template>
 
 <style lang="css" scoped>

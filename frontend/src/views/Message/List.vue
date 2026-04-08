@@ -194,7 +194,7 @@ onUnmounted(() => {
                         ></MessageOverview>
                     </div>
                     <div class="TalkLists" v-else>
-                        <div class="d-flex flex-column align-center justify-center" style="height: calc(100vh - 36.67px)">
+                        <div class="d-flex flex-column align-center justify-center" style="height: calc(100vh - 36.67px - 64px)">
                             <v-icon icon="$mdiProgressAlert" color="warning" size="36px"></v-icon>
                             <p class="ma-0 mt-1 ml-1">没有消息记录</p>
                         </div>
@@ -211,7 +211,7 @@ onUnmounted(() => {
                     <div class="full-height d-flex flex-column">
                         <div class="flex-grow-1 full-width Messages">
                             <v-infinite-scroll
-                                :height="height - 236.67"
+                                :height="height - 236.67 - 64"
                                 side="start" 
                                 @load="loadMessages"
                                 empty-text="没有更多消息啦"
@@ -272,14 +272,14 @@ onUnmounted(() => {
 }
 
 .TalkLists {
-    max-height: calc(100vh - 36.67px);
+    max-height: calc(100vh - 64px - 36.67px);
     overflow-y: auto;
 }
 
 .Messages {
-    height: calc(100vh - 236.67px);
-    max-height: calc(100vh - 236.67px);
-    max-width: calc(min(100vw, 1280px) - 306.67px);
+    height: calc(100vh - 64px - 236.67px);
+    max-height: calc(100vh - 64px - 236.67px);
+    max-width: calc(min(100vw, 1280px) - 250px);
     overflow-y: auto;
 }
 
