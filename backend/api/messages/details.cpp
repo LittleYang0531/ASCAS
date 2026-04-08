@@ -4,7 +4,7 @@ auto MessagesDetails = [](client_conn conn, http_request request, param argv) {
     int uid = UserUtils.checkLogin(request);
     if (!uid) quickSendCode(401);
     auto get = getParam(request);
-    int maxmid = get.find("max") != get.end() ? stoi(get["max"]) : 2147483647;
+    int maxmid = get.find("max") != get.end() ? stoi(get["max"]) : INT_MAX;
 
     std::string talkId = argv[0];
     auto tmp = explode("-", talkId);

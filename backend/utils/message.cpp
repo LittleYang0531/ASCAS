@@ -13,7 +13,7 @@ class MessageUtils {
         return "team-" + std::to_string(tid);
     }
 
-    std::vector<Message> getMessages(std::string talkId, int maxmid = 2147483647, int uid = -1) {
+    std::vector<Message> getMessages(std::string talkId, int maxmid = INT_MAX, int uid = -1) {
         quick_mysqli_connect();
         auto res = mysqli_query(
             mysql,
@@ -364,20 +364,20 @@ class MessageUtils {
         pushUnreadMessage(uid, -cnt);
     }
 
-    std::vector<Message> getUsersMessages(int fromuid, int touid, int maxmid = 2147483647) {
+    std::vector<Message> getUsersMessages(int fromuid, int touid, int maxmid = INT_MAX) {
         quick_mysqli_connect();
         std::string talkId = getUsersTalkId(fromuid, touid);
         clearUnreadMark(talkId, fromuid);
         return getMessages(talkId, maxmid);
     }
 
-    std::vector<Message> getTeamMessages(int tid, int uid, int maxmid = 2147483647) {
+    std::vector<Message> getTeamMessages(int tid, int uid, int maxmid = INT_MAX) {
         std::string talkId = getTeamTalkId(tid);
         clearUnreadMark(talkId, uid);
         return getMessages(talkId, maxmid);
     }
 
-    std::vector<Message> getSystemMessages(std::string talkId, int uid, int maxmid = 2147483647) {
+    std::vector<Message> getSystemMessages(std::string talkId, int uid, int maxmid = INT_MAX) {
         clearUnreadMark(talkId, uid);
         return getMessages(talkId, maxmid, uid);
     }

@@ -344,6 +344,11 @@ std::vector<DBTable> tables = {
             }, {
                 .name = "comment",
                 .type = "longtext"
+            }, {
+                .name = "createdAt",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
             }
         }
     }, {

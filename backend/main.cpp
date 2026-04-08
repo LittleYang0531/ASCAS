@@ -50,6 +50,10 @@
 #include "api/blogs/like.cpp"
 #include "api/blogs/dislike.cpp"
 #include "api/blogs/star.cpp"
+#include "api/comments/send.cpp"
+#include "api/comments/list.cpp"
+#include "api/comments/like.cpp"
+#include "api/comments/dislike.cpp"
 #include "api/notFound.cpp"
 
 #include "ws/broadcast.cpp"
@@ -181,6 +185,10 @@ int main(int argc, char** argv) {
     app.addRoute("/blogs/%d/like", BlogsLike);
     app.addRoute("/blogs/%d/dislike", BlogsDislike);
     app.addRoute("/blogs/%d/star", BlogsStar);
+    app.addRoute("/blogs/%d/comments/send", CommentsSend);
+    app.addRoute("/blogs/%d/comments/list", CommentsList);
+    app.addRoute("/blogs/%d/comments/%d/like", CommentsLike);
+    app.addRoute("/blogs/%d/comments/%d/dislike", CommentsDislike);
     app.addRoute("*", NotFound);
 
     app.ws_addRoute("/messages/unread", WSMessagesUnread);

@@ -18,4 +18,7 @@ export interface Comment {
     comment?: string;
     likes?: number;
     dislikes?: number;
+    liked?: boolean;
+    disliked?: boolean;
+    createdAt?: number;
 };
