@@ -9,7 +9,7 @@ const props = defineProps<{
 </script>
 
 <template>
-    <v-dialog v-model="open" max-width="336px">
+    <v-dialog v-model="open" max-width="448px">
         <v-card
             prepend-icon="$mdiDatabase"
             title="选择作物表"

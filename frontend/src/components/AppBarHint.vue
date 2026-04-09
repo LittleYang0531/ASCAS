@@ -7,7 +7,6 @@ import { useTheme } from 'vuetify';
 import { unread, userId } from '../utils/user';
 import { sleep } from '../utils/sleep';
 import LogoutDialog from './Dialog/LogoutDialog.vue';
-import { fa } from 'vuetify/locale';
 
 const showAppBar = defineModel<boolean>("showAppBar");
 const props = defineProps<{
