@@ -13,13 +13,16 @@ private:
         return session;
     }
 
+    bool isNumeric(RecordPropertyType type) {
+        return type == RecordPropertyType::NUMBER || type == RecordPropertyType::DATE;
+    }
     int checkWhereNode(WhereNodeBase node, std::map<std::string, RecordPropertyType> types) {
         if (node.isLeaf) {
             std::string realColumn = node.column;
             if (!std::set<std::string>({ "id", "name", "uid" }).count(realColumn) && types.count(realColumn) == 0) return -1;
             RecordPropertyType type = types[node.column];
-            if (type == RecordPropertyType::NUMBER && SQLOperator::LIKE <= node.op) return -2;
-            if (type != RecordPropertyType::NUMBER && SQLOperator::GREATER <= node.op && node.op <= SQLOperator::SMALLER_OR_EQUAL) return -2;
+            if (isNumeric(type) && SQLOperator::LIKE <= node.op) return -2;
+            if (!isNumeric(type) && SQLOperator::GREATER <= node.op && node.op <= SQLOperator::SMALLER_OR_EQUAL) return -2;
             return 0;
         } else {
             for (int i = 0; i < node.params.size(); i++) {
@@ -34,7 +37,7 @@ private:
             std::string realColumn = node.column;
             if (!std::set<std::string>({ "id", "name", "uid" }).count(realColumn)) realColumn = "var_" + realColumn;
             std::string value = node.value;
-            if (types[node.column] != RecordPropertyType::NUMBER) value = "\"" + quote_encode(value) + "\"";
+            if (!isNumeric(types[node.column])) value = "\"" + quote_encode(value) + "\"";
             else value = std::to_string(stod(value));
             return realColumn + " " + SQLOperators[int(node.op)] + " " + value;
         } else {
@@ -108,8 +111,8 @@ public:
                 std::string realColumn = column;
                 if (realColumn.starts_with("var_")) realColumn = realColumn.substr(4);
                 RecordPropertyType type = types[realColumn];
-                if (type != RecordPropertyType::NUMBER) tmp[realColumn] = value;
-                else tmp[realColumn] = stod(value);
+                if (!isNumeric(type)) tmp[realColumn] = value;
+                else tmp[realColumn] = value == "" ? 0 : stod(value);
             }
             tmp["user"] = jsonobj(
                 "uid", stoi(res[i]["uid"]),
@@ -130,7 +133,7 @@ public:
         for (int i = 0; i < n; ++i)
         {
             std::string newline;
-            if (crop.properties[i].type == RecordPropertyType::NUMBER)
+            if (isNumeric(crop.properties[i].type))
             {
                 newline += std::to_string(stod((posts[crop.properties[i].name].asString())));
             }
@@ -169,7 +172,7 @@ public:
             if(str.size())
             {
             std::string ins = "var_" +  v[i].name  + '=';
-            if(v[i].type != RecordPropertyType::NUMBER){
+            if(!isNumeric(v[i].type)){
                 str = sep + quote_encode(str) + sep;
             }
             update.push_back(ins + str);

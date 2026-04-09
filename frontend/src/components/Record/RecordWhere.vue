@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { WhereNode } from '../../models/record';
+import { isNumeric } from '../../utils/property';
 import VOutlined from '../VOutlined.vue';
 import draggable from 'vuedraggable';
 
@@ -31,13 +32,13 @@ const stringOp = [
 ]
 
 function updateColumn() {
-    if (props.type[(where.value as any).column!] == 'RecordPropertyType::NUMBER') {
+    if (isNumeric(props.type[(where.value as any).column!]!)) {
         (where.value as any).value = "0";
     } else {
         (where.value as any).value = "";
     }
 
-    var op = props.type[(where.value as any).column!] == 'RecordPropertyType::NUMBER' ? numberOp : stringOp;
+    var op = isNumeric(props.type[(where.value as any).column!]!) ? numberOp : stringOp;
     var exists = false;
     for (var i = 0; i < op.length; i++) exists = exists || (where.value as any).op == op[i]?.value;
     if (!exists) (where.value as any).op = op[0]?.value;
@@ -64,7 +65,7 @@ function updateColumn() {
                     ></v-select>
                     <v-select
                         v-model="where.op"
-                        :items="props.type[where.column!] == 'RecordPropertyType::NUMBER' ? numberOp : stringOp"
+                        :items="isNumeric(props.type[where.column!]!) ? numberOp : stringOp"
                         variant="outlined"
                         density="comfortable"
                         hide-details
@@ -78,7 +79,7 @@ function updateColumn() {
                         @update:model-value="(val) => (where as any).value = val.toString()"
                         :precision="null"
                         class="flex-grow-1"
-                        v-if="props.type[where.column!] == 'RecordPropertyType::NUMBER'"
+                        v-if="isNumeric(props.type[where.column!]!)"
                     ></v-number-input>
                     <v-text-field
                         v-model="where.value"

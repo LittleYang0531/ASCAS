@@ -13,6 +13,14 @@ class CropUtils {
         return session;
     }
 
+    std::string getPropertyType(RecordPropertyType type) {
+        switch (type) {
+            case RecordPropertyType::NUMBER: return " float"; break;
+            case RecordPropertyType::DATE: return " int"; break;
+            default: return " text"; break;
+        }
+    }
+
     public:
 
     // 检查作物是否存在
@@ -103,7 +111,7 @@ class CropUtils {
         std::vector<std::string> columns;
         std::string type;
         for (int i = 0; i < crop.properties.size(); i++){
-            type = (crop.properties[i].type == RecordPropertyType::NUMBER ? " float": " text");
+            type = getPropertyType(crop.properties[i].type);
             columns.push_back("var_" + crop.properties[i].name + type);
         }
         std::string columnString = join(", ", columns);
@@ -264,7 +272,7 @@ class CropUtils {
         for(size_t i = 0;i < add.size();++i) 
         { 
             std::string v1 = " add var_" + add[i];
-            std::string type = (current_crop.properties[i].type == RecordPropertyType::NUMBER ? " FLOAT" : " TEXT");
+            std::string type = getPropertyType(current_crop.properties[i].type);
             v1 += type;
             v.push_back(v1);
         }  
@@ -295,11 +303,11 @@ class CropUtils {
         std::vector<std::string> astr;
         for(int i = 1;i < current_crop.properties.size();++i)
         {
-            std::string type = (current_crop.properties[i].type == RecordPropertyType::NUMBER ? " FLOAT" : " TEXT");
+            std::string type = getPropertyType(current_crop.properties[i].type);
             astr.push_back("modify var_" + current_crop.properties[i].name + type + " after var_" + current_crop.properties[i - 1].name);
         }
         std::string l = join(sep,astr);
-        std::string type1 = (current_crop.properties[0].type == RecordPropertyType::NUMBER ? " FLOAT" : " TEXT");
+        std::string type1 = getPropertyType(current_crop.properties[0].type);
         mysqli_execute(mysql,
             "alter table table_%s "
             "MODIFY id int AUTO_INCREMENT FIRST, "

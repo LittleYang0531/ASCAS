@@ -35,6 +35,12 @@ export const propertyTypes = [
         options: false,
         allowDef: false
     }, 
+    {
+        title: "当前时间",
+        value: "RecordPropertyType::DATE",
+        options: false,
+        allowDef: false
+    },
     { 
         title: "上传图片", 
         value: "RecordPropertyType::IMAGE",
@@ -47,3 +53,7 @@ export const propertyTypeMap = propertyTypes.reduce((map, item) => {
     map[item.value] = item;
     return map;
 }, {} as Record<string, typeof propertyTypes[0]>);
+
+export function isNumeric(value: string) {
+    return value == "RecordPropertyType::NUMBER" || value == "RecordPropertyType::DATE";
+}

@@ -21,6 +21,7 @@ enum class RecordPropertyType {
     MULTI, // 多选
     GEOMETRY, // GPS坐标
     QRCODE, // 二维码
+    DATE, // 时间
     IMAGE // 图像
 };
 initEnum(RecordPropertyType, NUMBER, IMAGE);

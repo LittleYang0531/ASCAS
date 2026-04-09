@@ -18,6 +18,7 @@ import { userId } from '../../../utils/user';
 import VCollapse from '../../../components/VCollapse.vue';
 import Chart from '../../../components/Chart/Chart.vue';
 import { locate } from '../../../router';
+import { isNumeric } from '../../../utils/property';
 
 const crop = defineProps<{
     crop: Crop
@@ -96,7 +97,7 @@ function whereToString(where: WhereNode) {
     if (where.isLeaf) {
         var column = columnTitle.value[where.column!];
         var op = opTable[where.op as keyof typeof opTable];
-        var value = columnType.value[where.column!] == 'RecordPropertyType::NUMBER' ? where.value : `"${ quote_encode(where.value!) }"`;
+        var value = isNumeric(columnType.value[where.column!]!) ? where.value : `"${ quote_encode(where.value!) }"`;
         return column + ' ' + op + ' ' + value;
     } else {
         var strings: Array<string> = [];

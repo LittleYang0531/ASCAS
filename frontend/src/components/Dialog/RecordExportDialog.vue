@@ -16,16 +16,17 @@ const emits = defineEmits<{
 
 function exportCSV() {
     emits('getData', (data) => {
-        var content = "编号,";
+        var content = "编号,编辑者,";
         for (var i = 0; i < props.properties.length; i++) {
             content += "\"" + props.properties[i]!.title?.replace(/"/g, '""') + "\",";
         }
         content = content.slice(0, -1) + "\n";
         for (var i = 0; i < data.length; i++) {
-            content += data[i]!.id + ",";
+            content += data[i]!.id + "," + (data[i]!.user as any).name + ",";
             for (var j = 0; j < props.properties.length; j++) {
                 var value = data[i]![props.properties[j]!.name!]!;
                 if (props.properties[j]!.type == "RecordPropertyType::MULTI") value = JSON.parse(value as string).join(";");
+                else if (props.properties[j]!.type == "RecordPropertyType::DATE") value = new Date(Number(value) * 1000).toLocaleString();
                 else if (props.properties[j]!.type == "RecordPropertyType::IMAGE") value = `${API_BASE_URL}/crops/${props.cid}/images/${value}`;
                 content += "\"" + value.toString().replace(/"/g, '""') + "\",";
             }
@@ -46,16 +47,17 @@ function exportXLSX() {
     emits('getData', async (data) => {
         var xlsx = await import('xlsx');
         var workbook = xlsx.utils.book_new();
-        var sheetheader: Array<string> = [ "编号" ];
+        var sheetheader: Array<string> = [ "编号", "编辑者" ];
         for (var i = 0; i < props.properties.length; i++) sheetheader.push(props.properties[i]!.title!);
         var worksheet = xlsx.utils.aoa_to_sheet([ sheetheader ]);
         for (var i = 0; i < data.length; i++) {
-            xlsx.utils.sheet_add_aoa(worksheet, [[ data[i]!.id! ]], { origin: { r: i + 1, c: 0 } });
+            xlsx.utils.sheet_add_aoa(worksheet, [[ data[i]!.id!, (data[i]!.user as any).name ]], { origin: { r: i + 1, c: 0 } });
             for (var j = 0; j < props.properties.length; j++) {
                 var value = data[i]![props.properties[j]!.name!]!;
                 if (props.properties[j]!.type == "RecordPropertyType::MULTI") value = JSON.parse(value as string).join(";");
-                xlsx.utils.sheet_add_aoa(worksheet, [[ value ]], { origin: { r: i + 1, c: j + 1 } }); 
-                var address = xlsx.utils.encode_cell({ r: i + 1, c: j + 1 });
+                else if (props.properties[j]!.type == "RecordPropertyType::DATE") value = new Date(Number(value) * 1000).toLocaleString();
+                xlsx.utils.sheet_add_aoa(worksheet, [[ value ]], { origin: { r: i + 1, c: j + 2 } }); 
+                var address = xlsx.utils.encode_cell({ r: i + 1, c: j + 2 });
                 if (props.properties[j]!.type == "RecordPropertyType::IMAGE") {
                     worksheet[address].l = { Target: `${API_BASE_URL}/crops/${props.cid}/images/${value}` };
                     worksheet[address].v = `${value}.jpg`;
@@ -63,7 +65,7 @@ function exportXLSX() {
             }
         }
         worksheet['!autofilter'] = {
-            ref: xlsx.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: data.length, c: props.properties.length } })
+            ref: xlsx.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: data.length, c: props.properties.length + 1 } })
         };
         worksheet['!freeze'] = { xSplit: 1, ySplit: 1 };
 
@@ -84,7 +86,7 @@ async function exportJSON() {
     emits('getData', (data) => {
         var content: Array<any> = [];
         for (var i = 0; i < data.length; i++) {
-            var tmp: any = { "编号": data[i]!.id! };
+            var tmp: any = { "编号": data[i]!.id!, "编辑者": data[i]!.user! };
             for (var j = 0; j < props.properties.length; j++) {
                 var title = props.properties[j]!.title!;
                 var value = data[i]![props.properties[j]!.name!];
