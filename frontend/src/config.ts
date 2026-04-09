@@ -8,6 +8,14 @@ export const login_background_urls = [
     `${import.meta.env.BASE_URL}bg2.jpg`,
 ];
 
+export const index_background_urls = [
+    `${import.meta.env.BASE_URL}index1.jpg`,
+    `${import.meta.env.BASE_URL}index2.jpg`,
+    `${import.meta.env.BASE_URL}index3.jpg`,
+    `${import.meta.env.BASE_URL}index4.jpg`,
+    `${import.meta.env.BASE_URL}index5.jpg`,
+];
+
 export const recommendPropertyName = [
     "株高",
     "茎粗",

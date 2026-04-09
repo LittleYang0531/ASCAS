@@ -83,7 +83,11 @@ const drawer = ref(false);
 <template>
     <transition>
         <v-app v-if="loaded">
-            <AppBarHint v-model:showAppBar="showAppBar" :title="pageTitle" @c="drawer = !drawer"></AppBarHint>
+            <AppBarHint 
+                v-model:showAppBar="showAppBar" 
+                :title="pageTitle" @c="drawer = !drawer" 
+                :transparent="route.name == 'Home' || route.name == 'Index'"
+            ></AppBarHint>
             <NavigationDrawer :user="userInfo" v-model:drawer="drawer"></NavigationDrawer>
             <v-main class="Main">
                 <router-view v-slot="{ Component }">

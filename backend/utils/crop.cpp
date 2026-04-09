@@ -117,7 +117,7 @@ class CropUtils {
         std::string columnString = join(", ", columns);
         mysqli_execute(
             mysql,
-            "CREATE TABLE table_%s (id int AUTO_INCREMENT PRIMARY KEY, name text, uid int, %s)",
+            "CREATE TABLE table_%s (id int AUTO_INCREMENT PRIMARY KEY, name text, uid int, createdAt int, %s)",
             crop.name.c_str(),
             columnString.c_str()
         );
@@ -313,7 +313,8 @@ class CropUtils {
             "MODIFY id int AUTO_INCREMENT FIRST, "
             "MODIFY name text AFTER id, "
             "MODIFY uid int AFTER name, "
-            "modify var_%s %s after uid,"
+            "MODIFY createdAt int AFTER uid, "
+            "modify var_%s %s after createdAt,"
             "%s",
             quote_encode(previous_crop.name).c_str(),
             quote_encode(current_crop.properties[0].name).c_str(),
@@ -502,5 +503,14 @@ class CropUtils {
             uid,
             code.c_str()
         );
+    }
+
+    int getCropsCount() {
+        quick_mysqli_connect();
+
+        return stoi(mysqli_query(
+            mysql,
+            "SELECT COUNT(*) AS count FROM crops"
+        )[0]["count"]);
     }
 }CropUtils;

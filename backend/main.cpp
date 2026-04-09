@@ -5,6 +5,7 @@
 #include "ascas.h"
 
 #include "api/version.cpp"
+#include "api/overview.cpp"
 #include "api/favicon.cpp"
 #include "api/users/check.cpp"
 #include "api/users/login.cpp"
@@ -143,6 +144,7 @@ int main(int argc, char** argv) {
 
     app.addRoute("/version", Version);
     app.addRoute("/favicon.ico", Favicon);
+    app.addRoute("/overview", Overview);
     app.addRoute("/users/check", UsersCheck);
     app.addRoute("/users/login", UsersLogin);
     app.addRoute("/users/create", UsersCreate);

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, watch } from 'vue';
 import type { RecordProperty } from '../../../models/crop';
 import { showMsg } from '../../../utils/message';
 import { MessageType } from '../../../models/message';
@@ -33,9 +33,13 @@ function loadGeolocation() {
     }
 }
 
+watch(model, (val) => {
+    if (val == "") loadGeolocation();
+});
+
 onMounted(() => {
     if (model.value == "") loadGeolocation();
-})
+});
 </script>
 
 <template>

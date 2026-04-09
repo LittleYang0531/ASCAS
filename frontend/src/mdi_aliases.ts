@@ -1,16 +1,21 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Thu Apr 9 21:14:33 CST 2026
+// Generated on Fri Apr 10 01:29:51 CST 2026
 
 import { mdiAccount } from '@mdi/js';
+import { mdiAccountCog } from '@mdi/js';
 import { mdiAccountGroup } from '@mdi/js';
+import { mdiAccountMultipleOutline } from '@mdi/js';
+import { mdiAccountMultiplePlus } from '@mdi/js';
 import { mdiAccountPlus } from '@mdi/js';
 import { mdiAlphabetical } from '@mdi/js';
 import { mdiArrowLeftBold } from '@mdi/js';
 import { mdiArrowRightBold } from '@mdi/js';
 import { mdiBook } from '@mdi/js';
+import { mdiBookmarkPlusOutline } from '@mdi/js';
 import { mdiCalendar } from '@mdi/js';
 import { mdiCamera } from '@mdi/js';
 import { mdiCameraFlip } from '@mdi/js';
+import { mdiChartBar } from '@mdi/js';
 import { mdiChartBoxOutline } from '@mdi/js';
 import { mdiCheck } from '@mdi/js';
 import { mdiCheckCircle } from '@mdi/js';
@@ -59,6 +64,7 @@ import { mdiSend } from '@mdi/js';
 import { mdiSortAlphabeticalAscending } from '@mdi/js';
 import { mdiSortAlphabeticalDescending } from '@mdi/js';
 import { mdiStar } from '@mdi/js';
+import { mdiTablePlus } from '@mdi/js';
 import { mdiThumbDown } from '@mdi/js';
 import { mdiThumbUp } from '@mdi/js';
 import { mdiTrashCan } from '@mdi/js';
@@ -69,15 +75,20 @@ import { mdiWhiteBalanceSunny } from '@mdi/js';
 
 export const mdi_aliases = {
     mdiAccount,
+    mdiAccountCog,
     mdiAccountGroup,
+    mdiAccountMultipleOutline,
+    mdiAccountMultiplePlus,
     mdiAccountPlus,
     mdiAlphabetical,
     mdiArrowLeftBold,
     mdiArrowRightBold,
     mdiBook,
+    mdiBookmarkPlusOutline,
     mdiCalendar,
     mdiCamera,
     mdiCameraFlip,
+    mdiChartBar,
     mdiChartBoxOutline,
     mdiCheck,
     mdiCheckCircle,
@@ -126,6 +137,7 @@ export const mdi_aliases = {
     mdiSortAlphabeticalAscending,
     mdiSortAlphabeticalDescending,
     mdiStar,
+    mdiTablePlus,
     mdiThumbDown,
     mdiThumbUp,
     mdiTrashCan,

@@ -10,6 +10,7 @@ import { sleep } from '../utils/sleep';
 import { onMounted, ref } from 'vue';
 import { WS_BASE_URL } from '../config';
 import LogoutDialog from './Dialog/LogoutDialog.vue';
+import { unread } from '../utils/user';
 
 const theme = useTheme();
 const route = useRoute();
@@ -17,7 +18,6 @@ const props = defineProps<{
     user: User,
 }>();
 const model = defineModel<boolean>("drawer");
-const unread = ref(0);
 const logoutDialog = ref(false);
 
 function active(prefix: string) {

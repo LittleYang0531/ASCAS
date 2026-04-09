@@ -151,11 +151,12 @@ public:
         std::string name = c + generateSession(16) + c;
         mysqli_execute(
             mysql,
-            "insert into table_%s(name,uid,%s) values(%s,%d,%s)",
+            "insert into table_%s(name,uid,createdAt,%s) values(%s,%d,%lld,%s)",
             quote_encode(crop.name).c_str(),
             quote_encode(var).c_str(),
             name.c_str(),
             uid,
+            time(NULL),
             all.c_str()
         );
         updatedat(cid);
@@ -207,5 +208,33 @@ public:
                 time(NULL),
                 cid
         );
+    }
+
+    int getRecordCount() {
+        quick_mysqli_connect();
+        
+        time_t t = time(NULL);
+        tm m = *localtime(&t);
+        m.tm_hour = 0;
+        m.tm_min = 0;
+        m.tm_sec = 0;
+        time_t st = mktime(&m);
+
+        auto res = mysqli_query(
+            mysql,
+            "SELECT name FROM crops WHERE updatedAt >= %lld",
+            st
+        );
+
+        int sum = 0;
+        for (int i = 0; i < res.size(); i++)
+            sum += stoi(mysqli_query(
+                mysql,
+                "SELECT COUNT(*) AS count FROM table_%s WHERE createdAt >= %lld",
+                res[i]["name"].c_str(),
+                st
+            )[0]["count"]);
+
+        return sum;
     }
 }RecordUtils;

@@ -3,3 +3,4 @@ import type { User } from "../models/user";
 
 export var userId = ref(0);
 export var userInfo: Ref<User> = ref({});
+export const unread = ref(0);

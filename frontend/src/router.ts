@@ -79,6 +79,7 @@ const router = createRouter({
 });
 
 router.afterEach(() => {
+    document.scrollingElement?.scrollTo({ top: 0, behavior: 'smooth' });
     NProgress.done();
 });
 
