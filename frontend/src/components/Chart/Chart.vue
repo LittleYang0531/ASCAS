@@ -4,6 +4,10 @@ import PieOptions from './Pie/Options.vue';
 import PieRender from './Pie/Render.vue';
 import BarOptions from './Bar/Options.vue';
 import BarRender from './Bar/Render.vue';
+import LineOption from './Line/Options.vue';
+import LineRender from './Line/Render.vue';
+import ScatterOptions from './Scatter/Options.vue';
+import ScatterRender from './Scatter/Render.vue';
 import type { RecordProperty } from '../../models/crop';
 
 const items = defineProps<{
@@ -25,6 +29,18 @@ const charts = [
         value: "bar",
         options: BarOptions,
         render: BarRender
+    }, 
+    {
+        title: "折线图",
+        value: "line",
+        options: LineOption,
+        render: LineRender
+    },
+    {
+        title: "散点图",
+        value: "scatter",
+        options: ScatterOptions,
+        render: ScatterRender
     }
 ];
 const chartsMap = charts.reduce((map, obj) => {
