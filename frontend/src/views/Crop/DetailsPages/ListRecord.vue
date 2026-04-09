@@ -17,6 +17,8 @@ import RecordExportDialog from '../../../components/Dialog/RecordExportDialog.vu
 import { userId } from '../../../utils/user';
 import VCollapse from '../../../components/VCollapse.vue';
 import Chart from '../../../components/Chart/Chart.vue';
+import { propsFactory } from 'vuetify/lib/util/propsFactory.mjs';
+import { locate } from '../../../router';
 
 const crop = defineProps<{
     crop: Crop
@@ -427,6 +429,7 @@ const chartModel: Ref<number | undefined> = ref(undefined);
         <template v-slot:headers="{ columns }">
             <tr>
                 <th nowrap>编号</th>
+                <th nowrap>编辑者</th>
                 <template v-for="column in columns">
                     <th nowrap>
                         <div class="d-flex align-center">
@@ -439,6 +442,11 @@ const chartModel: Ref<number | undefined> = ref(undefined);
         <template v-slot:item="{ index, item }">
             <tr class="text-no-wrap" @click="edit(index)">
                 <td align="center">#{{ item.id }}</td>
+                <td 
+                    align="center" 
+                    @click="locate('/users/' + (item.user as any).uid); $event.stopPropagation()"
+                    class="cursor-pointer"
+                >{{ (item.user as any).name }}</td>
                 <template v-for="(prop, j) in crop.crop.properties">
                     <RecordValue 
                         :cid="crop.crop.cid!"

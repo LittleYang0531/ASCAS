@@ -89,7 +89,9 @@ public:
 
         auto res = mysqli_query(
             mysql,
-            "SELECT * FROM table_%s WHERE %s %s LIMIT %d OFFSET %d",
+            "SELECT A.*, B.name, B.email, B.isAdmin FROM table_%s AS A "
+            "INNER JOIN users AS B ON B.id = A.uid "
+            "WHERE %s %s LIMIT %d OFFSET %d",
             crop.name.c_str(),
             whereString.c_str(),
             orderString.c_str(),
@@ -100,6 +102,7 @@ public:
         for (int i = 0; i < res.size(); i++) {
             Json::Value tmp;
             for (auto v : res[i].res) {
+                if (std::set<std::string>({ "name", "email", "isAdmin" }).count(v.first)) continue;
                 std::string column = v.first;
                 std::string value = v.second;
                 std::string realColumn = column;
@@ -108,6 +111,12 @@ public:
                 if (type != RecordPropertyType::NUMBER) tmp[realColumn] = value;
                 else tmp[realColumn] = stod(value);
             }
+            tmp["user"] = jsonobj(
+                "uid", stoi(res[i]["uid"]),
+                "name", res[i]["name"],
+                "email", res[i]["email"],
+                "isAdmin", stoi(res[i]["isAdmin"]) ? true : false
+            );
             vec.push_back(tmp);
         }
         return vec;
