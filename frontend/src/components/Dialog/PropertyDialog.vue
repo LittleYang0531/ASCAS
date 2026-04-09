@@ -5,6 +5,7 @@ import PropertyControl from '../Property/Control.vue';
 import draggable from 'vuedraggable';
 import VOutlined from '../VOutlined.vue';
 import { propertyTypeMap, propertyTypes } from '../../utils/property';
+import { recommendPropertyName, recommendPropertyUnit } from '../../config';
 
 const props = defineModel<RecordProperty>("props", { required: true });
 const open = defineModel<boolean>("open", { required: true });
@@ -53,30 +54,32 @@ function remove(index: number) {
                     :disabled="title.disabled || title.disableType"
                     @click="props.def = ''"
                 ></v-select>
-                <v-text-field
+                <v-combobox
                     v-model="props.title"
                     variant="outlined"
                     density="comfortable"
                     hide-details
                     class="mt-4"
+                    :items="recommendPropertyName"
                     :disabled="title.disabled"
                 >
                     <template v-slot:label>
                         <span>属性名称</span>  
                         <span style="color: red">&nbsp;*</span>
                     </template>
-                </v-text-field>
+                </v-combobox>
 
                 <div v-if="propertyTypeMap[props.type!]?.allowDef">
-                    <v-text-field
+                    <v-combobox
                         v-model="props.unit"
                         label="属性单位"
                         variant="outlined"
                         density="comfortable"
                         hide-details
                         class="mt-4"
+                        :items="recommendPropertyUnit"
                         :disabled="title.disabled"
-                    ></v-text-field>
+                    ></v-combobox>
                     <VOutlined label="可选选项" v-if="propertyTypeMap[props.type!]?.options" class="mt-4">
                         <template v-slot:label>
                             <span>可选选项</span>  

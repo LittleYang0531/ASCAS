@@ -17,7 +17,6 @@ import RecordExportDialog from '../../../components/Dialog/RecordExportDialog.vu
 import { userId } from '../../../utils/user';
 import VCollapse from '../../../components/VCollapse.vue';
 import Chart from '../../../components/Chart/Chart.vue';
-import { propsFactory } from 'vuetify/lib/util/propsFactory.mjs';
 import { locate } from '../../../router';
 
 const crop = defineProps<{
