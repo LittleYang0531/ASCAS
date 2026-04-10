@@ -56,7 +56,7 @@ class SensorUtils {
         };
     }
 
-    std::vector<Sensor> list(int uid) {
+    std::vector<Sensor> list(int uid, bool ignore = false) {
         quick_mysqli_connect();
 
         auto res = mysqli_query(
@@ -69,16 +69,18 @@ class SensorUtils {
 
         std::vector<Sensor> ans;
         for (int i = 0; i < res.size(); i++) {
-            auto data = mysqli_query(
-                mysql,
-                "SELECT value, createdAt FROM sensor_data WHERE sid = %d ORDER BY createdAt DESC LIMIT 10",
-                stoi(res[i]["sid"])
-            );
             std::vector<double> values;
             std::vector<time_t> createdAt;
-            for (int j = data.size() - 1; j >= 0; j--) 
-                values.push_back(stod(data[j]["value"])),
-                createdAt.push_back(stol(data[j]["createdAt"]));
+            if (!ignore) {
+                auto data = mysqli_query(
+                    mysql,
+                    "SELECT value, createdAt FROM sensor_data WHERE sid = %d ORDER BY createdAt DESC LIMIT 10",
+                    stoi(res[i]["sid"])
+                );
+                for (int j = data.size() - 1; j >= 0; j--) 
+                    values.push_back(stod(data[j]["value"])),
+                    createdAt.push_back(stol(data[j]["createdAt"]));
+            }
             ans.push_back(Sensor({
                 .sid = stoi(res[i]["sid"]),
                 .owner = User({

@@ -7,6 +7,7 @@ import MultiControl from './Multi/Control.vue';
 import GeometryControl from './Geometry/Control.vue';
 import QrcodeControl from './Qrcode/Control.vue';
 import DateControl from './Date/Control.vue';
+import SensorControl from './Sensor/Control.vue';
 import ImageControl from './Image/Control.vue';
 
 const label = defineProps<{ props: RecordProperty, label: string, class: string, disabled: boolean, cropId?: number }>();
@@ -19,6 +20,7 @@ const controls = {
     "RecordPropertyType::GEOMETRY": GeometryControl,
     "RecordPropertyType::QRCODE": QrcodeControl,
     "RecordPropertyType::DATE": DateControl,
+    "RecordPropertyType::SENSOR": SensorControl,
     "RecordPropertyType::IMAGE": ImageControl
 }
 </script>

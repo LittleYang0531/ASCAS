@@ -15,7 +15,9 @@ class CropUtils {
 
     std::string getPropertyType(RecordPropertyType type) {
         switch (type) {
-            case RecordPropertyType::NUMBER: return " float"; break;
+            case RecordPropertyType::NUMBER: 
+            case RecordPropertyType::SENSOR:
+                return " float"; break;
             case RecordPropertyType::DATE: return " int"; break;
             default: return " text"; break;
         }

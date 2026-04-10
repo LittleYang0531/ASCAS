@@ -50,6 +50,7 @@ function add() {
         showMsg(MessageType.Error, "属性名不能为空");
         return;
     }
+
     if (propertyTypeMap[property.value.type!]?.options) {
         if (property.value.options?.length == 0) {
             showMsg(MessageType.Error, "至少需要添加一个选项");
@@ -61,7 +62,12 @@ function add() {
 
     if (!propertyTypeMap[property.value.type!]?.allowDef) {
         property.value.required = true;
-        property.value.def = "";
+        if (!propertyTypeMap[property.value.type!]?.sensor) property.value.def = "";
+    }
+    
+    if (propertyTypeMap[property.value.type!]?.sensor && !property.value.def) {
+        showMsg(MessageType.Error, "请选择一个传感器");
+        return;
     }
 
     if (editingIndex.value != -1) {

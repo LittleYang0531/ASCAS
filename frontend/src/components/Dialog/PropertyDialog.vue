@@ -1,11 +1,13 @@
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { onMounted, ref, type Ref } from 'vue';
 import type { RecordProperty } from '../../models/crop';
 import PropertyControl from '../Property/Control.vue';
 import draggable from 'vuedraggable';
 import VOutlined from '../VOutlined.vue';
 import { propertyTypeMap, propertyTypes } from '../../utils/property';
-import { recommendPropertyName, recommendPropertyUnit } from '../../config';
+import { API_BASE_URL, recommendPropertyName, recommendPropertyUnit } from '../../config';
+import type { Sensor } from '../../models/sensor';
+import { newFetch } from '../../utils/fetch';
 
 const props = defineModel<RecordProperty>("props", { required: true });
 const open = defineModel<boolean>("open", { required: true });
@@ -22,6 +24,7 @@ const emits = defineEmits<{
 const addOption = ref("");
 const editingIndex = ref(-1);
 const editingValue = ref("");
+const sensors: Ref<Sensor[]> = ref([]);
 
 function edit(index: number) {
     editingValue.value = props.value.options![index]!;
@@ -34,6 +37,11 @@ function submitEdit(index: number) {
 function remove(index: number) {
     props.value.options!.splice(index, 1);
 }
+
+onMounted(async () => {
+    var data = await (await newFetch(`${API_BASE_URL}/sensors/list`)).json();
+    sensors.value = data.items;
+});
 </script>
 
 <template>
@@ -164,6 +172,25 @@ function remove(index: number) {
                         <v-switch v-model="props.required" hide-details color="primary" :disabled="title.disabled"></v-switch>
                     </div>
                     <PropertyControl v-model:model="props.def!" :props="props" label="默认值" class="mt-2" :disabled="title.disabled"></PropertyControl>
+                </div>
+                <div v-if="propertyTypeMap[props.type!]?.sensor">
+                    <v-select
+                        :model-value="Number(props.def)"
+                        variant="outlined"
+                        density="comfortable"
+                        hide-details
+                        :items='sensors'
+                        item-title="title"
+                        item-value="sid"
+                        :disabled="title.disabled"
+                        class="mt-4"
+                        @update:model-value="(val) => { props.def = String(val); props.unit = sensors.find(s => s.sid == val)?.unit || ''; }"
+                    >
+                        <template v-slot:label>
+                            <span>选择传感器</span>  
+                            <span style="color: red">&nbsp;*</span>
+                        </template>
+                    </v-select>
                 </div>
                 <div class="mt-3 d-flex justify-center">
                     <v-btn

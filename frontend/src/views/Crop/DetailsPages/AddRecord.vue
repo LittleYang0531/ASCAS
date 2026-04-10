@@ -50,7 +50,8 @@ async function addRecordAndContinue() {
     await addRecord(() => {
         for (var i = 0; i < item.item.properties!.length; i++) {
             var prop = item.item.properties![i]!;
-            values.value[prop.name!] = prop.def!;
+            if (prop.type == "RecordPropertyType::SENSOR") values.value[prop.name!] = "";
+            else values.value[prop.name!] = prop.def!;
         }
     });
 }
@@ -58,7 +59,8 @@ async function addRecordAndContinue() {
 onBeforeMount(() => {
     for (var i = 0; i < item.item.properties!.length; i++) {
         var prop = item.item.properties![i]!;
-        values.value[prop.name!] = prop.def!;
+        if (prop.type == "RecordPropertyType::SENSOR") values.value[prop.name!] = "";
+        else values.value[prop.name!] = prop.def!;
     }
 })
 </script>

@@ -14,7 +14,7 @@ private:
     }
 
     bool isNumeric(RecordPropertyType type) {
-        return type == RecordPropertyType::NUMBER || type == RecordPropertyType::DATE;
+        return type == RecordPropertyType::NUMBER || type == RecordPropertyType::DATE || type == RecordPropertyType::SENSOR;
     }
     int checkWhereNode(WhereNodeBase node, std::map<std::string, RecordPropertyType> types) {
         if (node.isLeaf) {

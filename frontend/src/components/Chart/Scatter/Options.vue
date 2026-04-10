@@ -8,7 +8,7 @@ const props = defineProps<{
 }>();
 
 function propFilter(p: RecordProperty) {
-    return p.type == 'RecordPropertyType::NUMBER';
+    return p.type == 'RecordPropertyType::NUMBER' || p.type == 'RecordPropertyType::SENSOR';
 }
 
 function propFilterType(p: RecordProperty) {

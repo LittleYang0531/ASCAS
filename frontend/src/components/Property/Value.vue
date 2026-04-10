@@ -7,6 +7,7 @@ import MultiValue from './Multi/Value.vue';
 import GeometryValue from './Geometry/Value.vue';
 import QrcodeValue from './Qrcode/Value.vue';
 import DateValue from './Date/Value.vue';
+import SensorValue from './Sensor/Value.vue';
 import ImageValue from './Image/Value.vue';
 
 const item = defineProps<{
@@ -27,6 +28,7 @@ const values = {
     "RecordPropertyType::GEOMETRY": GeometryValue,
     "RecordPropertyType::QRCODE": QrcodeValue,
     "RecordPropertyType::DATE": DateValue,
+    "RecordPropertyType::SENSOR": SensorValue,
     "RecordPropertyType::IMAGE": ImageValue
 }
 </script>
