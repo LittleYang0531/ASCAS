@@ -103,6 +103,13 @@ defineExpose({ loading });
                             @click="locate('/blogs/create')"
                         >写博客</v-btn>
                         <v-btn
+                            prepend-icon="$mdiAlarmLight"
+                            color="primary"
+                            size="x-large"
+                            rounded="xl"
+                            @click="locate('/sensors/create')"
+                        >添加传感器</v-btn>
+                        <v-btn
                             prepend-icon="$mdiAccountMultiplePlus"
                             color="primary"
                             size="x-large"
