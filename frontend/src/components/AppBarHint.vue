@@ -52,6 +52,7 @@ function onScroll() {
     scrolled.value = scrollTop > 0 || scrollHeight == clientHeight; // 特判打开对话框
 }
 
+var e: number;
 onMounted(() => {
     var version = localStorage.getItem("appVersion");
     if (version == null) version = "";
@@ -68,10 +69,12 @@ onMounted(() => {
     else showAppBar.value = false;
 
     window.onscroll = onScroll;
+    e = setInterval(onScroll, 200);
 });
 
 onUnmounted(() => {
     window.onscroll = () => {};
+    clearInterval(e);
 });
 </script>
 
