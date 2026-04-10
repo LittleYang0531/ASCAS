@@ -106,7 +106,7 @@ onUnmounted(() => {
         </div>
         <template v-slot:append>
             <div class="d-flex align-center">
-                <div class="d-flex align-center ga-10 mr-10">
+                <div class="d-flex align-center ga-8 mr-10">
                     <router-link class="d-flex align-center cursor-pointer ga-1 RouterLink" to="/">
                         <v-icon icon="$mdiHome"></v-icon>
                         <p>网站主页</p>
@@ -118,6 +118,10 @@ onUnmounted(() => {
                     <router-link class="d-flex align-center cursor-pointer ga-1 RouterLink" to="/blogs/list">
                         <v-icon icon="$mdiBook"></v-icon>
                         <p>我的博客</p>
+                    </router-link>
+                    <router-link class="d-flex align-center cursor-pointer ga-1 RouterLink" to="/sensors/list">
+                        <v-icon icon="$mdiAlarmLight"></v-icon>
+                        <p>传感器</p>
                     </router-link>
                     <router-link class="d-flex align-center cursor-pointer ga-1 RouterLink" to="/messages/list">
                         <v-badge v-if="unread > 0" :content="unread" color="error" location="top right">

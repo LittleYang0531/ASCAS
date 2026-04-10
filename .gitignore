@@ -1,6 +1,7 @@
 .vscode
 .version
 check.sh
+push.sh
 
 backend/backup
 backend/config.json

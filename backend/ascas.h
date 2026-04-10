@@ -28,6 +28,7 @@
 #include "models/message.cpp"
 #include "models/blog.cpp"
 #include "models/comment.cpp"
+#include "models/sensor.cpp"
 
 Json::Value appConfig;
 MYSQL mysql;
@@ -56,3 +57,4 @@ void quick_mysqli_close() {
 #include "utils/message.cpp"
 #include "utils/blog.cpp"
 #include "utils/comment.cpp"
+#include "utils/sensor.cpp"

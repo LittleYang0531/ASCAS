@@ -70,6 +70,22 @@ const routes = [
         path: '/blogs/:id/edit',
         name: 'BlogEdit',
         component: () => import('./views/Blog/Edit.vue')
+    }, {
+        path: '/sensors/list',
+        name: 'SensorList',
+        component: () => import('./views/Sensor/List.vue')
+    }, {
+        path: '/sensors/create',
+        name: 'SensorCreate',
+        component: () => import('./views/Sensor/Create.vue')
+    }, {
+        path: '/sensors/:id/edit',
+        name: 'SensorEdit',
+        component: () => import('./views/Sensor/Edit.vue')
+    }, {
+        path: '/sensors/:id',
+        name: 'SensorDetails',
+        component: () => import('./views/Sensor/Details.vue')
     }
 ];
 

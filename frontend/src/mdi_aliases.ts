@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Fri Apr 10 01:29:51 CST 2026
+// Generated on Fri Apr 10 23:36:40 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -7,6 +7,7 @@ import { mdiAccountGroup } from '@mdi/js';
 import { mdiAccountMultipleOutline } from '@mdi/js';
 import { mdiAccountMultiplePlus } from '@mdi/js';
 import { mdiAccountPlus } from '@mdi/js';
+import { mdiAlarmLight } from '@mdi/js';
 import { mdiAlphabetical } from '@mdi/js';
 import { mdiArrowLeftBold } from '@mdi/js';
 import { mdiArrowRightBold } from '@mdi/js';
@@ -19,6 +20,7 @@ import { mdiChartBar } from '@mdi/js';
 import { mdiChartBoxOutline } from '@mdi/js';
 import { mdiCheck } from '@mdi/js';
 import { mdiCheckCircle } from '@mdi/js';
+import { mdiCheckCircleOutline } from '@mdi/js';
 import { mdiChevronLeft } from '@mdi/js';
 import { mdiClock } from '@mdi/js';
 import { mdiClose } from '@mdi/js';
@@ -30,6 +32,7 @@ import { mdiComment } from '@mdi/js';
 import { mdiContentPaste } from '@mdi/js';
 import { mdiCrown } from '@mdi/js';
 import { mdiDatabase } from '@mdi/js';
+import { mdiDelete } from '@mdi/js';
 import { mdiDrag } from '@mdi/js';
 import { mdiExitToApp } from '@mdi/js';
 import { mdiExport } from '@mdi/js';
@@ -80,6 +83,7 @@ export const mdi_aliases = {
     mdiAccountMultipleOutline,
     mdiAccountMultiplePlus,
     mdiAccountPlus,
+    mdiAlarmLight,
     mdiAlphabetical,
     mdiArrowLeftBold,
     mdiArrowRightBold,
@@ -92,6 +96,7 @@ export const mdi_aliases = {
     mdiChartBoxOutline,
     mdiCheck,
     mdiCheckCircle,
+    mdiCheckCircleOutline,
     mdiChevronLeft,
     mdiClock,
     mdiClose,
@@ -103,6 +108,7 @@ export const mdi_aliases = {
     mdiContentPaste,
     mdiCrown,
     mdiDatabase,
+    mdiDelete,
     mdiDrag,
     mdiExitToApp,
     mdiExport,

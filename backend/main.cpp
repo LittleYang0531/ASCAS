@@ -57,12 +57,22 @@
 #include "api/comments/list.cpp"
 #include "api/comments/like.cpp"
 #include "api/comments/dislike.cpp"
+#include "api/sensors/list.cpp"
+#include "api/sensors/create.cpp"
+#include "api/sensors/details.cpp"
+#include "api/sensors/query.cpp"
+#include "api/sensors/generate.cpp"
+#include "api/sensors/edit.cpp"
+#include "api/sensors/remove.cpp"
+#include "api/sensors/add.cpp"
 #include "api/notFound.cpp"
 
 #include "ws/broadcast.cpp"
 #include "ws/messages/unread.cpp"
 #include "ws/messages/list.cpp"
 #include "ws/messages/details.cpp"
+#include "ws/sensors/list.cpp"
+#include "ws/sensors/details.cpp"
 
 using Json::ValueType;
 initEnum(ValueType, nullValue, objectValue);
@@ -132,6 +142,8 @@ int main(int argc, char** argv) {
     proc_create(&pid, generateBroadcastServer("/tmp/ascas/msgUnread.sock"), NULL);
     proc_create(&pid, generateBroadcastServer("/tmp/ascas/msgList.sock"), NULL);
     proc_create(&pid, generateBroadcastServer("/tmp/ascas/msgDetails.sock"), NULL);
+    proc_create(&pid, generateBroadcastServer("/tmp/ascas/sensorList.sock"), NULL);
+    proc_create(&pid, generateBroadcastServer("/tmp/ascas/sensorDetails.sock"), NULL);
 
     app.setopt(HTTP_ENABLE_SSL, appConfig["server.enableSSL"].asBool());
     app.setopt(HTTP_LISTEN_HOST, appConfig["server.listenHost"].asCString());
@@ -195,11 +207,21 @@ int main(int argc, char** argv) {
     app.addRoute("/blogs/%d/comments/%d/dislike", CommentsDislike);
     app.addRoute("/blogs/%d/images", BlogsUploadImages);
     app.addRoute("/blogs/%d/images/%s", BlogsImages);
+    app.addRoute("/sensors/list", SensorsList);
+    app.addRoute("/sensors/create", SensorsCreate);
+    app.addRoute("/sensors/%d", SensorsDetails);
+    app.addRoute("/sensors/%d/query", SensorsQuery);
+    app.addRoute("/sensors/%d/generate", SensorsGenerate);
+    app.addRoute("/sensors/%d/edit", SensorsEdit);
+    app.addRoute("/sensors/%d/remove", SensorsRemove);
+    app.addRoute("/sensors/%s/add", SensorsAdd);
     app.addRoute("*", NotFound);
 
     app.ws_addRoute("/messages/unread", WSMessagesUnread);
     app.ws_addRoute("/messages/list/websocket", WSMessagesList);
     app.ws_addRoute("/messages/%s/websocket", WSMessagesDetails);
+    app.ws_addRoute("/sensors/list/websocket", WSSensorsList);
+    app.ws_addRoute("/sensors/%d/websocket", WSSensorsDetails);
 
     __default_response["Access-Control-Allow-Credentials"] = "true";
     __default_response["Access-Control-Allow-Headers"] = "*";

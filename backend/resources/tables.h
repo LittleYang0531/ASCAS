@@ -429,5 +429,50 @@ std::vector<DBTable> tables = {
                 .valueIsExpr = true
             }
         }
+    }, {
+        .name = "sensors",
+        .columns = {
+            {
+                .name = "id",
+                .type = "int",
+                .enableDefaultValue = false,
+                .autoIncrement = true,
+                .primary = true,
+            }, {
+                .name = "uid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "title",
+                .type = "text"
+            }, {
+                .name = "unit",
+                .type = "text"
+            }, {
+                .name = "sensorId",
+                .type = "text"
+            }
+        }
+    }, {
+        .name = "sensor_data",
+        .columns = {
+            {
+                .name = "sid",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "value",
+                .type = "float",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }, {
+                .name = "createdAt",
+                .type = "int",
+                .defaultValue = "0",
+                .valueIsExpr = true
+            }
+        }
     }
 };

@@ -87,6 +87,12 @@ onMounted(() => {
                 :active="active('/blogs')"
                 @click="locate('/blogs/list')"
             ></v-list-item>
+            <v-list-item
+                prepend-icon="$mdiAlarmLight"
+                title="传感器"
+                :active="active('/sensors')"
+                @click="locate('/sensors/list')"
+            ></v-list-item>
         </v-list>
 
         <v-divider></v-divider>

@@ -61,6 +61,10 @@ const titles = {
     "BlogCreate": "新建博客",
     "BlogDetails": "博客详情",
     "BlogEdit": "编辑博客",
+    "SensorList": "传感器列表",
+    "SensorCreate": "新建传感器",
+    "SensorEdit": "编辑传感器",
+    "SensorDetails": "传感器信息",
 };
 watch(() => route.name, () => {
 	var title = "ASCAS | 田间形状采集辅助系统";
