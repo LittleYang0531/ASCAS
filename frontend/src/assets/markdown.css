@@ -1,3 +1,7 @@
+.markdown-text { 
+    max-width: 100%;
+}
+
 .markdown-text p:first-child {
     margin-top: 0;
 }
