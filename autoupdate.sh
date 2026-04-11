@@ -302,6 +302,8 @@ fi
 
 echo -e $YELLOW"Building..."$CLEAR
 g++ $TMP/backend/main.cpp -o./ascas-backend -lssl -lcrypto -ljsoncpp -lmysqlclient -lpng -O3 -Wno-unused-result -Wno-deprecated-declarations -std=c++20
+mkdir ./data
+cp $TMP/data/system-avatars ./data -r
 
 if [[ ! -f config.json ]]; then
     cp $TMP/backend/config-example.json ./config.json
