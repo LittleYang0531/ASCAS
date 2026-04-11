@@ -39,10 +39,10 @@ function formatDate(date: number) {
 }
 
 async function like() {
-    if (userId.value == props.comment.author?.uid) {
-        showMsg(MessageType.Error, '不能给自己点赞');
-        return;
-    }
+    // if (userId.value == props.comment.author?.uid) {
+    //     showMsg(MessageType.Error, '不能给自己点赞');
+    //     return;
+    // }
 
     await newFetch(`${API_BASE_URL}/blogs/${props.bid}/comments/${props.comment.cid}/like`, { method: 'POST' });
     if (props.comment.disliked) props.comment.disliked = false, props.comment.dislikes!--;
@@ -58,10 +58,10 @@ async function like() {
 }
 
 async function dislike() {
-    if (userId.value == props.comment.author?.uid) {
-        showMsg(MessageType.Error, '不能给自己点踩');
-        return;
-    }
+    // if (userId.value == props.comment.author?.uid) {
+    //     showMsg(MessageType.Error, '不能给自己点踩');
+    //     return;
+    // }
 
     await newFetch(`${API_BASE_URL}/blogs/${props.bid}/comments/${props.comment.cid}/dislike`, { method: 'POST' });
     if (props.comment.liked) props.comment.liked = false, props.comment.likes!--;

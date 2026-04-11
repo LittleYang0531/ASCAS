@@ -70,10 +70,10 @@ function loading(data: any) {
 }
 
 async function submitLike() {
-    if (userId.value == item.value.author?.uid) {
-        showMsg(MessageType.Error, '不能给自己点赞');
-        return;
-    }
+    // if (userId.value == item.value.author?.uid) {
+    //     showMsg(MessageType.Error, '不能给自己点赞');
+    //     return;
+    // }
 
     await newFetch(`${API_BASE_URL}/blogs/${item.value.bid}/like`, { method: 'POST' });
     if (dislike.value) dislike.value = false, item.value.dislikes!--;
@@ -89,10 +89,10 @@ async function submitLike() {
 }
 
 async function submitDislike() {
-    if (userId.value == item.value.author?.uid) {
-        showMsg(MessageType.Error, '不能给自己点踩');
-        return;
-    }
+    // if (userId.value == item.value.author?.uid) {
+    //     showMsg(MessageType.Error, '不能给自己点踩');
+    //     return;
+    // }
 
     await newFetch(`${API_BASE_URL}/blogs/${item.value.bid}/dislike`, { method: 'POST' });
     if (like.value) like.value = false, item.value.likes!--;
@@ -108,10 +108,10 @@ async function submitDislike() {
 }
 
 async function submitStar() {
-    if (userId.value == item.value.author?.uid) {
-        showMsg(MessageType.Error, '不能给自己收藏');
-        return;
-    }
+    // if (userId.value == item.value.author?.uid) {
+    //     showMsg(MessageType.Error, '不能给自己收藏');
+    //     return;
+    // }
 
     await newFetch(`${API_BASE_URL}/blogs/${item.value.bid}/star`, { method: 'POST' });
     if (star.value) {
