@@ -48,11 +48,22 @@ async function logout() {
 
 var ws: WebSocket;
 onMounted(() => {
-    ws = new WebSocket(`${WS_BASE_URL}/messages/unread`);
-    ws.onmessage = (event) => {
-        var data = JSON.parse(event.data);
-        unread.value += Number(data);
+    function connectWebSocket() {
+        ws = new WebSocket(`${WS_BASE_URL}/messages/unread`);
+        ws.onmessage = (event) => {
+            var data = JSON.parse(event.data);
+            unread.value += Number(data);
+        }
+        ws.onclose = () => {
+            console.log("WebSocket closed");
+            connectWebSocket();
+        };
+        ws.onerror = (error) => {
+            console.error("WebSocket error:", error);
+            ws.close();
+        };
     }
+    connectWebSocket();
 })
 </script>
 

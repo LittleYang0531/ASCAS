@@ -74,17 +74,28 @@ async function open(talk: Talk, push = true) {
         history.pushState(null, '', `${import.meta.env.BASE_URL}messages/list?id=${talk.talkId}`);
     }
 
-    ws2 = new WebSocket(`${WS_BASE_URL}/messages/${currTalk.value}/websocket`);
-    ws2.onmessage = (event) => {
-        var isBottom = messageArea.value?.parentElement?.scrollHeight! - messageArea.value?.parentElement?.scrollTop! - messageArea.value?.parentElement?.clientHeight! < 10;
-        var message = JSON.parse(event.data) as Message;
-        messages.value.unshift(message);
-        if (isBottom) {
-            setTimeout(() => {
-                messageArea.value?.parentElement?.scrollTo({ top: messageArea.value.parentElement.scrollHeight, behavior: "smooth" });
-            }, 100);
+    function connectWebSocket() {
+        ws2 = new WebSocket(`${WS_BASE_URL}/messages/${currTalk.value}/websocket`);
+        ws2.onmessage = (event) => {
+            var isBottom = messageArea.value?.parentElement?.scrollHeight! - messageArea.value?.parentElement?.scrollTop! - messageArea.value?.parentElement?.clientHeight! < 10;
+            var message = JSON.parse(event.data) as Message;
+            messages.value.unshift(message);
+            if (isBottom) {
+                setTimeout(() => {
+                    messageArea.value?.parentElement?.scrollTo({ top: messageArea.value.parentElement.scrollHeight, behavior: "smooth" });
+                }, 100);
+            }
         }
+        ws2.onclose = () => {
+            console.log("WebSocket closed");
+            connectWebSocket();
+        };
+        ws2.onerror = (error) => {
+            console.error("WebSocket error:", error);
+            ws2.close();
+        };
     }
+    connectWebSocket();
 }
 
 async function loadMessages({ done }: { done: (status: InfiniteScrollStatus) => void }) {
@@ -154,17 +165,28 @@ onMounted(() => {
         height.value = window.innerHeight;
     };
 
-    ws = new WebSocket(`${WS_BASE_URL}/messages/list/websocket`);
-    ws.onmessage = (event) => {
-        var [ talkId, msg ] = event.data.split("\r\n");
-        var talk = lists.value.find(t => t.talkId == talkId)!;
-        var message = JSON.parse(msg) as Message;
-        if (talk) {
-            if (talk.talkId != currTalk.value) talk.unread! += 1;
-            talk.latest = message;
-            lists.value = [ talk, ...lists.value.filter(t => t.talkId != talk.talkId) ];
+    function connectWebSocket() {
+        ws = new WebSocket(`${WS_BASE_URL}/messages/list/websocket`);
+        ws.onmessage = (event) => {
+            var [ talkId, msg ] = event.data.split("\r\n");
+            var talk = lists.value.find(t => t.talkId == talkId)!;
+            var message = JSON.parse(msg) as Message;
+            if (talk) {
+                if (talk.talkId != currTalk.value) talk.unread! += 1;
+                talk.latest = message;
+                lists.value = [ talk, ...lists.value.filter(t => t.talkId != talk.talkId) ];
+            }
         }
+        ws.onclose = () => {
+            console.log("WebSocket closed");
+            connectWebSocket();
+        };
+        ws.onerror = (error) => {
+            console.error("WebSocket error:", error);
+            ws.close();
+        };
     }
+    connectWebSocket();
 });
 onUnmounted(() => {
     window.onresize = () => {};

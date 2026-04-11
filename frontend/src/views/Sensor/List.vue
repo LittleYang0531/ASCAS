@@ -40,18 +40,29 @@ defineExpose({ loading });
 
 var ws: WebSocket;
 onMounted(() => {
-    ws = new WebSocket(`${WS_BASE_URL}/sensors/list/websocket`);
-    ws.onmessage = (event) => {
-        var data = event.data.split(' ');
-        var sid = Number(data[0]);
-        var value = Number(data[1]);
-        var createdAt = Number(data[2]);
-        var sensor = sensors.value.find(e => e.sid == sid);
-        if (sensor) {
-            sensor.data?.push(value);
-            sensor.createdAt?.push(createdAt);
-        }
-    };
+    function connectWebSocket() {
+        ws = new WebSocket(`${WS_BASE_URL}/sensors/list/websocket`);
+        ws.onmessage = (event) => {
+            var data = event.data.split(' ');
+            var sid = Number(data[0]);
+            var value = Number(data[1]);
+            var createdAt = Number(data[2]);
+            var sensor = sensors.value.find(e => e.sid == sid);
+            if (sensor) {
+                sensor.data?.push(value);
+                sensor.createdAt?.push(createdAt);
+            }
+        };
+        ws.onclose = () => {
+            console.log("WebSocket closed");
+            connectWebSocket();
+        };
+        ws.onerror = (error) => {
+            console.error("WebSocket error:", error);
+            ws.close();
+        };
+    }
+    connectWebSocket();
 })
 
 async function remove(sid: number) {
