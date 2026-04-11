@@ -38,7 +38,7 @@ async function call() {
     messages.value.push({
         mid: messages.value.length + 1,
         user: userInfo.value,
-        message: msg.value,
+        message: msg.value.trim(),
         createdAt: Math.round(new Date().getTime() / 1000),
     });
     msg.value = '';
@@ -93,7 +93,7 @@ async function call() {
 function onkeydown(event: KeyboardEvent) {
     if (event.key == 'Enter' && !event.shiftKey) {
         event.preventDefault();
-        msg.value.length && call();
+        msg.value.trim().length && call();
     }
 }
 
@@ -146,8 +146,8 @@ onMounted(() => {
                         <v-icon
                             icon="$mdiSend"
                             color="primary"
-                            :class="msg.length ? 'Clickable' : ''"
-                            @click="msg.length && call()">
+                            :class="msg.trim().length ? 'Clickable' : ''"
+                            @click="msg.trim().length && call()">
                         </v-icon>
                     </template>
                 </v-textarea>
