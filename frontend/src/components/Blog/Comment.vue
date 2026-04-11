@@ -5,7 +5,6 @@ import { MessageType } from '../../models/message';
 import { locate } from '../../router';
 import { newFetch } from '../../utils/fetch';
 import { showMsg } from '../../utils/message';
-import { userId } from '../../utils/user';
 import Markdown from '../Markdown.vue';
 
 const props = defineProps<{
