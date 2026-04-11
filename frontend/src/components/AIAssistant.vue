@@ -35,7 +35,6 @@ function jump(behavior: ScrollBehavior) {
 }
 
 async function call() {
-    console.log('调用 AI 小助手:', msg.value);
     messages.value.push({
         mid: messages.value.length + 1,
         user: userInfo.value,
@@ -94,7 +93,7 @@ async function call() {
 function onkeydown(event: KeyboardEvent) {
     if (event.key == 'Enter' && !event.shiftKey) {
         event.preventDefault();
-        call();
+        msg.value.length && call();
     }
 }
 
@@ -139,15 +138,16 @@ onMounted(() => {
                     hide-details
                     auto-grow
                     rows="1"
-                    class="flex-grow-0"
+                    class="flex-grow-0 TextArea"
                     @keydown="onkeydown"
                 >
                     <template v-slot:append-inner>
+                        <v-divider vertical class="mr-3 InnerDivider"></v-divider>
                         <v-icon
                             icon="$mdiSend"
                             color="primary"
-                            :disabled="msg.length == 0"
-                            @click="call()">
+                            :class="msg.length ? 'Clickable' : ''"
+                            @click="msg.length && call()">
                         </v-icon>
                     </template>
                 </v-textarea>
@@ -180,5 +180,25 @@ onMounted(() => {
     max-width: calc(max(min(512px, 100vw - 24px), 32vw));
     height: calc(100vh - 164px);
     max-height: calc(100vh - 164px);
+}
+
+.Clickable {
+    opacity: 1;
+}
+</style>
+
+<style lang="css">
+.TextArea .v-field:not(.v-field--center-affix) .v-field__append-inner {
+    align-items: flex-end;
+    padding-bottom: 12px;
+}
+
+.TextArea .v-field--center-affix .InnerDivider {
+    margin-top: 12px;
+    margin-bottom: 12px;
+}
+
+.TextArea .v-icon {
+    transition: opacity 0.28s;
 }
 </style>
