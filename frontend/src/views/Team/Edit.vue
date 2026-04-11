@@ -26,7 +26,7 @@ import { mergeUsers, type User } from '../../models/user';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
 import { newFetch } from '../../utils/fetch';
-import { API_BASE_URL } from '../../config';
+import { API_BASE_URL, avatarMaxSize } from '../../config';
 import { sleep } from '../../utils/sleep';
 import { userId } from '../../utils/user';
 
@@ -79,10 +79,14 @@ function onclick() {
             reader.onload = async function(e) {
                 var data = e.target?.result;
                 var base64 = window.btoa(data as string);
-                await newFetch(`${API_BASE_URL}/teams/${tid.value}/avatar`, {
+                var res = await newFetch(`${API_BASE_URL}/teams/${tid.value}/avatar`, {
                     method: "POST",
                     body: base64
                 });
+                if (res.status == 413) {
+                    showMsg(MessageType.Error, "头像大小不能超过 " + avatarMaxSize + "KB");
+                    return;
+                }
                 showMsg(MessageType.Success, "上传成功");
                 t.value = Date.now();
             }

@@ -3,7 +3,7 @@ import NProgress from 'nprogress';
 import { ref, type Ref } from 'vue';
 import type { User } from '../../models/user';
 import { newFetch } from '../../utils/fetch';
-import { API_BASE_URL } from '../../config';
+import { API_BASE_URL, avatarMaxSize } from '../../config';
 import { userId } from '../../utils/user';
 import { showMsg } from '../../utils/message';
 import { MessageType } from '../../models/message';
@@ -45,10 +45,14 @@ function onclick() {
             reader.onload = async function(e) {
                 var data = e.target?.result;
                 var base64 = window.btoa(data as string);
-                await newFetch(`${API_BASE_URL}/users/${userId.value}/avatar`, {
+                var res = await newFetch(`${API_BASE_URL}/users/${userId.value}/avatar`, {
                     method: "POST",
                     body: base64
                 });
+                if (res.status == 413) {
+                    showMsg(MessageType.Error, "头像大小不能超过 " + avatarMaxSize + "KB");
+                    return;
+                }
                 showMsg(MessageType.Success, "上传成功");
                 t.value = Date.now();
             }
