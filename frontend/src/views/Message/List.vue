@@ -86,9 +86,9 @@ async function open(talk: Talk, push = true) {
                 }, 100);
             }
         }
-        ws2.onclose = () => {
-            console.log("WebSocket closed");
-            connectWebSocket();
+        ws2.onclose = (e) => {
+            console.log("WebSocket closed: ", e.code, e.reason);
+            if (e.code != 1000) connectWebSocket();
         };
         ws2.onerror = (error) => {
             console.error("WebSocket error:", error);
@@ -177,9 +177,9 @@ onMounted(() => {
                 lists.value = [ talk, ...lists.value.filter(t => t.talkId != talk.talkId) ];
             }
         }
-        ws.onclose = () => {
-            console.log("WebSocket closed");
-            connectWebSocket();
+        ws.onclose = (e) => {
+            console.log("WebSocket closed:", e.code, e.reason);
+            if (e.code != 1000) connectWebSocket();
         };
         ws.onerror = (error) => {
             console.error("WebSocket error:", error);

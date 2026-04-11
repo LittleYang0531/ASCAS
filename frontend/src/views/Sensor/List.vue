@@ -53,9 +53,9 @@ onMounted(() => {
                 sensor.createdAt?.push(createdAt);
             }
         };
-        ws.onclose = () => {
+        ws.onclose = (e) => {
             console.log("WebSocket closed");
-            connectWebSocket();
+            if (e.code != 1000) connectWebSocket();
         };
         ws.onerror = (error) => {
             console.error("WebSocket error:", error);
@@ -74,6 +74,7 @@ async function remove(sid: number) {
 }
 
 onUnmounted(() => {
+    ws.send("bye");
     ws.close();
 })
 </script>

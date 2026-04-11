@@ -7,7 +7,7 @@ import UserCard from './User/Card.vue';
 import { showMsg } from '../utils/message';
 import { MessageType } from '../models/message';
 import { sleep } from '../utils/sleep';
-import { onMounted, ref } from 'vue';
+import { onMounted, onUnmounted, ref } from 'vue';
 import { WS_BASE_URL } from '../config';
 import LogoutDialog from './Dialog/LogoutDialog.vue';
 import { unread } from '../utils/user';
@@ -54,9 +54,9 @@ onMounted(() => {
             var data = JSON.parse(event.data);
             unread.value += Number(data);
         }
-        ws.onclose = () => {
-            console.log("WebSocket closed");
-            connectWebSocket();
+        ws.onclose = (e) => {
+            console.log("WebSocket closed:", e.code, e.reason);
+            if (e.code != 1000) connectWebSocket();
         };
         ws.onerror = (error) => {
             console.error("WebSocket error:", error);
@@ -65,6 +65,11 @@ onMounted(() => {
     }
     connectWebSocket();
 })
+
+onUnmounted(() => {
+    ws.send("bye");
+    ws.close();
+});
 </script>
 
 <template>

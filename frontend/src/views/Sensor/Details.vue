@@ -19,7 +19,7 @@ use([
 
 import VChart from "vue-echarts";
 import NProgress from 'nprogress';
-import { defineComponent, onMounted, ref, type Ref } from 'vue';
+import { defineComponent, onMounted, onUnmounted, ref, type Ref } from 'vue';
 import { newFetch } from '../../utils/fetch';
 import { API_BASE_URL, WS_BASE_URL } from '../../config';
 import type { Sensor } from '../../models/sensor';
@@ -87,9 +87,9 @@ onMounted(() => {
             sensor.value.data?.push(Number(data[0]));
             sensor.value.createdAt?.push(Number(data[1]));
         }
-        ws.onclose = () => {
+        ws.onclose = (e) => {
             console.log("WebSocket closed");
-            connectWebSocket();
+            if (e.code != 1000) connectWebSocket();
         };
         ws.onerror = (error) => {
             console.error("WebSocket error:", error);
@@ -98,6 +98,11 @@ onMounted(() => {
     }
     connectWebSocket();
 })
+
+onUnmounted(() => {
+    ws.send("bye");
+    ws.close();
+});
 </script>
 
 <template>
