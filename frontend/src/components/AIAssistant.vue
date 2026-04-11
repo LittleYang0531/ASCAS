@@ -111,7 +111,7 @@ onMounted(() => {
             <v-fab
                 v-bind="activatorProps"
                 size="large"
-                icon="$mdiAssistant"
+                icon="$mdiRobotHappy"
                 class="AssistantButton"
                 @click="jump('instant')"
             ></v-fab>

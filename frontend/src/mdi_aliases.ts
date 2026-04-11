@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Sat Apr 11 12:51:29 CST 2026
+// Generated on Sat Apr 11 15:49:11 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -11,7 +11,6 @@ import { mdiAlarmLight } from '@mdi/js';
 import { mdiAlphabetical } from '@mdi/js';
 import { mdiArrowLeftBold } from '@mdi/js';
 import { mdiArrowRightBold } from '@mdi/js';
-import { mdiAssistant } from '@mdi/js';
 import { mdiBook } from '@mdi/js';
 import { mdiBookmarkPlusOutline } from '@mdi/js';
 import { mdiCalendar } from '@mdi/js';
@@ -64,6 +63,7 @@ import { mdiQrcode } from '@mdi/js';
 import { mdiQrcodeScan } from '@mdi/js';
 import { mdiRefresh } from '@mdi/js';
 import { mdiReply } from '@mdi/js';
+import { mdiRobotHappy } from '@mdi/js';
 import { mdiSend } from '@mdi/js';
 import { mdiSortAlphabeticalAscending } from '@mdi/js';
 import { mdiSortAlphabeticalDescending } from '@mdi/js';
@@ -88,7 +88,6 @@ export const mdi_aliases = {
     mdiAlphabetical,
     mdiArrowLeftBold,
     mdiArrowRightBold,
-    mdiAssistant,
     mdiBook,
     mdiBookmarkPlusOutline,
     mdiCalendar,
@@ -141,6 +140,7 @@ export const mdi_aliases = {
     mdiQrcodeScan,
     mdiRefresh,
     mdiReply,
+    mdiRobotHappy,
     mdiSend,
     mdiSortAlphabeticalAscending,
     mdiSortAlphabeticalDescending,
