@@ -94,7 +94,7 @@ function getUnit() {
 
 <style lang="css" scoped>
 .SensorOverview {
-    width: calc(50% - 16px);
+    width: max(calc(50% - 16px), 300px);
 }
 
 .chart {
