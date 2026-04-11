@@ -117,6 +117,7 @@ loading();
             density="comfortable"
             hide-details
             class="mt-4"
+            disabled
         >
             <template v-slot:label>
                 <span>用户邮箱</span>  

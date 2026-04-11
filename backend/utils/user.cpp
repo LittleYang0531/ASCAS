@@ -221,9 +221,9 @@ class UserUtils {
 
         mysqli_execute(
             mysql,
-            "UPDATE users SET name = \"%s\", email = \"%s\", description = \"%s\" WHERE id = %d",
+            "UPDATE users SET name = \"%s\", description = \"%s\" WHERE id = %d",
             quote_encode(info.name).c_str(),
-            quote_encode(info.email).c_str(),
+            // quote_encode(info.email).c_str(),
             quote_encode(description).c_str(),
             info.uid
         );
