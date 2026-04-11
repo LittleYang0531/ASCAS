@@ -13,6 +13,7 @@ import { useRoute } from 'vue-router';
 import AppBarHint from './components/AppBarHint.vue';
 import { type as versionType } from './version'
 import { userId, userInfo as globalUserInfo } from './utils/user';
+import AIAssistant from './components/AIAssistant.vue';
 
 const theme = useTheme();
 const route = useRoute();
@@ -93,6 +94,7 @@ const drawer = ref(false);
                 :transparent="route.name == 'Home' || route.name == 'Index'"
             ></AppBarHint>
             <NavigationDrawer :user="userInfo" v-model:drawer="drawer"></NavigationDrawer>
+            <AIAssistant></AIAssistant>
             <v-main class="Main">
                 <router-view v-slot="{ Component }">
                     <component :is="Component"></component>

@@ -1,5 +1,5 @@
 // This file is auto-generated. Do not edit manually.
-// Generated on Sat Apr 11 01:24:16 CST 2026
+// Generated on Sat Apr 11 12:51:29 CST 2026
 
 import { mdiAccount } from '@mdi/js';
 import { mdiAccountCog } from '@mdi/js';
@@ -11,6 +11,7 @@ import { mdiAlarmLight } from '@mdi/js';
 import { mdiAlphabetical } from '@mdi/js';
 import { mdiArrowLeftBold } from '@mdi/js';
 import { mdiArrowRightBold } from '@mdi/js';
+import { mdiAssistant } from '@mdi/js';
 import { mdiBook } from '@mdi/js';
 import { mdiBookmarkPlusOutline } from '@mdi/js';
 import { mdiCalendar } from '@mdi/js';
@@ -87,6 +88,7 @@ export const mdi_aliases = {
     mdiAlphabetical,
     mdiArrowLeftBold,
     mdiArrowRightBold,
+    mdiAssistant,
     mdiBook,
     mdiBookmarkPlusOutline,
     mdiCalendar,

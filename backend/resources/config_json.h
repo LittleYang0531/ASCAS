@@ -34,5 +34,9 @@ const std::string config_json = std::string("{\n"
                                             "    \"smtp.passwd\": \"password\",\n"
                                             "\n"
                                             "    \"images.maxSize\": 512,\n"
-                                            "    \"avatars.maxSize\": 128\n"
-                                            "}", 852);
+                                            "    \"avatars.maxSize\": 128,\n"
+                                            "\n"
+                                            "    \"ai.endPoint\": \"\",\n"
+                                            "    \"ai.apiKey\": \"\",\n"
+                                            "    \"ai.model\": \"\"\n"
+                                            "}", 917);

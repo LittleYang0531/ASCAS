@@ -103,7 +103,7 @@ async function loadMessages({ done }: { done: (status: InfiniteScrollStatus) => 
 }
 
 function onkeydown(e: KeyboardEvent) {
-    if (e.key == "Enter" && e.shiftKey) {
+    if (e.key == "Enter" && !e.shiftKey) {
         sendMessage();
     }
 }
@@ -232,7 +232,7 @@ onUnmounted(() => {
                         <v-divider></v-divider>
                         <div class="Textarea full-width d-flex flex-column align-center justify-center pa-3 ga-2" v-if="!currTalk.startsWith('system-')">
                             <textarea 
-                                :placeholder="'输入消息...\n支持 Markdown 及 Latex 格式\n按 Enter 键换行，按 Shift+Enter 键发送'" 
+                                :placeholder="'输入消息...\n支持 Markdown 及 Latex 格式\n按 Enter 键发送，按 Shift+Enter 键换行'" 
                                 class="flex-grow-1" 
                                 ref="textarea"
                                 @keydown="onkeydown"

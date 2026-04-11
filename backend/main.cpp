@@ -65,6 +65,7 @@
 #include "api/sensors/edit.cpp"
 #include "api/sensors/remove.cpp"
 #include "api/sensors/add.cpp"
+#include "api/completion.cpp"
 #include "api/notFound.cpp"
 
 #include "ws/broadcast.cpp"
@@ -215,6 +216,7 @@ int main(int argc, char** argv) {
     app.addRoute("/sensors/%d/edit", SensorsEdit);
     app.addRoute("/sensors/%d/remove", SensorsRemove);
     app.addRoute("/sensors/%s/add", SensorsAdd);
+    app.addRoute("/completion", Completion);
     app.addRoute("*", NotFound);
 
     app.ws_addRoute("/messages/unread", WSMessagesUnread);

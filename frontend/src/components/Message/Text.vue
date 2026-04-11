@@ -76,6 +76,7 @@ const props = defineProps<{
     border-bottom-right-radius: 10px;
     word-break: break-word;
     max-width: 100%;
+    min-height: 36px;
     overflow-x: hidden;
 }
 
@@ -86,6 +87,7 @@ const props = defineProps<{
     border-bottom-right-radius: 10px;
     word-break: break-word;
     max-width: 100%;
+    min-height: 36px;
     overflow-x: hidden;
 }
 </style>
