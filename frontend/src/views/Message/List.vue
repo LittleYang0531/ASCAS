@@ -104,6 +104,7 @@ async function loadMessages({ done }: { done: (status: InfiniteScrollStatus) => 
 
 function onkeydown(e: KeyboardEvent) {
     if (e.key == "Enter" && !e.shiftKey) {
+        e.preventDefault();
         sendMessage();
     }
 }
@@ -111,14 +112,15 @@ function onkeydown(e: KeyboardEvent) {
 async function sendMessage() {
     if (textarea.value?.value.trim() == "") return;
     fetching.value = true;
+    var value = textarea.value!.value;
+    textarea.value!.value = "";
     var res = await (await newFetch(`${API_BASE_URL}/messages/send`, {
         method: "POST",
         body: JSON.stringify({
             id: currTalk.value,
-            message: textarea.value?.value,
+            message: value,
         }),
     }, () => { fetching.value = false; })).json();
-    textarea.value!.value = "";
     messages.value.unshift(res.item);
     fetching.value = false;
     var talk = lists.value.find(t => t.talkId == currTalk.value)!;
