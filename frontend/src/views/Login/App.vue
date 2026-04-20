@@ -84,13 +84,13 @@ function toggleTheme() {
 function switchPage(page: string) {
     currpage.value = page as Page;
     history.pushState(null, '', `${import.meta.env.BASE_URL}login?${page}`);
-    document.title = titles[currpage.value as Page] + " - ASCAS | 田间形状采集辅助系统";
+    document.title = titles[currpage.value as Page] + " - ASCAS | 田间性状采集辅助系统";
 }
 window.onpopstate = function() {
     var page = new URLSearchParams(window.location.search).keys().next().value;
     if (page && titles[page as Page]) currpage.value = page;
     else currpage.value = "login";
-    document.title = titles[currpage.value as Page] + " - ASCAS | 田间形状采集辅助系统";
+    document.title = titles[currpage.value as Page] + " - ASCAS | 田间性状采集辅助系统";
 }
 
 onMounted(() => {
@@ -100,7 +100,7 @@ onMounted(() => {
 
     var page = new URLSearchParams(window.location.search).keys().next().value;
     if (page && titles[page as Page]) currpage.value = page;
-    document.title = titles[currpage.value as Page] + " - ASCAS | 田间形状采集辅助系统";
+    document.title = titles[currpage.value as Page] + " - ASCAS | 田间性状采集辅助系统";
 
     theme.themes.value.light!.colors.primary = "#4CAF50";
     theme.themes.value.dark!.colors.primary = "#4CAF50";

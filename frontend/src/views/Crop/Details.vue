@@ -56,11 +56,11 @@ window.onpopstate = function() {
     console.log("popstate", page);
     if (page && titles[page as Page]) tab.value = page;
     else tab.value = "login";
-    document.title = item.value.title + " - " + titles[tab.value as Page] + " - ASCAS | 田间形状采集辅助系统";
+    document.title = item.value.title + " - " + titles[tab.value as Page] + " - ASCAS | 田间性状采集辅助系统";
 }
 function updatePage(newval: string) {
     history.pushState(null, '', `${import.meta.env.BASE_URL}crops/${item.value.cid}?page=${newval}`);
-    document.title = item.value.title + " - " + titles[newval as Page] + " - ASCAS | 田间形状采集辅助系统";
+    document.title = item.value.title + " - " + titles[newval as Page] + " - ASCAS | 田间性状采集辅助系统";
 };
 
 defineExpose({ loading });

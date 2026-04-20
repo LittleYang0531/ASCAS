@@ -68,7 +68,7 @@ const titles = {
     "SensorDetails": "传感器信息",
 };
 watch(() => route.name, () => {
-	var title = "ASCAS | 田间形状采集辅助系统";
+	var title = "ASCAS | 田间性状采集辅助系统";
 	document.title = route.name ? titles[route.name as keyof typeof titles] + ' - ' + title : title;
     pageTitle.value = route.name ? titles[route.name as keyof typeof titles] + ' | ASCAS' : "ASCAS";
 });
